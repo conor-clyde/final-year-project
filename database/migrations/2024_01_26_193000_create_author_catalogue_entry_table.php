@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('author_catalogue_entry', function (Blueprint $table) {
+        Schema::create('author_catalogue_entries', function (Blueprint $table) {
             $table->foreignId('author_id');
             $table->foreignId('catalogue_entry_id');
 
             $table->primary(['author_id', 'catalogue_entry_id']);
 
-            $table->foreign('author_id')->references('id')->on('author')->onDelete('cascade');
-            $table->foreign('catalogue_entry_id')->references('id')->on('catalogue_entry')->onDelete('cascade');
+            $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
+            $table->foreign('catalogue_entry_id')->references('id')->on('catalogue_entries')->onDelete('cascade');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('author_catalogue_entry');
+        Schema::dropIfExists('author_catalogue_entries');
     }
 };

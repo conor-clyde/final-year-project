@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('author', function (Blueprint $table) {
-            $table->id();
-            $table->string('surname');
-            $table->string('forename');
-            $table->timestamps();
+        Schema::table('genres', function (Blueprint $table) {
+            $table->string('description')->default("")->nullable();;
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('author');
+        Schema::table('genres', function (Blueprint $table) {
+            $table->dropColumn('description');
+        });
     }
 };

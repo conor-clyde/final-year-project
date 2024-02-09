@@ -34,6 +34,6 @@
             </div>
         </div>
     </div>
-    <link rel="stylesheet" type="text/css" href="{{ asset('custom.css') }}" >
+    <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}" >
 </x-app-layout>
 

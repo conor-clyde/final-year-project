@@ -11,8 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('genre', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::create('genres', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();;
+            $table->timestamps();
         });
     }
 
@@ -21,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('genre', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-        });
+        Schema::dropIfExists('genres');
     }
 };

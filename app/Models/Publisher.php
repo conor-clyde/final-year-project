@@ -9,10 +9,5 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Publisher extends Model
 {
-    protected $table = 'publisher';
-
-
-
-
 
 }

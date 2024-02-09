@@ -14,10 +14,7 @@ class PublisherSeeder extends Seeder
      */
     public function run(): void
     {
-
-
-        DB::table('publisher')->delete();
-
+        DB::table('publishers')->delete();
 
         \App\Models\Publisher::create([
             'name' => 'Independently Published',
@@ -95,22 +92,5 @@ class PublisherSeeder extends Seeder
             'name' => 'Harper Perennial',
         ]);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+    }
 }

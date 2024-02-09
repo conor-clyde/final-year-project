@@ -23,7 +23,7 @@
 
 
                 <!-- Genre Details -->
-                <h1>{{ $genre->name }}</h1>
+                <h1>{{ $book->catalogueEntry->title }}</h1>
 
                 <div class="border-b-2 border-gray-300 mb-2"></div>
 
@@ -32,14 +32,14 @@
                     <div class="row">
                         <div class="col-md-4">
                             <h2 class="text-xl font-semibold mb-4">Details</h2>
-                            <p class="text-gray-600">Created: {{ $genre->created_at->format('F d, Y') }}</p>
-                            <p class="text-gray-600">Last Updated: {{ $genre->updated_at->format('F d, Y') }}</p>
-                            <p>Description: {{ $genre->description }}</p>
+                            <p class="text-gray-600">Created: {{ $book->created_at->format('F d, Y') }}</p>
+                            <p class="text-gray-600">Last Updated: {{ $book->updated_at->format('F d, Y') }}</p>
+                            <p>Description: </p>
                         </div>
                         <div class="col-md-8">
                             <!-- Book Titles -->
-                            <h2 class="text-xl font-semibold mb-4">Books Classified under {{ $genre->name }}</h2>
-                            @if ($genre->catalogueEntries->count() > 0)
+                            <h2 class="text-xl font-semibold mb-4">Loans Classified under {{ $book->catalogueEntry->title }}</h2>
+                            @if ($book->loans->count() > 0)
                                 <table id="genreShow" class="data-table table">
                                     <thead>
                                     <tr>

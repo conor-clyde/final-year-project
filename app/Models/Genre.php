@@ -12,14 +12,15 @@ class Genre extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'genre';
+    protected $fillable = [
+        'name',
+        'description',
+    ];
 
     public function catalogueEntries()
     {
-        return $this->hasMany(Catalogue_Entry::class);
+        return $this->hasMany(CatalogueEntry::class);
     }
-
-
 
     public function popularity()
     {

@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('catalogue_entry', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->foreignId('genre_id');
-            $table->timestamps();
-
-            $table->foreign('genre_id')->references('id')->on('genre')->onDelete('cascade');
+        Schema::table('genres', function (Blueprint $table) {
+            $table->boolean('archived')->default(0);
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('catalogue_entry');
+        Schema::table('genres', function (Blueprint $table) {
+            $table->dropColumn('archived');
+        });
     }
 };

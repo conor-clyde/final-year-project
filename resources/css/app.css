@@ -13,3 +13,13 @@
 input:disabled + .for-disabled{
     display: block;
 }
+
+/* Set margin for DataTables buttons */
+.dataTables_wrapper .dt-buttons {
+    margin-top: 0px !important; /* Add !important to override existing styles */
+}
+
+/* If you want to target a specific button by its class */
+.dataTables_wrapper .dt-buttons .buttons-csv {
+    margin-right: 10px !important; /* Add !important to override existing styles */
+}

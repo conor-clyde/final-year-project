@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('genre', function (Blueprint $table) {
+        Schema::table('book_copies', function (Blueprint $table) {
             $table->boolean('archived')->default(0);
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('genre', function (Blueprint $table) {
+        Schema::table('book_copies', function($table) {
             $table->dropColumn('archived');
         });
     }

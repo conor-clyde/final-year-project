@@ -14,10 +14,7 @@ class AuthorSeeder extends Seeder
      */
     public function run(): void
     {
-
-
-        DB::table('author')->delete();
-
+        DB::table('authors')->delete();
 
         \App\Models\Author::create([
             'forename' => 'S.T.',
@@ -213,22 +210,6 @@ Joan',
 Fyodor',
         'surname' => 'Dostoecsky'
     ]);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Author;
-use App\Models\Author_Catalogue_Entry;
-use App\Models\Book_Copy;
-use App\Models\Catalogue_Entry;
+use App\Models\Author_CatalogueEntry;
+use App\Models\BookCopy;
+use App\Models\CatalogueEntry;
 use App\Models\Genre;
 use App\Models\Publisher;
 use Illuminate\Http\Request;

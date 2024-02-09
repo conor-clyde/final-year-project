@@ -9,6 +9,11 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
+                    @if(Session::has('flashMessage'))
+                        <div class="alert alert-success">
+                            {{ Session::get('flashMessage') }}
+                        </div>
+                    @endif
 
 
                     {!! Form::open (['method' => 'PUT', 'url' => ['book/update', $book->id]]) !!}
@@ -76,6 +81,6 @@
             </div>
         </div>
     </div>
-    <link rel="stylesheet" type="text/css" href="{{ asset('custom.css') }}" >
+    <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}" >
 </x-app-layout>
 

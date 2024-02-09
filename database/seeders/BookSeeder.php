@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Author;
-use App\Models\Catalogue_Entry;
+use App\Models\CatalogueEntry;
 use App\Models\Genre;
-use App\Models\Author_Catalogue_Entry;
+use App\Models\Author_CatalogueEntry;
 use App\Models\Publisher;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -61,9 +61,9 @@ class BookSeeder extends Seeder
         ];
 
 
-        DB::table('author_catalogue_entry')->delete();
-        DB::table('catalogue_entry')->delete();
-        DB::table('book_copy')->delete();
+        DB::table('author_catalogue_entries')->delete();
+        DB::table('catalogue_entries')->delete();
+        DB::table('book_copies')->delete();
 
 
             for ($i=0; $i<count($books); $i++)
@@ -72,21 +72,17 @@ class BookSeeder extends Seeder
                     $genres = Genre::orderByRaw("RAND()")->first();
                     $publisher = Publisher::orderByRaw("RAND()")->first();
 
-                    $data = \App\Models\Catalogue_Entry::create([
+                    $data = \App\Models\CatalogueEntry::create([
                         'title' => $books[$i],
                         'genre_id' => $genres->id
                     ]);
 
-
-
-
-
-                    \App\Models\Author_Catalogue_Entry::create([
+                    \App\Models\Author_CatalogueEntry::create([
                         'author_id' => $authors->id,
                         'catalogue_entry_id' => $data->id
                     ]);
 
-                    $data = \App\Models\Book_Copy::create([
+                    $data = \App\Models\BookCopy::create([
                         'year_published' => 2002,
                         'catalogue_entry_id' => $data->id,
                         'publisher_id' => $publisher->id

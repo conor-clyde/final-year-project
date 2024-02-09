@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('patron', function (Blueprint $table) {
+        Schema::create('publishers', function (Blueprint $table) {
             $table->id();
-            $table->string('surname');
-            $table->string('forename');
-            $table->string('email');
+            $table->string('name')->unique();
             $table->timestamps();
-
-            $table->foreign('email')->references('email')->on('users')->onDelete('cascade');
         });
     }
 
@@ -27,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('patron');
+        Schema::dropIfExists('publishers');
     }
 };

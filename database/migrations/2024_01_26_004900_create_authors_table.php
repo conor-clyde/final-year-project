@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('genre', function (Blueprint $table) {
-            $table->string('description')->default("");
+        Schema::create('authors', function (Blueprint $table) {
+            $table->id();
+            $table->string('surname');
+            $table->string('forename');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('genre', function (Blueprint $table) {
-            $table->dropColumn('description');
-        });
+        Schema::dropIfExists('authors');
     }
 };

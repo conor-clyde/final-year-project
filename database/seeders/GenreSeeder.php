@@ -14,7 +14,7 @@ class GenreSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('genre')->delete();
+        DB::table('genres')->delete();
 
         \App\Models\Genre::create([
             'name' => 'Thriller',
@@ -63,10 +63,5 @@ class GenreSeeder extends Seeder
         \App\Models\Genre::create([
             'name' => 'Graphic Novel',
         ]);
-
-
-
-
-
     }
 }

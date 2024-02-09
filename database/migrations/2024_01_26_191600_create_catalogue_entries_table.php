@@ -11,8 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('book_copy', function (Blueprint $table) {
-            $table->boolean('archived')->default(0);
+        Schema::create('catalogue_entries', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->foreignId('genre_id');
+            $table->timestamps();
+
+            $table->foreign('genre_id')->references('id')->on('genres')->onDelete('cascade');
         });
     }
 
@@ -21,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('book_copy', function($table) {
-            $table->dropColumn('archived');
-        });
+        Schema::dropIfExists('catalogue_entries');
     }
 };

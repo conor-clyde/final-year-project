@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Update Book Genre') }}
-        </h2>
+        <h1 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Update Genre') }}
+        </h1>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
-                    <a href="{{ route('genre') }}" class="btn btn-primary" style="margin-bottom: 40px;">Return</a>
+                    <a href="{{ route('genre') }}" class="btn btn-secondary mb-4">Go Back</a>
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul>
@@ -20,30 +20,28 @@
                         </div>
                     @endif
 
+                    <form method="post" action="{{ route('genre.update', $genre->id) }}">
+                        @csrf
+                        @method('PUT')
 
-                    {!! Form::open (['method' => 'PUT', 'url' => ['genre/update', $genre->id]]) !!}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Genre Name:</label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter name..." name="name" value="{{ $genre->name }}" required/>
+                        </div>
 
-                    {!! Form::hidden ('id', $genre->id) !!}
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description (Optional):</label>
+                            <textarea class="form-control" id="description" placeholder="Enter description..." name="description" rows="5">{{ $genre->description }}</textarea>
+                        </div>
 
-                    {!! Form::label ('name', 'Name:') !!}
-                    {!! Form::text ('name', $genre->name) !!}
-
-                    {!! Form::submit ('Update', ['class' => 'btn btn-primary', 'style' => "background-color: #0d6efd;"])  !!}
-
-                    {!! Form::close() !!}
-
-
-
-
-
-
-
-
-
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">Update Genre</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-    <link rel="stylesheet" type="text/css" href="{{ asset('custom.css') }}" >
-</x-app-layout>
 
+    <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
+</x-app-layout>

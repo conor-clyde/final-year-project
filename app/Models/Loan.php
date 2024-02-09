@@ -4,17 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class Author extends Model
+class Loan extends Model
 {
-
-    // Author.php
-    public function catalogueEntries()
+    public function bookCopy()
     {
-        return $this->belongsToMany(CatalogueEntry::class, 'author_catalogue_entries');
+        return $this->belongsTo(BookCopy::class);
     }
-
-
 }

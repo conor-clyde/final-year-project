@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Author;
-use App\Models\Author_Catalogue_Entry;
-use App\Models\Book_Copy;
-use App\Models\Catalogue_Entry;
+use App\Models\Author_CatalogueEntry;
+use App\Models\BookCopy;
+use App\Models\CatalogueEntry;
 use App\Models\Genre;
 use App\Models\Publisher;
 use Illuminate\Http\Request;
@@ -17,16 +17,24 @@ class BookController extends Controller
 {
     public function index(Request $request)
     {
-        $books = Book_copy::orderBy('year_published')
-            ->select(['*', 'book_copy.id as book_id', 'genre.name as genre', 'publisher.name as publisher'])
-            ->join('publisher', 'publisher.id', '=', 'book_copy.publisher_id')
-            ->join('catalogue_entry', 'catalogue_entry.id', '=', 'book_copy.catalogue_entry_id')
-            ->join('genre', 'genre.id', '=', 'catalogue_entry.genre_id')
-            ->join('author_catalogue_entry', 'author_catalogue_entry.catalogue_entry_id', '=', 'catalogue_entry.id')
-            ->join('author', 'author.id', '=', 'author_catalogue_entry.author_id')
-            ->where('book_copy.archived', '=', '0')->get();
+        $books = BookCopy::orderBy('year_published')
+            ->select(['*', 'book_copies.id as book_id', 'genres.name as genre', 'publishers.name as publisher'])
+            ->join('publishers', 'publishers.id', '=', 'book_copies.publisher_id')
+            ->join('catalogue_entries', 'catalogue_entries.id', '=', 'book_copies.catalogue_entry_id')
+            ->join('genres', 'genres.id', '=', 'catalogue_entries.genre_id')
+            ->join('author_catalogue_entries', 'author_catalogue_entries.catalogue_entry_id', '=', 'catalogue_entries.id')
+            ->join('authors', 'authors.id', '=', 'author_catalogue_entries.author_id')
+            ->where('book_copies.archived', '=', '0')->get();
 
         return view('book.index', compact('books'));
+    }
+
+    public function show(BookCopy $book)
+    {
+        //dd($book);
+        $book->load('loans');
+        $book->load('catalogueEntry');
+        return view('book.show', compact('book'));
     }
 
     public function create()
@@ -34,51 +42,57 @@ class BookController extends Controller
         $authors = Author::all();
         $genres = Genre::all(); // Fetch all genres
         $publishers = Publisher::all(); // Fetch all genres
-        return view('book.create', compact('authors', 'genres', 'publishers'));
+        $catalogue_entries = CatalogueEntry::all(); // Fetch all genres
+        return view('book.create', compact('authors', 'genres', 'publishers', 'catalogue_entries'));
     }
 
-
-    public function show($id)
+    public function deleted(Request $request)
     {
-        return Genre::find($id);
+        $books = BookCopy::onlyTrashed()->get();
+        return view('book.deleted', compact('books'));
     }
+
+
 
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required',
-            'author' => 'required',
-            'genre' => 'required',
-            'publisher' => 'required',
-            'year' => 'required'
         ]);
 
         // Create book
-        $catalogue_entry = new Catalogue_Entry();
-        $catalogue_entry->title = $request->input('title');
-        $catalogue_entry->genre_id =  $request->input('genre');
-        $catalogue_entry->save();
+        if( $request->input('catalogue_entry') == null) {
 
-        $author_catalogue_entry = new Author_Catalogue_Entry();
-        $author_catalogue_entry->catalogue_entry_id =  $catalogue_entry->id;
-        $author_catalogue_entry->author_id =  $request->input('author');
-        $author_catalogue_entry->save();
+            $catalogue_entry = new CatalogueEntry();
 
-        $book_copy = new Book_Copy();
-        $book_copy->year_published = $request->input('year');
-        $book_copy->catalogue_entry_id =  $catalogue_entry->id;
-        $book_copy->publisher = $request->input('publisher');
+            $catalogue_entry->title = $request->input('new_catalogue_entry');
+            $catalogue_entry->genre_id = $request->input('genre');
+            $catalogue_entry->save();
+
+            $author_catalogue_entry = new Author_CatalogueEntry();
+            $author_catalogue_entry->catalogue_entry_id = $catalogue_entry->id;
+            $author_catalogue_entry->author_id = $request->input('author');
+            $author_catalogue_entry->save();
+        }
+
+        $book_copy = new BookCopy();
+        $book_copy->year_published = $request->input('publish_year');
+        if( $request->input('catalogue_entry') == null) {
+
+            $book_copy->catalogue_entry_id = $catalogue_entry->id;
+        }
+        else {
+            $book_copy->catalogue_entry_id = $request->input('catalogue_entry');
+        }
+        $book_copy->publisher_id = $request->input('publisher');
         $book_copy->save();
 
         return redirect('/book')->with('flashMessage', 'Book added successfully!');
     }
 
     public function edit($id) {
+        $book = BookCopy::find($id);
 
-        $book = Book_Copy::find($id);
-        //dd($book);
-
-        $test = Book_Copy::
+        $test = BookCopy::
             select(['*', 'book_copy.id as book_id', 'genre.name as genre', 'publisher.name as publisher'])
             ->join('publisher', 'publisher.id', '=', 'book_copy.publisher_id')
             ->join('catalogue_entry', 'catalogue_entry.id', '=', 'book_copy.catalogue_entry_id')
@@ -86,10 +100,6 @@ class BookController extends Controller
             ->join('author_catalogue_entry', 'author_catalogue_entry.catalogue_entry_id', '=', 'catalogue_entry.id')
             ->join('author', 'author.id', '=', 'author_catalogue_entry.author_id')
             ->where('book_copy.id', '=', $id)->get();
-
-        //dd( $test );
-
-
 
         $authors = Author::all();
         $genres = Genre::all(); // Fetch all genres
@@ -104,9 +114,7 @@ class BookController extends Controller
             'title' => 'required'
         ]);
 
-        $update =
-
-        $book = Book_Copy::find($request->input('id'));
+        $book = BookCopy::find($request->input('id'));
         $book->publisher_id = $request->input('publisher');
         $book->save();
 
@@ -115,7 +123,7 @@ class BookController extends Controller
 
     public function destroy(Request $request, $id)
     {
-        $book = Book_Copy::find($id);
+        $book = BookCopy::find($id);
         $book->delete();
 
         return redirect('/book')->with('flashMessage', 'Book deleted successfully!');
@@ -124,43 +132,33 @@ class BookController extends Controller
 
     public function archive(Request $request, $id)
     {
-
-
-        $book = Book_Copy::find($id);
-
+        $book = BookCopy::find($id);
         $book->archived=1;
         $book->save();
 
-
         return redirect('/book')->with('flashMessage', 'Book archived successfully!');
-
     }
-
 
 
     public function archived(Request $request)
     {
-        $books = Book_copy::orderBy('year_published')
-            ->select(['*', 'book_copy.id as book_id', 'genre.name as genre', 'publisher.name as publisher'])
-            ->join('publisher', 'publisher.id', '=', 'book_copy.publisher_id')
-            ->join('catalogue_entry', 'catalogue_entry.id', '=', 'book_copy.catalogue_entry_id')
-            ->join('genre', 'genre.id', '=', 'catalogue_entry.genre_id')
-            ->join('author_catalogue_entry', 'author_catalogue_entry.catalogue_entry_id', '=', 'catalogue_entry.id')
-            ->join('author', 'author.id', '=', 'author_catalogue_entry.author_id')
-            ->where('book_copy.archived', '=', '1')->get()
-
-        ;
+        $books = BookCopy::orderBy('year_published')
+            ->select(['*', 'book_copies.id as book_id', 'genres.name as genre', 'publishers.name as publisher'])
+            ->join('publishers', 'publishers.id', '=', 'book_copies.publisher_id')
+            ->join('catalogue_entries', 'catalogue_entries.id', '=', 'book_copies.catalogue_entry_id')
+            ->join('genres', 'genres.id', '=', 'catalogue_entries.genre_id')
+            ->join('author_catalogue_entries', 'author_catalogue_entries.catalogue_entry_id', '=', 'catalogue_entries.id')
+            ->join('authors', 'authors.id', '=', 'author_catalogue_entries.author_id')
+            ->where('book_copies.archived', '=', '1')->get();
 
         return view('book.archived', compact('books'));
-
-
     }
 
     public function unarchive(Request $request, $id)
     {
 
 
-        $book = Book_Copy::find($id);
+        $book = BookCopy::find($id);
 
         $book->archived=0;
         $book->save();

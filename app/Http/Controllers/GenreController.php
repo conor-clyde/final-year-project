@@ -2,270 +2,309 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book_Copy;
-use App\Models\Catalogue_Entry;
 use App\Models\Genre;
-use App\Models\Publisher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\CatalogueEntry;
 use Illuminate\Validation\Rule;
-use Yajra\DataTables\DataTables;
-
 
 class GenreController extends Controller
 {
+    // Genre.index
     public function index(Request $request)
     {
-        $genres = Genre::orderBy('name')->where('archived', '=', '0')->get();
-
+        $genres = Genre::orderBy('name')->where('archived', 0)->get();
         return view('genre.index', compact('genres'));
-
-
-
     }
 
-    // In your GenreController.php
-
-    public function bulkDelete(Request $request)
+    // Show genre details
+    public function show(Genre $genre)
     {
-        // Retrieve the selected genre IDs
-        $selectedGenreIds = $request->input('selected_genres', []);
-
-
-
-
-        // Perform the bulk action (e.g., delete genres)
-        foreach ($selectedGenreIds as $genreId) {
-            $genre = Genre::find($genreId);
-
-            // Check if the genre has associated books
-            if ($genre->catalogueEntries()->count() > 0) {
-                return redirect()->back()->with('flashMessage', 'Cannot delete genre. Associated books found.');
-            }
-
-            if ($genre) {
-                $genre->delete();
-            }
-        }
-
-        // Redirect back with a success message
-        return redirect()->back()->with('flashMessage', 'genres deleted successfully!');
+        $genre->load('catalogueEntries.authors');
+        return view('genre.show', compact('genre'));
     }
 
-
-
-
-    public function bulkArchive(Request $request)
-    {
-        $selectedGenres = $request->input('selected_genres');
-
-        // Check if there are selected genres
-        if (!empty($selectedGenres)) {
-            try {
-                // Update the status column to mark genres as archived
-                Genre::whereIn('id', $selectedGenres)->update(['archived' => '1']);
-
-                return response()->json(['success' => true, 'message' => 'Genres archived successfully']);
-            } catch (\Exception $e) {
-                return response()->json(['success' => false, 'message' => 'Error archiving genres']);
-            }
-        }
-
-        return response()->json(['success' => false, 'message' => 'No genres selected for archiving']);
-    }
-
-
-
-
+    // Create genre
     public function create()
     {
         return view('genre.create');
     }
 
-    public function show(Genre $genre)
-    {
-        // Load associated catalogue entries and any other relevant details
-        $genre->load('catalogueEntries');
-
-        // Pass the genre and its associated data to the view
-        return view('genre.show', compact('genre'));
-    }
-
-
-
+    // Save new genre
     public function store(Request $request)
     {
-
-
-
-
-        $this->validate($request, [
-            'name' => 'required|max:255|unique:genre'
-
-
-
+        $validatedData = $request->validate([
+            'name' => 'required|max:255|unique:genres',
+            'description' => 'max:255',
         ]);
 
-        // Create genre
-        $genre = new Genre;
-        $genre->name = $request->input('name');
+        $genre = new Genre([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'] ?? null,
+        ]);
+
         $genre->save();
 
-        return redirect('/genre')->with('flashMessage', 'Genre added successfully!');
+        return redirect()->route('genre')->with('flashMessage', 'Genre added successfully!');
     }
 
-    public function edit($id) {
+    // Edit genre
+    public function edit($id)
+    {
         $genre = Genre::find($id);
-
+        //dd($id);
         return view('genre.edit')->with('genre', $genre);
-
-
-
     }
 
-    public function update(Request $request, $id) {
-
-        $this->validate($request, [
-            'name' => 'required|max:255',
-            Rule::unique('genres')->ignore($request->id)
+    // Save genre update
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('genres')->ignore($id),
+            ],
+            'description' => 'max:255',
         ]);
 
-        $genre = Genre::find($request->input('id'));
-        $genre->name = $request->input('name');
+        $genre = Genre::findOrFail($id);
+        $genre->fill($validatedData);
         $genre->save();
 
-        return redirect('/genre')->with('flashMessage', 'Genre updated successfully!');
+        return redirect()->route('genre')->with('flashMessage', 'Genre updated successfully!');
     }
 
-    public function destroy(Request $request)
-    {
-        $test = \App\Models\Catalogue_Entry::where('genre_id', '=', $request->genre_id)->first();
-
-        if($test!=null)
-        {
-            return redirect('/genre')->with('flashMessage', 'Delete unsuccessful. Books are currently set to this genre.');
-        }
-
-
-
-        //$genre = Genre::find($id);
-        $genre = Genre::find($request->genre_id);
-        //dd( $genre );
-        $genre->delete();
-
-        return redirect('/genre')->with('flashMessage', 'Genre deleted successfully!');
-    }
-
-    public function permanentDelete(Request $request, $id)
-    {
-        $genre = Genre::withTrashed()->find($id);
-
-        // Permanently delete the genre
-        $genre->forceDelete();
-
-        return redirect('/genre/deleted')->with('flashMessage', 'Genre permanently deleted!');
-
-    }
-
-
-
-
-
-    public function check(Request $request)
-    {
-
-        $test = \App\Models\Catalogue_Entry::where('genre_id', '=', $request->category_delete_id)->first();
-
-        if($test!=null)
-        {
-            return true;
-        }
-
-        return false;
-
-
-    }
-
+    // Create confirm delete message
     public function checkDeletionStatus($id)
     {
         $genre = Genre::find($id);
+        $test = CatalogueEntry::where('genre_id', $id)->first();
 
-
-        // Your logic to check if the category can be deleted
-        $test = \App\Models\Catalogue_Entry::where('genre_id', '=', $id)->first();
-
-        if($test==null)
-        {
-            $canBeDeleted = true;
-        }
-        else {
-            $canBeDeleted = false;
-        }
+        $canBeDeleted = !$test;
 
         if ($canBeDeleted) {
-            return response()->json(['message' => 'Are you sure that you want to delete ' .  $genre->name . "?", 'deletable' => true], 200);
+            return response()->json(['message' => "Are you sure that you want to delete {$genre->name}?", 'deletable' => true], 200);
         } else {
-            return response()->json(['message' => $genre->name . ' can not be deleted because books are assigned to this genre', 'deletable' => false], 200);
+            return response()->json(['message' => "{$genre->name} can not be deleted because books are assigned to this genre", 'deletable' => false], 200);
         }
     }
 
-    public function archive(Request $request, $id)
+    // Create confirm archive message
+    public function checkArchiveStatus($id)
     {
-
-
         $genre = Genre::find($id);
+        return response()->json(['message' => "Are you sure that you want to archive {$genre->name}?", 'deletable' => true], 200);
+    }
 
-        $genre->archived=1;
+    // Archive genre
+    public function archive($id)
+    {
+        $genre = Genre::find($id);
+        $genre->archived = 1;
         $genre->save();
 
-
-        return redirect('/genre')->with('flashMessage', 'Genre archived successfully!');
-
+        return redirect()->route('genre')->with('flashMessage', 'Genre archived successfully!');
     }
 
+    // Soft delete genre
+    public function destroy(Request $request)
+    {
+        $genreId = $request->genre_id;
+
+        $genre = Genre::find($genreId);
+
+        if ($genre && $genre->archived == 1) {
+            $genre->archived = 0;
+            $genre->save();
+
+            Genre::findOrFail($genreId)->delete();;
+            return redirect()->route('genre.archived')->with('flashMessage', 'Genre deleted successfully!');
+        }
+        else
+        {
+        if (CatalogueEntry::where('genre_id', $genreId)->exists())
+            return redirect()->route('genre')->with('flashMessage', 'Delete unsuccessful. Books are currently using this genre.');
+
+        Genre::findOrFail($genreId)->delete();;
+        return redirect()->route('genre')->with('flashMessage', 'Genre deleted successfully!');
+        }
+    }
+
+    // archive to delete genre
+    public function archiveToDelete(Request $request)
+    {
+        $genreId = $request->genre_id;
+
+        if (CatalogueEntry::where('genre_id', $genreId)->exists())
+            return redirect()->route('genre.archive')->with('flashMessage', 'Delete unsuccessful. Books are currently using this genre.');
+
+        $genre = Genre::find($genreId);
+        $genre->archived = 0;
+        $genre->save();
+
+        Genre::findOrFail($genreId)->delete();;
+        return redirect()->route('genre.archive')->with('flashMessage', 'Genre deleted successfully!');
+    }
+
+    // View archived genres
     public function archived(Request $request)
     {
-
-        $genres = Genre::orderBy('name')
-            ->where('archived', '=', '1')->get();
-
+        $genres = Genre::where('archived', 1)->orderBy('name')->get();
         return view('genre.archived', compact('genres'));
-
-
     }
 
+    // View soft deleted genres
     public function deleted(Request $request)
     {
-
         $genres = Genre::onlyTrashed()->get();
-
-
-
         return view('genre.deleted', compact('genres'));
-
-
     }
 
+    // Reverse archive genre
+    public function unarchive(Request $request, $id)
+    {
+        $genre = Genre::find($id);
+        $genre->archived = 0;
+        $genre->save();
+
+        return redirect()->route('genre.archived')->with('flashMessage', 'Genre unarchived successfully!');
+    }
+
+    // Reverse archive every genre
+    public function unarchiveAll()
+    {
+        Genre::where('archived', 1)->update(['archived' => 0]);
+        return redirect()->route('genre.archived')->with('flashMessage', 'All genres unarchived successfully!');
+    }
+
+    // Reverse soft delete genre
     public function restore(Request $request, $id)
     {
         $genre = Genre::withTrashed()->find($id);
 
         if ($genre) {
             $genre->restore();
-            return redirect('genre/deleted')->with('flashMessage', 'Genre restored successfully!');
+            return redirect()->route('genre.deleted')->with('flashMessage', 'Genre restored successfully!');
         } else {
-            return redirect('genre/deleted')->with('flashMessage', 'Error: Genre not found');
+            return redirect()->route('genre.deleted')->with('flashMessage', 'Error: Genre not found');
+        }
+    }
+
+    // Reverse soft delete every genre
+    public function restoreAll()
+    {
+        Genre::onlyTrashed()->restore();
+        return redirect()->route('genre.deleted')->with('flashMessage', 'All genres restored successfully!');
+
+    }
+
+    // Hard delete genre
+    public function permanentDelete($id)
+    {
+        $genre = Genre::withTrashed()->find($id);
+
+        if (!$genre) {
+            return abort(404);
         }
 
+        $genre->forceDelete();
+        return redirect()->route('genre.deleted')->with('flashMessage', 'Genre permanently deleted!');
     }
 
-    public function unarchive(Request $request, $id)
+    // Create bulk archive confirm message
+    public function checkBulkArchive(Request $request)
     {
-        $genre = Genre::find($id);
+        $selectedGenres = $request->input('selected_genres', []);
 
-        $genre->archived=0;
-        $genre->save();
+        $genreIds = Genre::whereIn('id', $selectedGenres)->pluck('id')->toArray();
+        $genres = Genre::whereIn('id', $selectedGenres)->pluck('name')->toArray();
 
-        return redirect('genre/archived')->with('flashMessage', 'Genre unarchived successfully!');
+        $genreNames = implode(', ', $genres);
+        $lastIndex = strrpos($genreNames, ', ');
+        if ($lastIndex !== false) {
+            $genreNames = substr_replace($genreNames, ' and ', $lastIndex, 2);
+        }
+
+        return response()->json([
+            'message' => 'Are you sure you want to archive ' . $genreNames . '?',
+            'genre_ids' => $genreIds ]);
     }
+
+    // Create bulk delete confirm message
+    public function checkBulkDelete(Request $request)
+    {
+        $deletable = false;
+        $selectedGenres = $request->input('selected_genres', []);
+
+        $genreIds = Genre::whereIn('id', $selectedGenres)->pluck('id')->toArray();
+        $genres = Genre::whereIn('id', $selectedGenres)->get();
+
+        $deletableGenres = [];
+        $undeletableGenres = [];
+
+        $message = '';
+
+        foreach ($genres as $genre) {
+            $test = CatalogueEntry::where('genre_id', $genre->id)->first();
+            $canBeDeleted = !$test;
+
+            if ($canBeDeleted) {
+                $deletableGenres[] = $genre->name;
+            } else {
+                $undeletableGenres[] = $genre->name;
+            }
+        }
+
+        if (!empty($deletableGenres)) {
+            $message .= 'Are you sure you want to delete ' . implode(', ', $deletableGenres);
+            $deletable=true;
+        }
+
+        if (!empty($undeletableGenres)) {
+            if ($message !== '') {
+                $message .= ' and ';
+            }
+            $message .= 'Cannot delete ' . implode(', ', $undeletableGenres) . ' as they are associated with some data.';
+        }
+
+        return response()->json([
+            'message' => $message,
+            'genre_ids' => $genreIds,
+            'deletable' => $deletable
+        ]);
+    }
+
+    // Bulk soft delete genres
+    public function bulkDelete(Request $request)
+    {
+        $selectedGenreIds = $request->input('selected_genres', []);
+
+        foreach ($selectedGenreIds as $genreId) {
+            $genre = Genre::with('catalogueEntries')->findOrFail($genreId);
+
+            if ($genre->catalogueEntries->count() > 0)
+                continue;
+
+            $genre->delete();
+        }
+
+        redirect()->route('genre')->with('flashMessage', 'Genre(s) deleted successfully!');
+    }
+
+    // Bulk archive genres
+    public function bulkArchive(Request $request)
+    {
+        redirect()->route('genre')->with('flashMessage', 'Genre(s) deleted successfully!');
+
+        $selectedGenres = $request->input('selected_genres', []);
+        foreach ($selectedGenres as $selectedGenre) {
+            $genre = Genre::find($selectedGenre);
+            $genre->archived = 1;
+        }
+
+        //return view('genre')->with('flashMessage', 'Genre(s) archived successfully!');
+        //Genre::whereIn('id', $selectedGenres)->update(['archived' => 1]);
+       return redirect()->route('genre')->with('flashMessage', 'Genre(s) archived successfully!');
+    }
+
 }
