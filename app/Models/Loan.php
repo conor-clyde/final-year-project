@@ -14,4 +14,14 @@ class Loan extends Model
     {
         return $this->belongsTo(BookCopy::class);
     }
+
+    public function patron()
+    {
+        return $this->belongsTo(Patron::class, 'patron_id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'staff_id');
+    }
 }

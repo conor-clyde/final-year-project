@@ -1,5 +1,6 @@
- $(document).ready(function () {
+$(document).ready(function () {
     $('#bookIndex').DataTable({
+        responsive: true,
         dom: '<"top"fli>rt<"bottom"pB>',
         language: {
             lengthMenu: 'Show _MENU_',
@@ -9,7 +10,7 @@
         buttons: [{
             extend: 'csv',
             text: 'Export Book List',
-            exportOptions: { columns: [0, 1, 2, 3, 4] },
+            exportOptions: {columns: [0, 1, 2, 3, 4]},
             title: 'Books'
         }],
         lengthMenu: [
@@ -17,10 +18,17 @@
             ['10', '25', '50', 'All']
         ],
         columnDefs: [{
-            targets: [5, 6, 7, 8],
+            targets: [7, 8, 9, 10, 10],
             orderable: false,
             searchable: false,
-        }]});
+        },
+            {
+                targets: [4, 5, 6],
+                searchable: false,
+            }],
+
+        order: [[1, 'asc']]
+    });
 
     <!-- Styles-->
     var wrapper = $('.dataTables_wrapper');
@@ -33,8 +41,8 @@
     filter.css('float', 'left');
     lengthMenu.css('float', 'right');
     searchInput.css({
-    'margin-left': '20px',
-    'width': '340px'
-});
+        'margin-left': '20px',
+        'width': '340px'
+    });
     paginationContainer.addClass('float-start');
 });

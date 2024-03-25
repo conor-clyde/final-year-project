@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('book_copies', function (Blueprint $table) {
             $table->id();
-            $table->string('year_published');
+            $table->string('ISBN')->nullable();
+            $table->date('publish_date');
+            $table->integer('pages')->nullable();
             $table->foreignId('catalogue_entry_id');
             $table->foreignId('publisher_id');
             $table->timestamps();

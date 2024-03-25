@@ -109,7 +109,7 @@ class GenreController extends Controller
     // Soft delete genre
     public function destroy(Request $request)
     {
-        $genreId = $request->genre_id;
+        $genreId = $request->id;
 
         $genre = Genre::find($genreId);
 
@@ -130,21 +130,7 @@ class GenreController extends Controller
         }
     }
 
-    // archive to delete genre
-    public function archiveToDelete(Request $request)
-    {
-        $genreId = $request->genre_id;
 
-        if (CatalogueEntry::where('genre_id', $genreId)->exists())
-            return redirect()->route('genre.archive')->with('flashMessage', 'Delete unsuccessful. Books are currently using this genre.');
-
-        $genre = Genre::find($genreId);
-        $genre->archived = 0;
-        $genre->save();
-
-        Genre::findOrFail($genreId)->delete();;
-        return redirect()->route('genre.archive')->with('flashMessage', 'Genre deleted successfully!');
-    }
 
     // View archived genres
     public function archived(Request $request)
@@ -195,7 +181,6 @@ class GenreController extends Controller
     {
         Genre::onlyTrashed()->restore();
         return redirect()->route('genre.deleted')->with('flashMessage', 'All genres restored successfully!');
-
     }
 
     // Hard delete genre

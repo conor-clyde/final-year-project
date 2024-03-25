@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Genre;
+use App\Models\Publisher;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -16,81 +17,42 @@ class PublisherSeeder extends Seeder
     {
         DB::table('publishers')->delete();
 
-        \App\Models\Publisher::create([
-            'name' => 'Independently Published',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Atlantic Books',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Penguin',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Wordsworth Editions',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => ' Publisher Hodder Children\'s Books',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Piatkus',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => '1000Vultures',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Penguin Classics',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Head of Zeus',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Bloomsbury Children\'s Books',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'New York Review Books',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Knopf',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Thorndike Press Large Print',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Vintage',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Pushkin Press',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Dialogue Books',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Tor',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Hannah Bonam-Young',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Pan',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'St. Martin\'s Press',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Berkley Publishing Corporation,U.S.',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Simon & Schuster',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'HarperCollins',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Fourth Estate',
-        ]);
-        \App\Models\Publisher::create([
-            'name' => 'Harper Perennial',
-        ]);
+        $publishers = [
+            'Independently Published',
+            'Atlantic Books',
+            'Penguin',
+            'Wordsworth Editions',
+            'Hodder Children\'s Books',
+            'Piatkus',
+            '1000Vultures',
+            'Penguin Classics',
+            'Head of Zeus',
+            'Bloomsbury Children\'s Books',
+            'New York Review Books',
+            'Knopf',
+            'Thorndike Press Large Print',
+            'Vintage',
+            'Pushkin Press',
+            'Dialogue Books',
+            'Tor',
+            'Hannah Bonam-Young',
+            'Pan',
+            'St. Martin\'s Press',
+            'Berkley Publishing Corporation,U.S.',
+            'Simon & Schuster',
+            'HarperCollins',
+            'Fourth Estate',
+            'Harper Perennial',
+        ];
+
+
+
+        // Insert publishers into the database
+        foreach ($publishers as $publisher) {
+            Publisher::create([
+                'name' => $publisher,
+            ]);
+        }
 
     }
 }

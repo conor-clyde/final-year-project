@@ -25,20 +25,21 @@ class PublisherController extends Controller
         return view('publisher.create');
     }
 
-    public function show($id)
+    public function show(Publisher $publisher)
     {
-        return Genre::find($id);
+        $publisher->load('bookCopies.catalogueEntry.authors');
+        return view('publisher.show', compact('publisher'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required'
+            'publisher' => 'required|max:255'
         ]);
 
         // Create publisher
-        $publisher= new Publisher;
-        $publisher->name = $request->input('name');
+        $publisher = new Publisher;
+        $publisher->name = $request->input('publisher');
         $publisher->save();
 
         return redirect('/publisher')->with('flashMessage', 'Publisher added successfully!');
@@ -48,16 +49,15 @@ class PublisherController extends Controller
         $publisher = Publisher::find($id);
 
         return view('publisher.edit')->with('publisher', $publisher);
-
     }
 
     public function update(Request $request, $id) {
         $this->validate($request, [
-            'name' => 'required'
+            'publisher' => 'required|max:255'
         ]);
 
-        $publisher = Publisher::find($request->input('id'));
-        $publisher->name = $request->input('name');
+        $publisher = Publisher::find($id);
+        $publisher->name = $request->input('publisher');
         $publisher->save();
 
         return redirect('/publisher')->with('flashMessage', 'Publisher updated successfully!');
@@ -74,6 +74,20 @@ class PublisherController extends Controller
 
         return redirect('/publisher')->with('flashMessage', 'Publisher deleted successfully!');
 
+    }
+
+    // View archived genres
+    public function archived(Request $request)
+    {
+        $publishers = Publisher::where('archived', 1)->orderBy('name')->get();
+        return view('publisher.archived', compact('publishers'));
+    }
+
+    // View soft deleted genres
+    public function deleted(Request $request)
+    {
+        $publishers = Publisher::onlyTrashed()->get();
+        return view('publisher.deleted', compact('publishers'));
     }
 
 

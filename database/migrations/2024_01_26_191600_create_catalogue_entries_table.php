@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('catalogue_entries', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignId('genre_id');
             $table->timestamps();
+            $table->foreignId('genre_id');
 
             $table->foreign('genre_id')->references('id')->on('genres')->onDelete('cascade');
-        });
+           });
     }
 
     /**

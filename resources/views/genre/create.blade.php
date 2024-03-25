@@ -23,14 +23,25 @@
 
                     <form method="post" action="{{ route('genre.store') }}">
                         @csrf
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Genre Name:</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter name..." required/>
-                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-md-11">
+                                <div class="top-buttons d-flex justify-content-between">
+                                    <h3>Genre <span class="text-danger">*</span></h3>
+                                    <div>
+                                        <h3><span class="text-danger">*</span> = required</h3>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                           placeholder="Enter genre..." required/>
+                                </div>
 
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description (Optional):</label>
-                            <textarea class="form-control" id="description" name="description" placeholder="Enter description ..." rows="5"></textarea>
+                                <div class="mb-3">
+                                    <h3>Description</h3>
+                                    <textarea class="form-control" id="description" name="description"
+                                              placeholder="Enter description... (Optional)" rows="8"></textarea>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="text-right">

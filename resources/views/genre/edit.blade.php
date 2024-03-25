@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
-                    <a href="{{ route('genre') }}" class="btn btn-secondary mb-4">Go Back</a>
+
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul>
@@ -19,6 +19,8 @@
                             </ul>
                         </div>
                     @endif
+
+                    <a href="{{ route('genre') }}" class="btn btn-secondary mb-4">Go Back</a>
 
                     <form method="post" action="{{ route('genre.update', $genre->id) }}">
                         @csrf

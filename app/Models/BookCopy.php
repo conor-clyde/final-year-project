@@ -12,19 +12,50 @@ class BookCopy extends Model
 {
     use SoftDeletes;
 
-    public function genre()
-    {
-        return $this->belongsTo(Genre::class);
-    }
+    protected $casts = [
+        'publish_date' => 'datetime',
+    ];
 
     public function catalogueEntry()
     {
         return $this->belongsTo(CatalogueEntry::class);
     }
 
+    public function condition()
+    {
+        return $this->belongsTo(Condition::class);
+    }
+
+    public function publisher()
+    {
+        return $this->belongsTo(Publisher::class);
+    }
+
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
+    }
+
+    public function format()
+    {
+        return $this->belongsTo(Format::class);
+    }
+
     public function loans()
     {
         return $this->hasMany(Loan::class);
     }
+
+    public function popularity()
+    {
+        return $this->loans()->count();
+    }
+
+    public function isOnLoan()
+    {
+        // Check if there is an active loan for the book
+        return $this->loans()->where('is_returned', 0)->exists();
+    }
+
 
 }

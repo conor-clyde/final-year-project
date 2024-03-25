@@ -1,65 +1,95 @@
 <x-app-layout>
+    {{-- Header --}}
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Add Book Loan') }}
+        <h2 class="font-semibold text-gray-800 leading-tight" style="margin: 16px;">
+            {{ __('Add Loan') }}
         </h2>
     </x-slot>
 
+    {{-- Book.Create --}}
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
 
-
-
-                    <form method="post" action="{{ route('book.store') }}">
-                        <div class="form-group">
-                            @csrf
-                            <label for="name">Title</label>
-                            <input type="text" class="form-control" name="title" placeholder="Title"/>
-                            <label for="author">Author:</label>
-                            <select name="author" id="author" required>
-                                @foreach($authors as $author)
-                                    <option value="{{ $author->id }}">{{ $author->surname }}, {{ $author->forename }} </option>
+                    {{-- Flash Message --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
                                 @endforeach
-                            </select>
-
-
-                            <label for="genre">Genre:</label>
-                            <select name="genre" id="genre" required>
-                                @foreach($genres as $genre)
-                                    <option value="{{ $genre->id }}">{{ $genre->name }}</option>
-                                @endforeach
-                            </select>
-
-                            <label for="publisher">Publisher:</label>
-                            <select name="publisher" id="publisher" required>
-                                @foreach($publishers as $publisher)
-                                    <option value="{{ $publisher->id }}">{{ $publisher->name }}</option>
-                                @endforeach
-                            </select>
-                            <label for="year">Year:</label>
-                            <input type="number" name="year" id="year" required>
+                            </ul>
                         </div>
+                    @endif
+
+                    {{-- Return Button --}}
+                    <a href="{{route ('loan') }}" class="btn btn-secondary mb-4">Go Back</a>
+
+                    {{-- Add Book Form --}}
+                    <form method="post" action="{{route('loan.store')}}">
+                        @csrf
 
 
-                        <button type="submit" class="btn btn-primary" style="background-color: #0d6efd;">Confirm Book</button>
+                        <div class="row align-items-center">
+                            <div class="col-md-11">
+                                <!-- Add, archived, and deleted buttons -->
+                                <div class="top-buttons d-flex justify-content-between">
+                                    <h3>Book Title <span class="text-danger">*</span></h3>
+                                    <div>
+                                        <h3><span class="text-danger">*</span> = required</h3>
+                                    </div>
+                                </div>
 
+                                {{-- Book Title --}}
+                                <div class="row align-items-center">
+                                    <div class="col-md-5">
+                                        {{-- Catalogue Entry Selection --}}
+                                        <div class="form-group">
+                                            <select name="title" id="title" class="form-control">
+                                                <option value="" disabled selected>Select Title...</option>
+                                                {{-- Existing Catalogue Entries --}}
+                                                @foreach($catalogue_entries as $catalogue_entry)
+                                                    <option
+                                                        value="{{ $catalogue_entry->id }}">{{ $catalogue_entry->title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Book Title --}}
+                                <div class="row align-items-center">
+                                    <h3>Patron <span class="text-danger">*</span></h3>
+                                    <div class="col-md-5">
+                                        {{-- Catalogue Entry Selection --}}
+                                        <div class="form-group">
+                                            <select name="patron" id="patron" class="form-control">
+                                                <option value="" disabled selected>Select Patron...</option>
+                                                {{-- Existing Catalogue Entries --}}
+                                                @foreach($patrons as $patron)
+                                                    <option
+                                                        value="{{ $patron->id }}">{{ $patron->surname }}, {{ $patron->forename }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Submit Button --}}
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-primary">Confirm Book</button>
+                                </div>
+                            </div>
                     </form>
-
-
-
-
-
-
-
-
-
-
                 </div>
+                </form>
             </div>
         </div>
-    </div>
-    <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}" >
-</x-app-layout>
 
+        <script>
+
+        </script>
+
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/styles.css') }}">
+</x-app-layout>

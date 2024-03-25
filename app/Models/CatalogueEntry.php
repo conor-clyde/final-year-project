@@ -9,9 +9,18 @@ use Laravel\Sanctum\HasApiTokens;
 
 class CatalogueEntry extends Model
 {
+    protected $dates = [
+        'publish_date'
+    ];
+
     public function genre()
     {
         return $this->belongsTo(Genre::class);
+    }
+
+    public function publisher()
+    {
+        return $this->belongsTo(Publisher::class);
     }
 
     public function authors()

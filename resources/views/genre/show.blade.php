@@ -24,51 +24,68 @@
 
                 <!-- Genre Details -->
                 <h1>{{ $genre->name }}</h1>
-
-                <div class="border-b-2 border-gray-300 mb-2"></div>
+                <div style="margin-bottom: 24px; max-height: 200px;word-wrap: break-word; overflow-y: auto;">
+                    {{ $genre->description }}
+                </div>
+                <p style="margin-bottom: 8px;">Added: {{ $genre->created_at->format('F d, Y') }}</p>
+                <p style="margin-bottom: 8px;">Updated: {{ $genre->updated_at->format('F d, Y') }}</p>
+                <div style="padding-top: 4px;" class="border-b-2 border-gray-300 mb-2"></div>
 
 
                 <div class="mb-8">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <h2 class="text-xl font-semibold mb-4">Details</h2>
-                            <p class="text-gray-600">Created: {{ $genre->created_at->format('F d, Y') }}</p>
-                            <p class="text-gray-600">Last Updated: {{ $genre->updated_at->format('F d, Y') }}</p>
-                            <p>Description: {{ $genre->description }}</p>
-                        </div>
-                        <div class="col-md-8">
-                            <!-- Book Titles -->
-                            <h2 class="text-xl font-semibold mb-4">Books Classified under {{ $genre->name }}</h2>
-                            @if ($genre->catalogueEntries->count() > 0)
-                                <table id="genreShow" class="data-table table">
-                                    <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Author</th>
-                                        <th></th>
-                                    </tr>
+                    <div style="margin: 20px 4px;" class="row">
+                        <!-- Book Titles -->
+                        <h2 class="text-xl font-semibold mb-4">Books Classified under {{ $genre->name }}</h2>
+                        @if ($genre->catalogueEntries->count() > 0)
+                            <table id="genreShow" class="data-table table">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Author</th>
+                                    <th>Publisher</th>
+                                    <th>Published</th>
+                                    <th>Condition</th>
+                                    <th>Status</th>
+                                    <th>Loans</th>
+                                    <th></th>
+                                </tr>
 
-                                    </thead>
-                                    <tbody>
-                                    @foreach ($genre->catalogueEntries as $catalogueEntry)
-                                        <tr>
-                                            <td>{{ $catalogueEntry->title }}</td>
-                                            <td>
-                                                @foreach ($catalogueEntry->authors as $author)
-                                                    {{ $author->surname }}, {{ $author->forename }}
-                                                    <br>
-                                                @endforeach
-                                            <td>
-                                                <a class="btn btn-primary btn-width-80" href="">Details</a>
-                                            </td>
-                                        </tr>
+                                </thead>
+                                <tbody>
+                                @foreach ($genre->catalogueEntries as $catalogueEntry)
+                                    @foreach ($catalogueEntry->bookCopies as $book)
+                                    <tr>
+                                        <td>{{ $book->id }}</td>
+                                        <td>{{ $catalogueEntry->title }}</td>
+                                        <td>
+                                            @foreach ($catalogueEntry->authors as $author)
+                                                {{ $author->surname }}, {{ $author->forename }}
+                                                <br>
+                                        @endforeach
+                                        <td>{{ $book->publisher->name }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
+                                        <td>{{ $book->condition->name }}</td>
+                                        <!-- Status column -->
+                                        <td>
+                                            @if ($book->isOnLoan())
+                                                On Loan
+                                            @else
+                                                Available
+                                            @endif
+                                        </td>
+                                        <td>{{ $book->popularity() }}</td>
+                                        <td>
+                                            <a class="btn btn-primary btn-width-80" href="{{ route('book.show', ['book' => $book->id]) }}">Details</a>
+                                        </td>
+                                    </tr>
                                     @endforeach
-                                    </tbody>
-                                </table>
-                            @else
-                                <p class="text-gray-600">No books are classified by this genre.</p>
-                            @endif
-                        </div>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <p class="text-gray-600">No books are classified by this genre.</p>
+                        @endif
                     </div>
                 </div>
             </div>

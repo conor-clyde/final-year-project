@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('genres', function (Blueprint $table) {
-            $table->string('description')->default("")->nullable();;
+            $table->string('description')->default("")->nullable()->after('name');;;
         });
     }
 

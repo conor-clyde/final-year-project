@@ -29,63 +29,106 @@
                     </div>
 
                     <!-- Book table -->
-                        <table id="bookIndex" class="data-table table">
+                    <table id="bookIndex" class="data-table table">
 
-                            <!-- Table headings -->
-                            <thead>
+                        <!-- Table headings -->
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Publisher</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                            <th>Loans</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+
+                        <!-- Table body -->
+                        <tbody>
+                        @foreach ($books as $book)
                             <tr>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Publisher</th>
-                                <th>Year</th>
-                                <th>Genre</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            </thead>
+                                <td>{{ $book->id }}</td>
+                                <td>{{ $book->catalogueEntry->title }}</td>
+                                <td>
+                                    @foreach ($book->catalogueEntry->authors as $author)
+                                        {{ $author->surname }}, {{ $author->forename }}
+                                        <br>
+                                    @endforeach
+                                </td>
+                                <td>{{ $book->publisher->name }},<br>
+                                    {{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
 
-                            <!-- Table body -->
-                            <tbody>
-                            @foreach ($books as $book)
-                                <tr>
-                                    <td>{{ $book->title }}</td>
-                                    <td>{{ $book->surname }}, {{ $book->forename }}</td>
-                                    <td>{{ $book->publisher }}</td>
-                                    <td>{{ $book->year_published }}</td>
-                                    <td>{{ $book->genre }}</td>
-                                    <td>
-                                        <a class="btn btn-primary btn-width-80" href="book/{{ $book->book_id }}">Details</a>
-                                    </td>
-                                    <td>
-                                        <a href="book/{{$book->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80" value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80" value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
-                                    </td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                                <td>{{ $book->condition->name }}</td>
+                                <!-- Status column -->
+                                <td>
+                                    @if ($book->isOnLoan())
+                                        On Loan
+                                    @else
+                                        Available
+                                    @endif
+                                </td>
+                                <td>{{ $book->popularity() }}</td>
+                                <td>
+                                    <a class="btn btn-primary btn-width-80" href="book/{{ $book->id }}">Details</a>
+                                </td>
+                                <td>
+                                    <a href="book/{{$book->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80"
+                                            value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">
+                                        Archive
+                                    </button>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
+                                            value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal for archive and delete confirmation -->
-    @include('partials.archive-modal', ['modalId' => 'archiveModal', 'formAction' => url('genre/archive'), 'textareaId' => 'archiveQuestion', 'categoryId' => 'category_id', 'confirmArchiveBtn' => 'confirmArchiveBtn'])
-    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('genre/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
+    @include('partials.archive-modal', ['modalId' => 'archiveModal', 'formAction' => url('book/archive'), 'textareaId' => 'archiveQuestion', 'categoryId' => 'category_id', 'confirmArchiveBtn' => 'confirmArchiveBtn'])
+    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('book/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeleteBtn' => 'confirmDeleteBtn'])
 
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+
+    <!-- DataTables Responsive CSS -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <!-- DataTables Responsive JS -->
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
     <!-- My scripts -->
     <script src="{{ asset('js/book.js') }}"></script>
@@ -95,20 +138,21 @@
         $('.deleteCategoryBtn').click(function (e) {
             e.preventDefault();
 
-            var category_id = $(this).val();
-
+            var book_id = $(this).val();
+            var url = "book/delete/" + book_id;
             $.ajax({
-                url: '{{ route('genre.check-deletion', ':id') }}'.replace(':id', category_id),
+                url: '{{ route('book.check-delete', ':id') }}'.replace(':id', book_id),
                 type: 'GET',
                 success: function (response) {
                     console.log(response.message);
                     $('#deleteQuestion').val(response.message);
-                    $('#category_id').val(category_id);
+                    $('#category_id').val(book_id);
 
                     var deletable = response.deletable;
 
                     if (deletable) {
                         $('#confirmDeletionBtn').show();
+                        // Set the href attribute of the confirm button
                     } else {
                         $('#confirmDeletionBtn').hide();
                     }
@@ -129,28 +173,30 @@
         $('.archiveCategoryBtn').click(function (e) {
             e.preventDefault();
 
-            var category_id = $(this).val();
-            var test ="genre/archive/" + category_id;
+            var book_id = $(this).val();
+            var url = "book/archive/" + book_id;
 
             $.ajax({
-                url: '{{ route('genre.check-archive', ':id') }}'.replace(':id', category_id),
+                url: '{{ route('book.check-archive', ':id') }}'.replace(':id', book_id),
                 type: 'GET',
                 success: function (response) {
                     // Set the modal content
                     console.log(response.message);
                     $('#archiveQuestion').val(response.message);
-                    $('#archive_genre_id').val(category_id);
+                    $('#archive_genre_id').val(book_id);
 
                     // Set the href attribute of the confirm button
-                    $('#confirmArchiveBtn').attr('href', test);
+                    $('#confirmArchiveBtn').attr('href', url);
 
                     // Show the modal
                     $('#archiveModal').modal('show');
                 },
                 error: function (error) {
-                    alert('Error checking deletion status');
+                    alert('Error checking archive status');
                 }
             });
         });
     </script>
+
+
 </x-app-layout>

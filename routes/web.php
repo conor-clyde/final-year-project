@@ -63,7 +63,7 @@ Route::get('/genre/check-archive/{id}', [GenreController::class, 'checkArchiveSt
 Route::post('/genre/check-bulk-archive', [GenreController::class, 'checkBulkArchive'])->name('genre.check-bulk-archive');
 Route::post('/genre/check-bulk-delete', [GenreController::class, 'checkBulkDelete'])->name('genre.check-bulk-delete');
 Route::get('/genre/archive/{genre}', [GenreController::class, 'archive'])->name('genre.archive');
-// web.php
+
 
 //Route::post('/genre/archive/{genre}', [GenreController::class, 'archive'])->name('genre.archive');
 
@@ -91,40 +91,58 @@ Route::post('/publisher/created', [PublisherController::class, 'store'])->name('
 Route::get('/publisher/{publisher}/edit',  [PublisherController::class, 'edit']);
 Route::put('/publisher/update/{publisher}', [PublisherController::class, 'update'])->name('publisher.update');;
 Route::delete('/publisher/delete/{publisher}', [PublisherController::class, 'destroy'])->name('publisher.delete');;
+Route::get('/publisher/archived',  [PublisherController::class, 'archived'])->name('publisher.archived');
+Route::get('/publisher/deleted', [PublisherController::class, 'deleted'])->name('publisher.deleted');
+Route::get('/publisher/{publisher}', [PublisherController::class, 'show'])->name('publisher.show');
 
-
-
+Route::post('/author/delete', [AuthorController::class, 'destroy'])->name('author.delete');
 
 //author
+Route::get('/author/unarchive-all',  [AuthorController::class, 'unarchiveAll'])->name('author.unarchive-all');
+Route::get('/author/restore-all',  [AuthorController::class, 'restoreAll'])->name('author.restore-all');
 Route::get('/author', [AuthorController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('author');;
 Route::get('/author/create',  [AuthorController::class, 'create'])->name('author.create');
 Route::post('/author/created', [AuthorController::class, 'store'])->name('author.store');;
 Route::get('/author/{author}/edit',  [AuthorController::class, 'edit']);
 Route::put('/author/update/{author}', [AuthorController::class, 'update'])->name('author.update');;
-Route::delete('/author/delete/{author}', [AuthorController::class, 'destroy'])->name('author.delete');;
-
-
+Route::get('/author/archived',  [AuthorController::class, 'archived'])->name('author.archived');
+Route::get('/author/deleted', [AuthorController::class, 'deleted'])->name('author.deleted');
+Route::get('/author/check-deletion/{id}', [AuthorController::class, 'checkDeletionStatus'])->name('author.check-deletion');
+Route::get('/author/check-archive/{id}', [AuthorController::class, 'checkArchiveStatus'])->name('author.check-archive');
+Route::get('/author/archive/{author}', [AuthorController::class, 'archive'])->name('author.archive');
+Route::get('/author/{author}', [AuthorController::class, 'show']);
+Route::get('/author/unarchive/{author}',  [AuthorController::class, 'unarchive'])->name('author.unarchive');
+Route::get('/author/restore/{author}',  [AuthorController::class, 'restore'])->name('author.restore');
 
 
 
 //book
+Route::get('/get-book-details/{book}', [BookController::class, 'getDetails']);
+Route::get('/book/unarchive-all',  [BookController::class, 'unarchiveAll'])->name('book.unarchive-all');
+Route::get('/book/restore-all',  [BookController::class, 'restoreAll'])->name('book.restore-all');
+Route::get('/book/check-archive/{id}', [BookController::class, 'checkArchiveStatus'])->name('book.check-archive');
+Route::get('/book/check-delete/{id}', [BookController::class, 'checkDeleteStatus'])->name('book.check-delete');
 Route::get('/book/archived',  [BookController::class, 'archived'])->name('book.archived');
 Route::get('/book/deleted', [BookController::class, 'deleted'])->name('book.deleted');
 Route::get('/book', [BookController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('book');;
 Route::get('/book/create',  [BookController::class, 'create'])->name('book.create');
 Route::post('/book/created', [BookController::class, 'store'])->name('book.store');;
 Route::get('/book/{book}/edit',  [BookController::class, 'edit']);
+Route::put('/book/title-update/{book}', [BookController::class, 'titleUpdate'])->name('book.title-update');;
 Route::put('/book/update/{book}', [BookController::class, 'update'])->name('book.update');;
-Route::delete('/book/delete/{book}', [BookController::class, 'destroy'])->name('book.delete');;
+Route::post('/book/delete', [BookController::class, 'destroy'])->name('book.delete');;
 Route::get('/book/archive/{book}',  [BookController::class, 'archive'])->name('book.archive');
 Route::get('/book/unarchive/{book}',  [BookController::class, 'unarchive'])->name('book.unarchive');
+Route::get('/book/{book}',  [BookController::class, 'show'])->name('book.show');
+Route::get('/book/restore/{book}',  [BookController::class, 'restore'])->name('book.restore');
+Route::delete('/book/permanent-delete/{id}', [BookController::class, 'permanentDelete'])->name('book.permanent-delete');
 
-Route::get('/book/{book}',  [BookController::class, 'show']);
 
 
 //loan
 Route::get('/loan', [LoanController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('loan');;
 Route::get('/loan/create',  [LoanController::class, 'create'])->name('loan.create');
+Route::post('/loan/created', [LoanController::class, 'store'])->name('loan.store');;
 
 
 

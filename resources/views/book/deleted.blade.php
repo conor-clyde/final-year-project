@@ -1,4 +1,3 @@
-
 <style>
 
 </style>
@@ -14,23 +13,32 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
+
                     @if(Session::has('flashMessage'))
                         <div class="alert alert-success">
                             {{ Session::get('flashMessage') }}
                         </div>
                     @endif
 
-                        <!-- Go Back button -->
-                        <a href="{{ url()->previous() }}" class="btn btn-secondary mb-4">Go Back</a>
+                    <!-- Return and Restore all buttons -->
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('book') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                        <div>
+                            <a href="{{ route('book.restore-all') }}" class="btn btn-primary"
+                               style="margin-bottom: 40px;">Restore All</a>
+                        </div>
+                    </div>
 
-                    <table id="myTable" class="bookTable table">
+                    <table id="bookDeleted" class="data-table table">
                         <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Title</th>
                             <th>Author</th>
-                            <th>Genre</th>
                             <th>Publisher</th>
-                            <th>Year</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                            <th>Loans</th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -38,15 +46,31 @@
                         </thead>
                         <tbody>
 
-
-
                         @foreach ($books as $book)
                             <tr>
-                                <td>{{ $book->title }}</td>
-                                <td>{{ $book->surname }}, {{ $book->forename }}</td>
-                                <td>{{ $book->genre }}</td>
-                                <td>{{ $book->publisher }}</td>
-                                <td>{{ $book->year_published }}</td>
+                                <td>{{ $book->id }}</td>
+                                <td>{{ $book->catalogueEntry->title }}</td>
+                                <td>
+                                    @foreach ($book->catalogueEntry->authors as $author)
+                                        {{ $author->surname }}, {{ $author->forename }}
+                                        <br>
+                                    @endforeach
+                                </td>
+                                <td>{{ $book->publisher->name }},<br>
+                                    {{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
+                                <td>{{ $book->condition->name }}</td>
+                                <!-- Status column -->
+                                <td>
+                                    @if ($book->isOnLoan())
+                                        On Loan
+                                    @else
+                                        Available
+                                    @endif
+                                </td>
+                                <td>{{ $book->popularity() }}</td>
+                                <td>
+                                    <a class="btn btn-primary btn-width-80" href="{{ $book->id }}">Details</a>
+                                </td>
                                 <td>
                                     <a href="restore/{{$book->id}}" class="btn btn-primary">Restore</a>
                                 </td>
@@ -54,13 +78,10 @@
                                     {!! Form::open(['url' => ['book/permanent-delete', $book->id], 'method' => 'POST', 'class' => 'pull-right']) !!}
 
                                     {!! Form::hidden('_method', 'DELETE') !!}
-                                    {!! Form::submit('Delete', ['class' => 'btn btn-danger', 'style' => "background-color: #dc3545;", 'onclick' => 'confirmPermanentDelete(event, ' . $book->id . ')']) !!}
+                                    {!! Form::submit('Permanent Delete', ['class' => 'btn btn-danger', 'style' => "background-color: #dc3545;", 'onclick' => 'confirmPermanentDelete(event, ' . $book->id . ')']) !!}
 
                                     {!! Form::close() !!}
                                 </td>
-
-
-
                             </tr>
                         @endforeach
                         </tbody>
@@ -73,37 +94,80 @@
 
 
 
-    <!-- Modal -->
-    <!-- Permanent Delete Modal -->
-    <div class="modal fade" id="permanentDeleteModal" tabindex="-1" aria-labelledby="permanentDeleteModalLabel" aria-hidden="true">
-        <!-- Modal content goes here -->
-
-    </div>
 
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
 
+    <!-- DataTables Responsive CSS -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <!-- DataTables Responsive JS -->
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
 
     <script>
         $(document).ready(function () {
-            $('#myTable').DataTable({
-                columnDefs: [
-                    { targets: [-2, -1], orderable: false, searchable: false }
-                ]
+            $('#bookDeleted').DataTable({
+                responsive: true,
+                dom: '<"top"fli>rt<"bottom"pB>',
+                language: {
+                    lengthMenu: 'Show _MENU_',
+                    info: 'Displaying _START_-_END_ out of _TOTAL_',
+                    search: 'Search Books:',
+                },
+                buttons: [{
+                    extend: 'csv',
+                    text: 'Export Book List',
+                    exportOptions: {columns: [0, 1, 2, 3, 4]},
+                    title: 'Books'
+                }],
+                lengthMenu: [
+                    [10, 25, 50, -1],
+                    ['10', '25', '50', 'All']
+                ],
+                columnDefs: [{
+                    targets: [7, 8, 9],
+                    orderable: false,
+                    searchable: false,
+                }],
+                order: [[1, 'asc']]
             });
+
+            <!-- Styles-->
+            var wrapper = $('.dataTables_wrapper');
+            var filter = wrapper.find('.dataTables_filter');
+            var searchInput = filter.find('input');
+            var lengthMenu = wrapper.find('.dataTables_length');
+            var paginationContainer = $('.dataTables_paginate');
+            var filter = wrapper.find('.dataTables_filter');
+
+            filter.css('float', 'left');
+            lengthMenu.css('float', 'right');
+            searchInput.css({
+                'margin-left': '20px',
+                'width': '340px'
+            });
+            paginationContainer.addClass('float-start');
         });
     </script>
-
-
-
-
-
-
 
 
 </x-app-layout>

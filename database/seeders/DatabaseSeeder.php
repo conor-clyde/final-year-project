@@ -20,6 +20,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            AuthorSeeder::class,
+        ]);
+
+        $this->call([
             GenreSeeder::class,
         ]);
 
@@ -28,14 +32,22 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            AuthorSeeder::class,
+           FormatSeeder::class,
+        ]);
+
+        $this->call([
+            LanguageSeeder::class,
+        ]);
+
+        $this->call([
+            ConditionSeeder::class,
         ]);
 
         $this->call([
             BookSeeder::class,
         ]);
-
-
-
+        $this->call([
+            LoanSeeder::class,
+        ]);
     }
 }

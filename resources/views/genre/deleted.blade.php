@@ -33,9 +33,6 @@
                         <!-- Table headings -->
                         <thead>
                         <tr>
-                            <th>
-                                <input type="checkbox" id="select-all">
-                            </th>
                             <th>Name</th>
                             <th>Book Titles</th>
                             <th></th>
@@ -48,9 +45,6 @@
                         <!-- Table Body -->
                         @foreach ($genres as $genre)
                             <tr>
-                                <td>
-                                    <input class="select" type="checkbox" name="selected_genres[]" value="{{ $genre->id }}">
-                                </td>
                                 <td>{{ $genre->name }}</td>
                                 <td>{{ $genre->popularity() }}</td>
                                 <td>
@@ -67,9 +61,6 @@
                                         <button type="submit" class="btn btn-danger">Permanently Delete</button>
                                     </form>
                                 </td>
-
-
-
                             </tr>
                         @endforeach
                         </tbody>
@@ -111,7 +102,7 @@
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [0, 3, 4, 5],
+                    targets: [2, 3, 4],
                     orderable: false,
                     searchable: false,
 

@@ -16,20 +16,21 @@
                         {{ __('Catalogue') }}
                     </x-nav-link>
                     @if(auth()->check() && auth()->user()->role==2)
+                        <x-nav-link :href="route('book')" :active="request()->routeIs('book')">
+                            {{ __('Books') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('loan')" :active="request()->routeIs('loan')" class="loan-link">
+                            {{ __('Loans') }}
+                        </x-nav-link>
+
+                        <x-nav-link :href="route('author')" :active="request()->routeIs('author')">
+                            {{ __('Authors') }}
+                        </x-nav-link>
                     <x-nav-link :href="route('genre')" :active="request()->routeIs('genre')">
                         {{ __('Genres') }}
                     </x-nav-link>
                     <x-nav-link :href="route('publisher')" :active="request()->routeIs('publisher')">
                         {{ __('Publishers') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('author')" :active="request()->routeIs('author')">
-                        {{ __('Authors') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('book')" :active="request()->routeIs('book')">
-                        {{ __('Books') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('loan')" :active="request()->routeIs('loan')">
-                        {{ __('Loans') }}
                     </x-nav-link>
                     @endif
                     @if(auth()->check() && auth()->user()->role==3)

@@ -9,5 +9,13 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Publisher extends Model
 {
+    public function bookCopies()
+    {
+        return $this->hasMany(BookCopy::class);
+    }
 
+    public function popularity()
+    {
+        return $this->bookCopies()->count();
+    }
 }

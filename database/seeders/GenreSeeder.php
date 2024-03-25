@@ -16,52 +16,26 @@ class GenreSeeder extends Seeder
     {
         DB::table('genres')->delete();
 
-        \App\Models\Genre::create([
-            'name' => 'Thriller',
+        $genres = [
+            'Thriller' => 'A genre characterized by a heightened sense of suspense, mystery, and anticipation.',
+            'Literary Fiction' => 'Fictional works that focus more on the quality and depth of the writing than on the plot.',
+            'Nonfiction' => 'Books based on real events, facts, and information.',
+            'Classic' => 'Timeless literary works that are considered exemplary and have stood the test of time.',
+            'Romance' => 'Stories centered around romantic relationships and emotions.',
+            'Horror' => 'Designed to create an intense feeling of fear or shock.',
+            'Children\'s Literary' => 'Literary works written for and targeted towards children.',
+            'Historical Fiction' => 'Fictional stories set against a historical backdrop.',
+            'Young Adult' => 'Books aimed at a teenage audience, typically dealing with coming-of-age themes.',
+            'Poetry' => 'Expressive and rhythmic literary works often emphasizing the beauty of language.',
+            'Fantasy' => 'Imaginative and fantastical stories often set in fictional worlds.',
+            'Graphic Novel' => 'Narrative works presented in the form of comic strips or comic book-style storytelling.',
+        ];
+
+        foreach ($genres as $genreName => $genreDescription) {
+            Genre::create([
+                'name' => $genreName,
+                'description' => $genreDescription,
             ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Literary Fiction',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Nonfiction',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Classic',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Romance',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Horror',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Children\'s Literary',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Historical Fiction',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Young Adult',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Poetry',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Fantasy',
-        ]);
-
-        \App\Models\Genre::create([
-            'name' => 'Graphic Novel',
-        ]);
+        }
     }
 }
