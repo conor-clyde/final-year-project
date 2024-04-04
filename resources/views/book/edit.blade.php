@@ -1,14 +1,30 @@
 <x-app-layout>
+
+    {{-- Header --}}
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Update Book') }}
         </h2>
     </x-slot>
 
+    {{-- Book.Edit --}}
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
+
+                    {{-- Error Message --}}
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <!-- Flash message -->
                     @if(Session::has('flashMessage'))
                         <div class="alert alert-success">
                             {{ Session::get('flashMessage') }}
@@ -18,11 +34,31 @@
                     <!-- Add, archived, and deleted buttons -->
                     <a href="{{ route('book') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
 
+                    <!-- Update Book Title Details-->
                     <h2>Book Title Details</h2>
-                    <form method="post" action="{{ route('book.title-update', $book->id) }}">
+                    @if (isset($book))
+                            <?php
+                            $books = \App\Models\BookCopy::where('catalogue_entry_id', $book->catalogue_entry_id)->get();
+                            ?>
+                        <p style="margin-bottom: 10px;">The library has {{ count($books) }} book(s) under this title. ID(s):
+                            @foreach ($books as $book)
+                                {{ $book->id }}
+                                @if (!$loop->last)
+                                    <!-- Check if it's not the last book -->
+                                    , <!-- Add comma if it's not the last book -->
+                                @endif
+                            @endforeach
+                        </p>
+                    @else
+                        <p>No book found.</p>
+                    @endif
+
+                    <form method="post" action="{{ route('book.title-update', $book->catalogue_entry_id) }}">
                         @csrf
                         @method('PUT')
-                        <table id="test" class="data-table table">
+                        <table id="updateBookTitle" class="data-table table">
+
+                            <!-- Table Headers -->
                             <thead>
                             <tr>
                                 <th style="width: 20px">Detail</th>
@@ -30,32 +66,82 @@
                                 <th>New Value</th>
                             </tr>
                             </thead>
+
+                            <!-- Table Body -->
                             <tbody>
 
+                            {{-- Book Title --}}
                             <tr>
                                 <td>Title</td>
                                 <td>{{ $book->catalogueEntry->title }}</td>
-                                <td><input type="text" name="isbn" id="isbn" class="form-control"
-                                           value="{{ $book->catalogueEntry->title }}"></td>
-                            </tr>
-
-
-                            <tr>
-                                <td>Author</td>
-                                <td>  @foreach ($book->catalogueEntry->authors as $author)
-                                        {{ $author->surname }}, {{ $author->forename }}
-                                        <br>
-                                    @endforeach</td>
-                                <td>
+                                <td><input type="text" name="title" id="title" class="form-control"
+                                           value="{{ $book->catalogueEntry->title }}">
                                 </td>
                             </tr>
 
+                            {{-- Book Author --}}
+                            <tr>
+                                <td>Author</td>
+                                <td>
+                                    @foreach ($book->catalogueEntry->authors as $key => $author)
+                                        <label>ID: {{ $author->id }}</label><br>
+                                        Surname: {{ $author->surname }}<br>
+                                        Forename: {{ $author->forename }}
+                                        @if (!$loop->last)
+                                            <br>      <br>
+                                        @endif
+                                    @endforeach
+                                </td>
+
+                                {{-- Update Author Surname and Forename --}}
+                                <td>
+                                    @foreach ($book->catalogueEntry->authors as $author)
+                                        <div style="display: inline-block; margin-right: 10px; width:70px;">
+                                            <label for="id">ID:</label><br>
+                                            <input disabled type="text" name="author[{{ $author->id }}][id]" id="id"
+                                                   class="form-control" style="margin-bottom: 10px;"
+                                                   value="{{ $author->id }}">
+                                        </div>
+                                        <div style="display: inline-block; margin-right: 10px;">
+                                            <label for="surname">Surname:</label><br>
+                                            <input type="text" name="author[{{ $author->id }}][surname]" id="surname"
+                                                   class="form-control" style="margin-bottom: 10px;"
+                                                   value="{{ $author->surname }}">
+                                        </div>
+                                        <div style="display: inline-block;">
+                                            <label for="forename">Forename:</label><br>
+                                            <input type="text" name="author[{{ $author->id }}][forename]" id="forename"
+                                                   class="form-control"
+                                                   value="{{ $author->forename }}">
+                                        </div>
+                                        <button type="button" data-author-id="{{ $author->id }}" class="btn btn-danger delete-author-btn">Delete</button>
+
+                                    @if (!$loop->last)
+                                            <div class="border-b-2 border-gray-300 mb-2"></div>
+                                        @endif
+                                    @endforeach
+                                </td>
+
+
+
+
+                            </tr>
+
+                            {{-- Book Genre --}}
                             <tr>
                                 <td>Genre</td>
                                 <td>{{ $book->catalogueEntry->genre->name}}</td>
-                                <td>Update</td>
+                                <td><select name="genre" id="genre" class="form-control">
+                                        @foreach ($genres as $genre)
+                                            <option
+                                                value="{{ $genre->id }}" {{ $book->catalogueEntry->genre_id == $genre->id ? 'selected' : '' }}>
+                                                {{ $genre->name }}
+                                            </option>
+                                        @endforeach
+                                    </select></td>
                             </tr>
 
+                            {{-- Book Description --}}
                             <tr>
                                 <td style="vertical-align: top; max-width: 200px; word-wrap: break-word;">Description
                                 </td>
@@ -66,32 +152,33 @@
                                     <div id="fullDescription" style="display: none;">
                                         {{ $book->catalogueEntry->description }}
                                     </div>
-                                    <button id="toggleDescriptionBtn" class="btn btn-link">See Full Description</button>
+                                    @if (strlen($book->catalogueEntry->description) > 200)
+                                        <button id="toggleDescriptionBtn" class="btn btn-link" type="button">See Full
+                                            Description
+                                        </button>
+                                    @endif
                                 </td>
-                                <td></td>
+                                <td>
+                                    <textarea style="resize: vertical; min-height: 100px; max-height: 800px;"
+                                              class="form-control" id="description" name="description"
+                                              rows="5">{{ $book->catalogueEntry->description }} </textarea>
+                                </td>
                             </tr>
-
 
                             </tbody>
                         </table>
-                        <button type="submit" class="btn-primary btn">Confirm Book Title Details</button>
+
+                        {{-- Submit Book Title Details Button --}}
+                        <div class="text-right">
+                            <button type="submit" class="btn-primary btn">Confirm Book Title Details</button>
+                        </div>
                     </form>
-                    <?php
-                    $books = \App\Models\BookCopy::where('catalogue_entry_id', $book->catalogue_entry_id)->get();
-                    ?>
-                    @foreach ($books as $book)
-                        <p>
-                            {{$book->id}}
-
-                        </p>
-                    @endforeach
-
 
                     <h2>Book Copy Details</h2>
                     <form method="post" action="{{ route('book.update', $book->id) }}">
                         @csrf
                         @method('PUT')
-                        <table id="test2" class="data-table table">
+                        <table id="updateBook" class="data-table table">
                             <thead>
                             <tr>
                                 <th style="max-width: 20px;">Detail</th>
@@ -111,7 +198,7 @@
                                 <td><select name="format" id="format" class="form-control">
                                         @foreach($formats as $format)
                                             <option
-                                                    value="{{ $format->id }}" {{ $book->format_id == $format->id ? 'selected' : '' }}>
+                                                value="{{ $format->id }}" {{ $book->format_id == $format->id ? 'selected' : '' }}>
                                                 {{ $format->name }}
                                             </option>
                                         @endforeach
@@ -123,13 +210,12 @@
                                 <td><select name="language" id="language" class="form-control">
                                         @foreach($languages as $language)
                                             <option
-                                                    value="{{ $language->id }}" {{ $book->language_id == $language->id ? 'selected' : '' }}>
+                                                value="{{ $language->id }}" {{ $book->language_id == $language->id ? 'selected' : '' }}>
                                                 {{ $language->name }}
                                             </option>
                                         @endforeach
                                     </select></td>
                             </tr>
-
 
                             <tr>
                                 <td>Condition</td>
@@ -137,7 +223,7 @@
                                 <td><select name="condition" id="condition" class="form-control">
                                         @foreach($conditions as $condition)
                                             <option
-                                                    value="{{ $condition->id }}" {{ $book->condition_id == $condition->id ? 'selected' : '' }}>
+                                                value="{{ $condition->id }}" {{ $book->condition_id == $condition->id ? 'selected' : '' }}>
                                                 {{ $condition->name }}
                                             </option>
                                         @endforeach
@@ -150,7 +236,7 @@
                                         <option value="" disabled selected>Select Publisher...</option>
                                         @foreach($publishers as $publisher)
                                             <option
-                                                    value="{{ $publisher->id }}" {{ $book->publisher_id == $publisher->id ? 'selected' : '' }}>
+                                                value="{{ $publisher->id }}" {{ $book->publisher_id == $publisher->id ? 'selected' : '' }}>
                                                 {{ $publisher->name }}
                                             </option>
                                         @endforeach
@@ -158,16 +244,17 @@
                             </tr>
                             <tr>
                                 <td>Publish Date</td>
-                                <td>{{ $book->publish_date}}</td>
+                                <td>{{ date('jS M Y', strtotime($book->publish_date)) }}</td>
+
                                 <td>
                                     <div class="row align-items-center">
                                         <div class="col-md-4">
-                                            {!! Form::selectRange('publish_day', 1, 31, date('d', strtotime($book->publish_date)), ['class' => 'form-control']) !!}
+                                            {!! Form::selectRange('publish_day', 1, 31, date('j', strtotime($book->publish_date)), ['class' => 'form-control']) !!}
                                         </div>
 
                                         {{-- Month Input --}}
                                         <div class="col-md-4">
-                                            {!! Form::selectMonth('publish_month', intval(date('d', strtotime($book->publish_date))), ['class' => 'form-control']) !!}
+                                            {!! Form::selectMonth('publish_month', intval(date('m', strtotime($book->publish_date))), ['class' => 'form-control']) !!}
                                         </div>
 
                                         {{-- Year Input --}}
@@ -184,7 +271,7 @@
                                 </td>
                                 <td>
                                     <input type="text" name="isbn" id="isbn" class="form-control"
-                                           placeholder="Enter ISBN..." value="{{ $book->ISBN  }}">
+                                          value="{{ $book->ISBN  }}">
                                 </td>
                             </tr>
 
@@ -192,27 +279,23 @@
                                 <td>Pages</td>
                                 <td>{{ $book->pages }}</td>
                                 <td>
-                                    <input type="number" name="pages" value="{{ $book->pages }}">
+                                    <input min="0" max="2000" class="form-control" type="number" name="pages" value="{{ $book->pages }}">
                                 </td>
                             </tr>
 
                             </tbody>
                         </table>
 
-                        <div class="top-buttons d-flex justify-content-between">
-                            <div>
-
-                                <button type="submit" class="btn-primary btn">Confirm Book Copy Details</button>
-                            </div>
+                        {{-- Submit Book Details Button --}}
+                        <div class="text-right">
+                            <button type="submit" class="btn-primary btn">Confirm Book Copy Details</button>
                         </div>
-
                     </form>
                 </div>
 
             </div>
         </div>
     </div>
-    <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
 
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -241,10 +324,12 @@
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
 
+
+
     <script>
         // Create genre.index datatable
         $(document).ready(function () {
-            $('#test').DataTable({
+            $('#updateBookTitle').DataTable({
                 searching: false,
                 ordering: false, // Disable sorting
                 paging: false, // Remove pagination
@@ -261,7 +346,7 @@
         });
 
         $(document).ready(function () {
-            $('#test2').DataTable({
+            $('#updateBook').DataTable({
                 searching: false,
                 ordering: false, // Disable sorting
                 paging: false, // Remove pagination
@@ -278,6 +363,9 @@
         });
 
     </script>
+
+
+
 
     <script>
         $(document).ready(function () {
@@ -291,20 +379,10 @@
                 }
             });
         });
-
-        // Save button click event handler
-        $(document).on('click', '#saveDescriptionBtn', function () {
-            // Get the updated description value
-            var updatedDescription = $('#descriptionInput').val();
-
-            // Update the content of the cell with the updated value
-            $('#shortDescription').text(updatedDescription);
-
-            // Restore the original button text and ID
-            $('#saveDescriptionBtn').text('Update').attr('id', 'updateDescriptionBtn');
-        });
-        })
-        ;
     </script>
+
+
+
+
 </x-app-layout>
 

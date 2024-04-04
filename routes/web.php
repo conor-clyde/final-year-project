@@ -45,7 +45,6 @@ Route::get('/genre/restore-all',  [GenreController::class, 'restoreAll'])->name(
 
 
 
-
 Route::get('/genre/archived', [GenreController::class, 'archived'])->name('genre.archived');
 Route::get('/genre/deleted', [GenreController::class, 'deleted'])->name('genre.deleted');
 Route::delete('/genre/permanent-delete/{id}', [GenreController::class, 'permanentDelete'])->name('genre.permanent-delete');
@@ -63,7 +62,8 @@ Route::get('/genre/check-archive/{id}', [GenreController::class, 'checkArchiveSt
 Route::post('/genre/check-bulk-archive', [GenreController::class, 'checkBulkArchive'])->name('genre.check-bulk-archive');
 Route::post('/genre/check-bulk-delete', [GenreController::class, 'checkBulkDelete'])->name('genre.check-bulk-delete');
 Route::get('/genre/archive/{genre}', [GenreController::class, 'archive'])->name('genre.archive');
-
+Route::delete('/genre/permanent-delete/{id}', [GenreController::class, 'permanentDelete'])->name('genre.permanent-delete');
+Route::delete('/delete-author/{authorId}/{catalogueEntryId}', [BookController::class, 'deleteAuthorCatalogEntry'])->name('delete.author');
 
 //Route::post('/genre/archive/{genre}', [GenreController::class, 'archive'])->name('genre.archive');
 
@@ -136,8 +136,6 @@ Route::get('/book/unarchive/{book}',  [BookController::class, 'unarchive'])->nam
 Route::get('/book/{book}',  [BookController::class, 'show'])->name('book.show');
 Route::get('/book/restore/{book}',  [BookController::class, 'restore'])->name('book.restore');
 Route::delete('/book/permanent-delete/{id}', [BookController::class, 'permanentDelete'])->name('book.permanent-delete');
-
-
 
 //loan
 Route::get('/loan', [LoanController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('loan');;

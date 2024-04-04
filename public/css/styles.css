@@ -169,7 +169,8 @@ div.dataTables_paginate span a.paginate_button {
 .form-control {
     width: 100%;
     padding: 8px;
-    margin-bottom: 34px;
+    margin-top: 17px;
+    margin-bottom: 17px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }

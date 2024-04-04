@@ -12,6 +12,7 @@ class Author_CatalogueEntry extends Model
 {
     protected $table = 'author_catalogue_entries';
     public $timestamps = false;
-
+    protected $primaryKey = ['authorId', 'catalogueEntryId'];
+    public $incrementing = false;
 
 }
