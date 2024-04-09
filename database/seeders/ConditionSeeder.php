@@ -33,6 +33,5 @@ class ConditionSeeder extends Seeder
                 'name' => $condition,
             ]);
         }
-
     }
 }

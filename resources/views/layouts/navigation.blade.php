@@ -13,7 +13,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('catalogue')" :active="request()->routeIs('catalogue')">
-                        {{ __('Catalogue') }}
+                        {{ __('Home') }}
                     </x-nav-link>
                     @if(auth()->check() && auth()->user()->role==2)
                         <x-nav-link :href="route('book')" :active="request()->routeIs('book')">

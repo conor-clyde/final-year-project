@@ -32,10 +32,18 @@ class GenreController extends Controller
     // Save new genre
     public function store(Request $request)
     {
+        // Validation error messages
+        $customMessages = [
+            'name.max' => 'The genre\'s name must not exceed 255 characters',
+            'description.max' => 'The genre\'s description must not exceed 255 characters',
+        ];
+
         $validatedData = $request->validate([
             'name' => 'required|max:255|unique:genres',
             'description' => 'max:255',
-        ]);
+        ],
+            $customMessages
+        );
 
         $genre = new Genre([
             'name' => $validatedData['name'],
@@ -58,6 +66,12 @@ class GenreController extends Controller
     // Save genre update
     public function update(Request $request, $id)
     {
+        // Validation error messages
+        $customMessages = [
+            'name.max' => 'The genre\'s name must not exceed 255 characters',
+        ];
+
+
         $validatedData = $request->validate([
             'name' => [
                 'required',
@@ -65,7 +79,9 @@ class GenreController extends Controller
                 Rule::unique('genres')->ignore($id),
             ],
             'description' => 'max:255',
-        ]);
+        ],
+            $customMessages
+        );
 
         $genre = Genre::findOrFail($id);
         $genre->fill($validatedData);
@@ -119,17 +135,14 @@ class GenreController extends Controller
 
             Genre::findOrFail($genreId)->delete();;
             return redirect()->route('genre.archived')->with('flashMessage', 'Genre deleted successfully!');
-        }
-        else
-        {
-        if (CatalogueEntry::where('genre_id', $genreId)->exists())
-            return redirect()->route('genre')->with('flashMessage', 'Delete unsuccessful. Books are currently using this genre.');
+        } else {
+            if (CatalogueEntry::where('genre_id', $genreId)->exists())
+                return redirect()->route('genre')->with('flashMessage', 'Delete unsuccessful. Books are currently using this genre.');
 
-        Genre::findOrFail($genreId)->delete();;
-        return redirect()->route('genre')->with('flashMessage', 'Genre deleted successfully!');
+            Genre::findOrFail($genreId)->delete();;
+            return redirect()->route('genre')->with('flashMessage', 'Genre deleted successfully!');
         }
     }
-
 
 
     // View archived genres
@@ -212,7 +225,7 @@ class GenreController extends Controller
 
         return response()->json([
             'message' => 'Are you sure you want to archive ' . $genreNames . '?',
-            'genre_ids' => $genreIds ]);
+            'genre_ids' => $genreIds]);
     }
 
     // Create bulk delete confirm message
@@ -242,7 +255,7 @@ class GenreController extends Controller
 
         if (!empty($deletableGenres)) {
             $message .= 'Are you sure you want to delete ' . implode(', ', $deletableGenres);
-            $deletable=true;
+            $deletable = true;
         }
 
         if (!empty($undeletableGenres)) {
@@ -289,7 +302,7 @@ class GenreController extends Controller
 
         //return view('genre')->with('flashMessage', 'Genre(s) archived successfully!');
         //Genre::whereIn('id', $selectedGenres)->update(['archived' => 1]);
-       return redirect()->route('genre')->with('flashMessage', 'Genre(s) archived successfully!');
+        return redirect()->route('genre')->with('flashMessage', 'Genre(s) archived successfully!');
     }
 
 }

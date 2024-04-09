@@ -19,27 +19,35 @@
                         </div>
                     @endif
 
-                    <a href="{{ route('genre') }}" class="btn btn-secondary mb-4">Go Back</a>
+                    {{-- Return Button --}}
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('genre') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                        <div>
+                            <h3><span class="text-danger">*</span> = required</h3>
+                        </div>
+                    </div>
 
                     <form method="post" action="{{ route('genre.store') }}">
                         @csrf
+
+                        {{-- Genre Name --}}
                         <div class="row align-items-center">
                             <div class="col-md-11">
-                                <div class="top-buttons d-flex justify-content-between">
                                     <h3>Genre <span class="text-danger">*</span></h3>
-                                    <div>
-                                        <h3><span class="text-danger">*</span> = required</h3>
-                                    </div>
+
                                 </div>
                                 <div class="mb-3">
                                     <input type="text" class="form-control" id="name" name="name"
+                                           value="{{ old('name') }}"
                                            placeholder="Enter genre..." required/>
                                 </div>
 
                                 <div class="mb-3">
                                     <h3>Description</h3>
                                     <textarea class="form-control" id="description" name="description"
-                                              placeholder="Enter description... (Optional)" rows="8"></textarea>
+                                              style="resize: vertical; min-height: 100px; max-height: 200px;"
+                                              placeholder="Enter description..."
+                                              rows="8">{{ old('description') }}</textarea>
                                 </div>
                             </div>
                         </div>

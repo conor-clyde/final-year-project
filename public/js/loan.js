@@ -1,5 +1,5 @@
- $(document).ready(function () {
-    $('#loanIndex').DataTable({
+$(document).ready(function () {
+    $('#indexLoan').DataTable({
         dom: '<"top"fli>rt<"bottom"pB>',
         language: {
             lengthMenu: 'Show _MENU_',
@@ -9,7 +9,7 @@
         buttons: [{
             extend: 'csv',
             text: 'Export Loan List',
-            exportOptions: { columns: [0, 1, 2, 3, 4] },
+            exportOptions: {columns: [0, 1, 2, 3, 4]},
             title: 'Loans'
         }],
         lengthMenu: [
@@ -17,10 +17,12 @@
             ['10', '25', '50', 'All']
         ],
         columnDefs: [{
-            targets: [5, 6, 7],
+            targets: [6, 7, 8],
             orderable: false,
             searchable: false,
-        }]});
+        }],
+        order: [[0, 'desc']]
+    });
 
     <!-- Styles-->
     var wrapper = $('.dataTables_wrapper');
@@ -33,8 +35,8 @@
     filter.css('float', 'left');
     lengthMenu.css('float', 'right');
     searchInput.css({
-    'margin-left': '20px',
-    'width': '340px'
-});
+        'margin-left': '20px',
+        'width': '340px'
+    });
     paginationContainer.addClass('float-start');
 });

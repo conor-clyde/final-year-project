@@ -31,12 +31,18 @@ main {
 }
 
 .btn-width-80 {
-    width: 80px;
+    width: 70px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .btn-width-100 {
     width: 100px;
+    padding-left: 0;
+    padding-right: 0;
 }
+
+
 
 .btn-primary {
     background-color: #434952;

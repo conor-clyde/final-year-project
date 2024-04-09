@@ -51,11 +51,7 @@
                                             @foreach($catalogue_entry->authors as $author)
                                                 {{ $author->surname }}, {{ $author->forename }}
                                                 @if (!$loop->last)
-                                                    @if ($loop->remaining == 1)
-                                                        &amp;
-                                                    @else
-                                                        ,
-                                                    @endif
+                                                    &amp;
                                                 @endif
                                             @endforeach
                                         </option>
@@ -106,9 +102,11 @@
                                         <div class="form-group">
                                             <div id="author-inputs">
                                                 <input class="form-control" type="text" name="author_surname[]"
-                                                       placeholder="Author Surname">
+                                                       value="{{ old('author.0') ? '' : old('author_surname.0') }}"
+                                                       placeholder="Enter Surname...">
                                                 <input class="form-control" type="text" name="author_forename[]"
-                                                       placeholder="Author Forename">
+                                                       value="{{ old('author.0') ? '' : old('author_forename.0') }}"
+                                                       placeholder="Enter Forename...">
                                             </div>
                                         </div>
                                     </div>
@@ -251,15 +249,6 @@
                                 </div>
                             </div>
 
-                            {{-- Book ISBN --}}
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <label class="form-label" for="isbn">ISBN</label>
-                                    <input type="text" name="isbn" id="isbn" class="form-control"
-                                           placeholder="Enter ISBN..." value="{{ old('isbn') }}">
-                                </div>
-                            </div>
-
                             {{-- Book Pages --}}
                             <div class="row">
                                 <div class="col-md-5">
@@ -280,39 +269,117 @@
         </div>
     </div>
 
-
-
     <script>
         var addedAuthorSections = 0;
+        var test = "no";
+        var test1 = "0";
+        var test2 = "0";
+        var test3 = "0";
+
+        var yes = "yes";
 
         // Add author input section
         function addAuthorSection() {
             if (addedAuthorSections < 2) {
-                var authorContainer = document.querySelector('.form-group2');
-                var clonedAuthorContainer = authorContainer.cloneNode(true);
-                var oldAuthorIndex = addedAuthorSections === 0 ? "{{ old('author.1') }}" : "{{ old('author.2') }}";
-                var oldSurnameIndex = addedAuthorSections === 0 ? {{ old('author_surname.0') ?? -1 }} : {{ old('author_surname.1') ?? -1 }};
-                var oldForenameIndex = addedAuthorSections === 0 ? {{ old('author_forename.0') ?? -1 }} : {{ old('author_forename.1') ?? -1 }};
+                {
+                    test1 = {{ old('author.0') ? "yes" : -1 }};
+                    test2 = {{ old('author.1') ? "yes" : -1 }};
+                    test3 = {{ old('author.2') ? "yes" : -1 }};
+                    tests1 = {{ old('author_surname.0') ? "yes" : -1 }};
+                    tests2 = {{ old('author_surname.1') ? "yes" : -1 }};
+                    tests3 = {{ old('author_surname.2') ? "yes" : -1 }};
 
-                clonedAuthorContainer.querySelector('[name="author_surname[]"]').value = '';
-                clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = '';
-                clonedAuthorContainer.querySelector('[name="author[]"]').selectedIndex = 0;
 
-                if (oldAuthorIndex !== "") {
-                    clonedAuthorContainer.querySelector('[name="author[]"]').value = oldAuthorIndex;
+                    var authorContainer = document.querySelector('.form-group2');
+                    var clonedAuthorContainer = authorContainer.cloneNode(true);
+
+                    //reset
+                    clonedAuthorContainer.querySelector('[name="author_surname[]"]').value = '';
+                    clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = '';
+                    clonedAuthorContainer.querySelector('[name="author[]"]').selectedIndex = 0;
+
+                    // set author selection
+                    var oldAuthorIndex = addedAuthorSections === 0 ? "{{ old('author.1') }}" : "{{ old('author.2') }}";
+
+                    if (oldAuthorIndex !== "") {
+                        clonedAuthorContainer.querySelector('[name="author[]"]').value = oldAuthorIndex;
+                    }
+
+                    // set surname and forename
+
+                    oldSurnameIndex = "{{ old('author_surname.1') ?? -1 }}";
+                    oldForenameIndex = "{{ old('author_forename.1') ?? -1 }}";
+
+                    if (test3 != "yes") {
+                        if (addedAuthorSections == 0 && test1 == "yes" && test2 != "yes") {
+
+                            if (tests1 == "yes") {
+                                oldSurnameIndex = "{{ old('author_surname.0') ?? -1 }}";
+                                oldForenameIndex = "{{ old('author_forename.0') ?? -1 }}";
+
+                            } else if (tests2 == "yes") {
+                                oldSurnameIndex = "{{ old('author_surname.1') ?? -1 }}";
+                                oldForenameIndex = "{{ old('author_forename.1') ?? -1 }}";
+                            }
+
+
+                            if (oldSurnameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_surname[]"]').value = oldSurnameIndex;
+
+                            if (oldForenameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = oldForenameIndex;
+                        }
+                        else if (addedAuthorSections == 0 && test1 == "-1" && tests2 == "yes")
+                        {
+                            oldSurnameIndex = "{{ old('author_surname.1') ?? -1 }}";
+                            oldForenameIndex = "{{ old('author_forename.1') ?? -1 }}";
+
+                            if (oldSurnameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_surname[]"]').value = oldSurnameIndex;
+
+                            if (oldForenameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = oldForenameIndex;
+                        }
+
+                        if (addedAuthorSections == 1 && test2 == "yes") {
+
+                            if (tests1 == "yes") {
+                                oldSurnameIndex = "{{ old('author_surname.0') ?? -1 }}";
+                                oldForenameIndex = "{{ old('author_forename.0') ?? -1 }}";
+                            } else if (tests2 == "yes") {
+                                oldSurnameIndex = "{{ old('author_surname.1') ?? -1 }}";
+                                oldForenameIndex = "{{ old('author_forename.1') ?? -1 }}";
+                            } else if (tests3 == "yes") {
+                                oldSurnameIndex = "{{ old('author_surname.2') ?? -1 }}";
+                                oldForenameIndex = "{{ old('author_forename.2') ?? -1 }}";
+                            }
+
+
+                            if (oldSurnameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_surname[]"]').value = oldSurnameIndex;
+
+                            if (oldForenameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = oldForenameIndex;
+                        } else if (addedAuthorSections == 1 && test2 != "yes") {
+
+
+                            if (tests3 == "yes") {
+                                oldSurnameIndex = "{{ old('author_surname.2') ?? -1 }}";
+                                oldForenameIndex = "{{ old('author_forename.2') ?? -1 }}";
+                            }
+
+
+                            if (oldSurnameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_surname[]"]').value = oldSurnameIndex;
+
+                            if (oldForenameIndex != -1)
+                                clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = oldForenameIndex;
+                        }
+
+                    }
+
                 }
 
-                if (oldSurnameIndex !== -1) {
-                    if (!(clonedAuthorContainer.querySelector('[name="author[]"]').selectedIndex === 0))
-                        oldSurnameIndex = addedAuthorSections === 0 ? {{ old('author_surname.1') ?? -1 }} : {{ old('author_surname.2') ?? -1 }};
-                    clonedAuthorContainer.querySelector('[name="author_surname[]"]').value = oldSurnameIndex;
-                }
-
-                if (oldForenameIndex !== -1) {
-                    if (!(clonedAuthorContainer.querySelector('[name="author[]"]').selectedIndex === 0))
-                        oldForenameIndex = addedAuthorSections === 0 ? {{ old('author_forename.1') ?? -1 }} : {{ old('author_forename.2') ?? -1 }};
-                    clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = oldForenameIndex;
-                }
 
                 authorContainer.parentNode.appendChild(clonedAuthorContainer);
                 addedAuthorSections++;
@@ -372,7 +439,6 @@
                     const authorSelect = authorSection.querySelector('select[name="author[]"]');
 
 
-
                     if (target.value.trim() !== '') {
                         // Clear the value of author dropdown when a new author is being entered
                         authorSelect.selectedIndex = 0; // Reset author selection
@@ -390,15 +456,13 @@
             const expectedSurnameCount = {{ old('author_surname') ? count(old('author_surname')) : 0 }};
 
 
-
             if (expectedAuthorCount === 0) {
                 // Set surname and forename inputs to the values of surname.0 and forename.0
-                var oldSurnameIndex = {{ old('author_surname.0') ?? -1 }};
-                var oldForenameIndex = {{ old('author_forename.0') ?? -1 }};
-                document.querySelector('input[name="author_surname[]"]').value = oldSurnameIndex !== -1 ? oldSurnameIndex : '';
-                document.querySelector('input[name="author_forename[]"]').value = oldForenameIndex !== -1 ? oldForenameIndex : '';
+                var oldSurnameIndex = "{{ old('author_surname.0') ?? -1 }}";
+                var oldForenameIndex = "{{ old('author_forename.0') ?? -1 }}";
+                document.querySelector('input[name="author_surname[]"]').value = oldSurnameIndex !== "-1" ? oldSurnameIndex : '';
+                document.querySelector('input[name="author_forename[]"]').value = oldForenameIndex !== "-1" ? oldForenameIndex : '';
             }
-
 
 
             for (let i = authorSectionsCount; i < expectedSurnameCount; i++) {
@@ -485,10 +549,15 @@
                     publisherSelect.selectedIndex = 0;
                 }
             });
+
+            publisherSelect.addEventListener('change', function () {
+                if (publisherSelect.value !== '') {
+                    newPublisherInput.value = '';
+                }
+            });
+
         });
     </script>
-
-
 
 
     <link rel="stylesheet" type="text/css" href="{{ asset('css/styles.css') }}">

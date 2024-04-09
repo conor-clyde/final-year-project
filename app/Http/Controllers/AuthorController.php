@@ -36,6 +36,15 @@ class AuthorController extends Controller
 
     public function store(Request $request)
     {
+        $customMessages = [
+            'forename.unique' => 'An author with the given surname and forename already exists.',
+            'surname.max' => 'The author\'s surname must not exceed 255 characters.',
+            'forename.max' => 'The author\'s forename must not exceed 255 characters.',
+            'surname.required' => 'Please provide the author\'s surname.',
+            'forename.required' => 'Please provide the author\'s forename.'
+        ];
+
+
         $this->validate($request, [
             'surname' => 'required|max:255',
             'forename' => [
@@ -45,9 +54,7 @@ class AuthorController extends Controller
                     return $query->where('surname', $request->input('surname'));
                 }),
             ],
-        ], [
-            'forename.unique' => 'The given author\'s full name already exists',
-        ]);
+        ], $customMessages);
 
         $author = new Author;
         $author->surname = $request->input('surname');
@@ -88,6 +95,18 @@ class AuthorController extends Controller
         $author->save();
 
         return redirect('/author')->with('flashMessage', 'Author updated successfully!');
+    }
+
+    public function permanentDelete($id)
+    {
+        $author = Author::withTrashed()->find($id);
+
+        if (!$author) {
+            return abort(404);
+        }
+
+        $author->forceDelete();
+        return redirect()->route('author.deleted')->with('flashMessage', 'Author permanently deleted!');
     }
 
     public function destroy(Request $request)

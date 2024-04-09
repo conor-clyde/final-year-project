@@ -26,14 +26,15 @@
                         </div>
                     </div>
 
-                    <table id="bookArchived" class="data-table table">
+                    <table id="archivedBook" class="data-table table">
                         <thead>
                         <tr>
                             <th>ID</th>
+                            <th>PB/HC</th>
                             <th>Title</th>
                             <th>Author</th>
                             <th>Publisher</th>
-                            <th>Condition</th>
+                            <th>Cond.</th>
                             <th>Status</th>
                             <th>Loans</th>
                             <th></th>
@@ -46,15 +47,24 @@
 
                             <tr>
                                 <td>{{ $book->id }}</td>
+                                <td>
+                                    @if ($book->format->name == "Paperback")
+                                        PB
+                                    @else
+                                        HC
+                                    @endif
+                                </td>
                                 <td>{{ $book->catalogueEntry->title }}</td>
                                 <td>
                                 @foreach ($book->catalogueEntry->authors as $author)
-                                    {{ $author->surname }}, {{ $author->forename }}
-                                    <br>
+                                    {{ $author->forename }} {{ $author->surname }}
+                                        @if (!$loop->last)
+                                            &amp;
+                                        @endif
                                 @endforeach
                                 </td>
-                                <td>{{ $book->publisher->name }},<br>
-                                    {{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
+                                <td>{{ $book->publisher->name }}<br>
+                                    ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})</td>
                                 <td>{{ $book->condition->name }}</td>
                                 <!-- Status column -->
                                 <td>
@@ -65,13 +75,13 @@
                                     @endif
                                 </td>
                                 <td>{{ $book->popularity() }}</td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="{{ $book->id }}">Details</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a href="unarchive/{{$book->id}}" class="btn btn-primary">Unarchive</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
                                             value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         Delete
@@ -116,7 +126,7 @@
 
     <script>
         $(document).ready(function () {
-            $('#bookArchived').DataTable({
+            $('#archivedBook').DataTable({
                 responsive: true,
                 dom: '<"top"fli>rt<"bottom"pB>',
                 language: {
@@ -135,11 +145,16 @@
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [7, 8, 9],
+                    targets: [8, 9, 10],
                     orderable: false,
                     searchable: false,
-                }],
-                order: [[1, 'asc']]
+                },
+                    {
+                        targets: [4, 5, 6],
+                        searchable: false,
+                    }],
+
+                order: [[2, 'asc']]
             });
 
             <!-- Styles-->

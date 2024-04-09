@@ -45,14 +45,11 @@ class PublisherSeeder extends Seeder
             'Harper Perennial',
         ];
 
-
-
         // Insert publishers into the database
         foreach ($publishers as $publisher) {
             Publisher::create([
                 'name' => $publisher,
             ]);
         }
-
     }
 }

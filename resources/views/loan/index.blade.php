@@ -23,22 +23,22 @@
                     <div class="top-buttons d-flex justify-content-between">
                         <a href="{{ route('loan.create') }}" class="btn btn-primary">Add Loan</a>
                         <div>
-                            <a href="" class="btn btn-primary">Archived Loan</a>
-                            <a href="" class="btn btn-primary">Deleted Loan</a>
+                            <a href="" class="btn btn-primary">Deleted Loans</a>
                         </div>
                     </div>
 
                     <!-- Book table -->
-                    <table id="loanIndex" class="data-table table">
+                    <table id="indexLoan" class="data-table table">
 
                         <!-- Table headings -->
                         <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Book</th>
                             <th>Patron</th>
-                            <th>Date</th>
+                            <th>Start Date</th>
+                            <th>Return Date</th>
                             <th>Returned</th>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -49,27 +49,38 @@
                         <tbody>
                         @foreach ($loans as $loan)
                             <tr>
-                                <td>{{ $loan->bookCopy->CatalogueEntry->title }}
+                                <td>{{ $loan->id }}</td>
+                                <td>{{ $loan->bookCopy->id}}:
+                                    {{ $loan->bookCopy->CatalogueEntry->title }} by
                                     @foreach ($loan->bookCopy->CatalogueEntry->authors as $author)
-                                        ({{ $author->surname }}, {{ $author->forename }})
-                                        <br>
+                                        {{ $author->forename }} {{ $author->surname }}
+                                        @if (!$loop->last)
+                                            &amp;
+                                        @endif
+
                                     @endforeach</td>
                                 <td>{{ $loan->patron->surname }}, {{ $loan->patron->forename }}</td>
                                 <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}
-                                <br>- {{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}
                                 </td>
+                                <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
                                 <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
-                                <td>
-                                    <a class="btn btn-primary btn-width-80" href="book/{{ $loan->id }}">Details</a>
+
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    @if (!$loan->is_returned)
+                                        <a class="btn btn-primary btn-width-100" href="loan/return/{{ $loan->id }}">
+                                            Return</a>
+                                    @else
+                                        <a class="btn btn-primary btn-width-100" href="loan/return/{{ $loan->id }}">Un-Return</a>
+                                    @endif
                                 </td>
-                                <td>
-                                    <a href="book/{{$loan->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <a href="loan/{{$loan->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
                                 </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80" value="{{$loan->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80" value="{{$loan->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
+                                            value="{{$loan->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -81,15 +92,17 @@
     </div>
 
     <!-- Modal for archive and delete confirmation -->
-    @include('partials.archive-modal', ['modalId' => 'archiveModal', 'formAction' => url('genre/archive'), 'textareaId' => 'archiveQuestion', 'categoryId' => 'category_id', 'confirmArchiveBtn' => 'confirmArchiveBtn'])
-    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('genre/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
+    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('loan/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
 
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
 
     <!-- My scripts -->
     <script src="{{ asset('js/loan.js') }}"></script>
@@ -128,33 +141,4 @@
         });
     </script>
 
-    <!-- Confirm archive-->
-    <script>
-        $('.archiveCategoryBtn').click(function (e) {
-            e.preventDefault();
-
-            var category_id = $(this).val();
-            var test ="genre/archive/" + category_id;
-
-            $.ajax({
-                url: '{{ route('genre.check-archive', ':id') }}'.replace(':id', category_id),
-                type: 'GET',
-                success: function (response) {
-                    // Set the modal content
-                    console.log(response.message);
-                    $('#archiveQuestion').val(response.message);
-                    $('#archive_genre_id').val(category_id);
-
-                    // Set the href attribute of the confirm button
-                    $('#confirmArchiveBtn').attr('href', test);
-
-                    // Show the modal
-                    $('#archiveModal').modal('show');
-                },
-                error: function (error) {
-                    alert('Error checking deletion status');
-                }
-            });
-        });
-    </script>
 </x-app-layout>

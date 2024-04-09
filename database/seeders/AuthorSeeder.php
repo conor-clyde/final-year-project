@@ -16,7 +16,6 @@ class AuthorSeeder extends Seeder
         DB::table('authors')->delete();
 
         $authorsData = [
-            ['forename' => 'Abby', 'surname' => 'Abby'],
             ['forename' => 'André', 'surname' => 'Aciman'],
             ['forename' => 'Dolly', 'surname' => 'Alderton'],
             ['forename' => 'Michelle', 'surname' => 'Alexander'],

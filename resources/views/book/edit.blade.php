@@ -31,7 +31,7 @@
                         </div>
                     @endif
 
-                    <!-- Add, archived, and deleted buttons -->
+                    <!-- Go back button -->
                     <a href="{{ route('book') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
 
                     <!-- Update Book Title Details-->
@@ -40,7 +40,8 @@
                             <?php
                             $books = \App\Models\BookCopy::where('catalogue_entry_id', $book->catalogue_entry_id)->get();
                             ?>
-                        <p style="margin-bottom: 10px;">The library has {{ count($books) }} book(s) under this title. ID(s):
+                        <p style="margin-bottom: 10px;">The library has {{ count($books) }} book(s) under this title.
+                            ID(s):
                             @foreach ($books as $book)
                                 {{ $book->id }}
                                 @if (!$loop->last)
@@ -85,8 +86,8 @@
                                 <td>
                                     @foreach ($book->catalogueEntry->authors as $key => $author)
                                         <label>ID: {{ $author->id }}</label><br>
-                                        Surname: {{ $author->surname }}<br>
-                                        Forename: {{ $author->forename }}
+                                        Forename: {{ $author->forename }}<br>
+                                        Surname: {{ $author->surname }}
                                         @if (!$loop->last)
                                             <br>      <br>
                                         @endif
@@ -95,34 +96,39 @@
 
                                 {{-- Update Author Surname and Forename --}}
                                 <td>
+                                    <input type="hidden" name="removed_author_ids" id="removed_author_ids" value="">
+
                                     @foreach ($book->catalogueEntry->authors as $author)
-                                        <div style="display: inline-block; margin-right: 10px; width:70px;">
-                                            <label for="id">ID:</label><br>
-                                            <input disabled type="text" name="author[{{ $author->id }}][id]" id="id"
-                                                   class="form-control" style="margin-bottom: 10px;"
-                                                   value="{{ $author->id }}">
-                                        </div>
-                                        <div style="display: inline-block; margin-right: 10px;">
-                                            <label for="surname">Surname:</label><br>
-                                            <input type="text" name="author[{{ $author->id }}][surname]" id="surname"
-                                                   class="form-control" style="margin-bottom: 10px;"
-                                                   value="{{ $author->surname }}">
-                                        </div>
-                                        <div style="display: inline-block;">
-                                            <label for="forename">Forename:</label><br>
-                                            <input type="text" name="author[{{ $author->id }}][forename]" id="forename"
-                                                   class="form-control"
-                                                   value="{{ $author->forename }}">
-                                        </div>
-                                        <button type="button" data-author-id="{{ $author->id }}" class="btn btn-danger delete-author-btn">Delete</button>
+                                        <div style="display: inline-block; margin-right: 10px; width: 250px;">
+                                            <select name="author_ids[{{ $author->id }}]"
+                                                    id="author_select_{{ $author->id }}" class="form-control"
+                                                    style="margin-bottom: 10px;">
+                                                @foreach ($authors as $availableAuthor)
+                                                    <option
+                                                        value="{{ $availableAuthor->id }}" {{ $author->id == $availableAuthor->id ? 'selected' : '' }}>
+                                                        {{ $availableAuthor->id }}
+                                                        : {{ $availableAuthor->forename }} {{ $availableAuthor->surname }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @if (count($book->catalogueEntry->authors) > 1)
+                                                <button style="margin-bottom: 20px;" type="button"
+                                                        id="remove-author-button-{{ $author->id }}"
+                                                        class="btn btn-danger"
+                                                        onclick="removeAuthor({{ $author->id }})">X
+                                                </button>
+                                            @endif
 
-                                    @if (!$loop->last)
-                                            <div class="border-b-2 border-gray-300 mb-2"></div>
-                                        @endif
+
+                                        </div>
                                     @endforeach
-                                </td>
+                                    <div id="author-dropdown-container">
+                                        <!-- Existing author dropdowns will be added here -->
+                                    </div>
 
 
+                                    <button type="button" onclick="addNewAuthor()" class="btn btn-primary">Add Author
+                                    </button>
 
 
                             </tr>
@@ -265,21 +271,11 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>ISBN</td>
-                                <td>
-                                    {{ $book->ISBN }}
-                                </td>
-                                <td>
-                                    <input type="text" name="isbn" id="isbn" class="form-control"
-                                          value="{{ $book->ISBN  }}">
-                                </td>
-                            </tr>
-
-                            <tr>
                                 <td>Pages</td>
                                 <td>{{ $book->pages }}</td>
                                 <td>
-                                    <input min="0" max="2000" class="form-control" type="number" name="pages" value="{{ $book->pages }}">
+                                    <input min="0" max="2000" class="form-control" type="number" name="pages"
+                                           value="{{ $book->pages }}">
                                 </td>
                             </tr>
 
@@ -324,12 +320,11 @@
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
 
-
-
     <script>
         // Create genre.index datatable
         $(document).ready(function () {
             $('#updateBookTitle').DataTable({
+                responsive: true,
                 searching: false,
                 ordering: false, // Disable sorting
                 paging: false, // Remove pagination
@@ -347,6 +342,7 @@
 
         $(document).ready(function () {
             $('#updateBook').DataTable({
+                responsive: true,
                 searching: false,
                 ordering: false, // Disable sorting
                 paging: false, // Remove pagination
@@ -365,8 +361,6 @@
     </script>
 
 
-
-
     <script>
         $(document).ready(function () {
             $('#toggleDescriptionBtn').click(function () {
@@ -381,8 +375,89 @@
         });
     </script>
 
+    <script>
+        function removeAuthor(authorId) {
+            var activeAuthorsCount = document.querySelectorAll('select[name^="author_ids"]:enabled').length;
+
+            if (activeAuthorsCount <= 1) {
+                alert('At least one author must be active for the book.');
+                return;
+            }
+
+            console.log(activeAuthorsCount);
+            // Append the author's ID to the hidden input field value
+            var removedAuthorsInput = document.getElementById('removed_author_ids');
+            removedAuthorsInput.value += authorId + ',';
+
+            var authorSelect = document.getElementById('author_select_' + authorId);
+            authorSelect.disabled = true;
 
 
+            var authorSelectContainer = authorSelect.parentNode;
+            authorSelectContainer.parentNode.removeChild(authorSelectContainer);
+
+
+
+            var removeButton = document.getElementById('remove-author-button-' + authorId);
+
+
+            removeButton.onclick = function () {
+                // Remove the author ID from the hidden input field
+                var removedAuthorsInputValue = removedAuthorsInput.value;
+                var idToRemoveIndex = removedAuthorsInputValue.indexOf(authorId.toString());
+                if (idToRemoveIndex !== -1) {
+                    removedAuthorsInputValue = removedAuthorsInputValue.substring(0, idToRemoveIndex) +
+                        removedAuthorsInputValue.substring(idToRemoveIndex + authorId.toString().length + 1);
+                    removedAuthorsInput.value = removedAuthorsInputValue;
+                }
+
+                // Enable the author selection dropdown
+                authorSelect.disabled = false;
+
+                // Change the button text back to 'X' and reset onclick functionality
+                removeButton.textContent = 'X';
+                removeButton.onclick = function () {
+                    removeAuthor(authorId);
+                };
+            };
+
+
+        }
+    </script>
+
+    <script>
+
+        function addNewAuthor() {
+            // Check if the maximum number of authors has already been reached
+            var authorCount = document.querySelectorAll('select[name^="author_ids[]"]').length;
+            var authorsCount = document.querySelectorAll('select[name^="author_ids"]:enabled').length;
+
+            console.log(authorsCount);
+
+
+
+            if (authorsCount >= 3) {
+                alert('You can only add up to three authors to a book.');
+                return;
+            }
+
+            // Create a new <select> element for the author
+            var authorSelect = document.createElement('select');
+            authorSelect.name = 'author_ids[]';
+            authorSelect.className = 'form-control';
+
+            // Add options for authors (you may need to adjust this based on your implementation)
+            @foreach ($authors as $availableAuthor)
+            var option = document.createElement('option');
+            option.value = '{{ $availableAuthor->id }}';
+            option.textContent = '{{ $availableAuthor->id }}: {{ $availableAuthor->forename }} {{ $availableAuthor->surname }}';
+            authorSelect.appendChild(option);
+            @endforeach
+
+            // Append the new <select> element to the form
+            document.getElementById('author-dropdown-container').appendChild(authorSelect);
+        }
+    </script>
 
 </x-app-layout>
 

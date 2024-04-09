@@ -21,98 +21,209 @@
                 <!-- Go Back button -->
                 <a href="{{ url()->previous() }}" class="btn btn-secondary mb-4">Go Back</a>
 
-                <h1 class="">Title: {{ $book->catalogueEntry->title }}</h1>
-                <p style="margin-bottom: 12px;">ID: {{ $book->id  }}</p>
 
-                <p style="margin-bottom: 12px;">Archived: {{ $book->archived ? 'Yes'  : 'No' }}</p>
-                <p style="margin-bottom: 12px;">Deleted: {{ $book->deleted_at ? 'Yes' : 'No' }}</p>
+                <!-- Book Title Details-->
+                <h2>Book Title Details</h2>
+                @if (isset($book))
+                        <?php
+                        $books = \App\Models\BookCopy::where('catalogue_entry_id', $book->catalogue_entry_id)->get();
+                        ?>
+                    <p style="margin-bottom: 10px;">The library has {{ count($books) }} book(s) under this title. ID(s):
+                        @foreach ($books as $book)
+                            {{ $book->id }}
+                            @if (!$loop->last)
+                                <!-- Check if it's not the last book -->
+                                , <!-- Add comma if it's not the last book -->
+                            @endif
+                        @endforeach
+                    </p>
+                @else
+                    <p>No book found.</p>
+                @endif
 
-                <p style="margin-bottom: 8px;">Added: {{ $book->created_at->format('F d, Y') }}</p>
-                <p style="margin-bottom: 8px;">Updated: {{ $book->updated_at->format('F d, Y') }}</p>
-                <div class="border-b-2 border-gray-300 mb-2"></div>
-                <!-- Book Details -->
-                <h2 class="text-xl font-semibold mb-4">
-                    Details</h2>
+                <table id="showBookTitle" class="data-table table">
+                    <!-- Table Headers -->
+                    <thead>
+                    <tr>
+                        <th style="width: 20px">Detail</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
 
-                <div class="mb-8">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <p style="margin-bottom: 12px;">Format: {{ $book->format->name }}</p>
-                            <p style="margin-bottom: 12px;">Language: {{ $book->language->name }}</p>
-                            <p style="margin-bottom: 12px;">Author:
-                                @foreach ($book->catalogueEntry->authors as $author)
-                                    {{ $author->surname }}, {{ $author->forename }}
-                                    <br>
-                                @endforeach
-                            </p>
-                            <p style="margin-bottom: 12px;">Genre: {{ $book->catalogueEntry->genre->name }}</p>
 
-                            <p style="margin-bottom: 12px;">Publisher: {{ $book->publisher->name }}</p>
-                            <p style="margin-bottom: 12px;">Publish
-                                Date: {{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</p>
-                        </div>
-                        <div class="col-md-3">
-                            <p style="margin-bottom: 12px;">Status: @if ($book->isOnLoan())
-                                    On Loan
-                                @else
-                                    Available
-                                @endif </p>
-                            <p style="margin-bottom: 12px;">Condition: {{ $book->condition->name }}</p>
-                            <p style="margin-bottom: 12px;">ISBN: {{ $book->isbn ? $book->isbn : 'N/A' }}</p>
-                            <p style="margin-bottom: 12px;">Page Count: {{ $book->pages ? $book->pages : 'N/A' }}</p>
-                        </div>
-                        <div class="col-md-6">
+                    <!-- Table Body -->
+                    <tbody>
 
-                            <p style="margin-bottom: 6px;">Description:</p>
-                            <div
-                                style="margin-bottom: 12px; max-height: 200px;word-wrap: break-word; overflow-y: auto;">
-                                <p>{{ $book->catalogueEntry->description ? $book->catalogueEntry->description : 'N/A'  }}</p>
+                    {{-- Book Title --}}
+                    <tr>
+                        <td>Title</td>
+                        <td>{{ $book->catalogueEntry->title }}</td>
+                    </tr>
+                    <tr>
+                        <td>Author</td>
+                        <td>
+                            @foreach ($book->catalogueEntry->authors as $key => $author)
+                                <label>ID: {{ $author->id }}</label><br>
+                                Surname: {{ $author->surname }}<br>
+                                Forename: {{ $author->forename }}
+                                @if (!$loop->last)
+                                    <br>      <br>
+                                @endif
+                            @endforeach
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Genre</td>
+                        <td>{{ $book->catalogueEntry->genre->name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td style="max-width: 200px; word-wrap: break-word;">
+                            <div id="shortDescription">
+                                {{ \Illuminate\Support\Str::limit($book->catalogueEntry->description, 200) }}
                             </div>
-                        </div>
+                            <div id="fullDescription" style="display: none;">
+                                {{ $book->catalogueEntry->description }}
+                            </div>
+                            @if (strlen($book->catalogueEntry->description) > 200)
+                                <button id="toggleDescriptionBtn" class="btn btn-link" type="button">See Full
+                                    Description
+                                </button>
+                            @endif
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
-                    </div>
-                </div>
+
+                <h2>Book Copy Details</h2>
+                <table id="showBook" class="data-table table">
+                    <thead>
+                    <tr>
+                        <th style="max-width: 20px;">Detail</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
 
 
-                <div class="border-b-2 border-gray-300 mb-2"></div>
+                    <tr>
+                        <td>ID</td>
+                        <td>{{ $book->id }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Format</td>
+                        <td>{{ $book->format->name }}</td>
+                    </tr>
 
 
+                    <tr>
+                        <td>Language</td>
+                        <td>{{ $book->language->name }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Condition</td>
+                        <td>{{ $book->condition->name }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Publisher</td>
+                        <td>{{ $book->publisher->name }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Publish Date</td>
+                        <td>{{ date('jS M Y', strtotime($book->publish_date)) }}</td>
+
+                    </tr>
+
+                    <tr>
+                        <td>Pages</td>
+                        <td>{{ $book->pages ? : 'N/A' }}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Status</td>
+                        <td>@if ($book->isOnLoan())
+                                On Loan
+                            @else
+                                Available
+                            @endif</td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Archived
+                        </td>
+                        <td>
+                            {{ $book->archived ? 'Yes'  : 'No' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Deleted
+                        </td>
+                        <td>
+                            {{ $book->deleted ? 'Yes'  : 'No' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Added
+                        </td>
+                        <td>
+                            {{ $book->created_at->format('jS M Y, H:i:s') }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Last updated
+                        </td>
+                        <td>
+                            {{ $book->updated_at->format('jS M Y, H:i:s') }}
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+
+                <h2>Loan Details</h2>
                 <div class="mb-8">
                     <div class="row">
                         <div class="col-md-12">
                             <!-- Book Titles -->
-                            <h2 class="text-xl font-semibold mb-4">
-                                Loans</h2>
                             @if ($book->loans->count() > 0)
-                                <table id="genreShow" class="data-table table">
+                                <table id="showBookLoans" class="data-table table">
                                     <thead>
                                     <tr>
                                         <th>Patron</th>
                                         <th>Staff</th>
-                                        <th>Start</th>
-                                        <th>End</th>
+                                        <th>Start Date</th>
+                                        <th>Return Date</th>
                                         <th>Returned</th>
-                                        <th></th>
                                     </tr>
 
                                     </thead>
                                     <tbody>
                                     @foreach ($book->loans as $loan)
                                         <tr>
-                                            <td>{{ $loan->patron->surname }}, {{ $loan->patron->forename }},</td>
+                                            <td>{{ $loan->patron->surname }}, {{ $loan->patron->forename }}</td>
                                             <td>{{ $loan->staff->surname }}, {{ $loan->staff->forename }}</td>
                                             <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
                                             <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
-                                            <td>
-                                                <a class="btn btn-primary btn-width-80" href="">Details</a>
-                                            </td>
                                         </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
                             @else
-                                <p class="text-gray-600">This book has not been loaned</p>
+                                <p class="text-gray-600">This book has not been loaned.</p>
                             @endif
                         </div>
                     </div>
@@ -120,6 +231,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -148,9 +260,44 @@
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
     <!-- Data Table Initialization -->
+
+
     <script>
         $(document).ready(function () {
-            $('#genreShow').DataTable({
+            $('#showBookTitle').DataTable({
+                responsive: true,
+                searching: false,
+                ordering: false, // Disable sorting
+                paging: false, // Remove pagination
+                lengthChange: false, // Remove "Show entries" dropdown
+                language: {
+                    info: '', // Remove information about displaying entries
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('#showBook').DataTable({
+                responsive: true,
+                searching: false,
+                ordering: false, // Disable sorting
+                paging: false, // Remove pagination
+                lengthChange: false, // Remove "Show entries" dropdown
+                language: {
+                    info: '', // Remove information about displaying entries
+                },
+                columnDefs: [{
+                    targets: [2],
+                    orderable: false,
+                    searchable: false,
+                }],
+            });
+        });
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#showBookLoans').DataTable({
                 responsive: true,
                 dom: '<"top"fli>rt<"bottom"pB>',
                 language: {
@@ -161,6 +308,7 @@
                 buttons: [{
                     extend: 'csv',
                     text: 'Export Loan List',
+                    exportOptions: {columns: [1]},
                     title: 'Loans'
                 }],
                 lengthMenu: [
@@ -168,18 +316,20 @@
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [5],
-                    orderable: false,
-                    searchable: false,
-                }],
+                    targets: [2, 3],
+                    orderable: false
+                },
+                ],
+                order: [[0, 'asc']]
             });
 
-            // Styles
+            <!-- Styles-->
             var wrapper = $('.dataTables_wrapper');
             var filter = wrapper.find('.dataTables_filter');
             var searchInput = filter.find('input');
             var lengthMenu = wrapper.find('.dataTables_length');
             var paginationContainer = $('.dataTables_paginate');
+            var filter = wrapper.find('.dataTables_filter');
 
             filter.css('float', 'left');
             lengthMenu.css('float', 'right');
@@ -188,16 +338,22 @@
                 'width': '340px'
             });
             paginationContainer.addClass('float-start');
+        });
+    </script>
 
-            // Select all checkbox
-            document.getElementById('select-all').addEventListener('change', function () {
-                var isChecked = this.checked;
-                var genreCheckboxes = document.querySelectorAll('input[name="selected_genres[]"]');
-
-                genreCheckboxes.forEach(function (checkbox) {
-                    checkbox.checked = isChecked;
-                });
+    <script>
+        $(document).ready(function () {
+            $('#toggleDescriptionBtn').click(function () {
+                $('#shortDescription').toggle();
+                $('#fullDescription').toggle();
+                if ($(this).text() === 'See Full Description') {
+                    $(this).text('Hide Full Description');
+                } else {
+                    $(this).text('See Full Description');
+                }
             });
         });
     </script>
+
+
 </x-app-layout>

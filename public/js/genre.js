@@ -1,6 +1,7 @@
 // Create genre.index datatable
 $(document).ready(function () {
     $('#genreIndex').DataTable({
+        responsive: true,
         dom: '<"top"fli>rt<"bottom"pB>',
         language: {
             lengthMenu: 'Show _MENU_',
@@ -10,19 +11,25 @@ $(document).ready(function () {
         buttons: [{
             extend: 'csv',
             text: 'Export Genre List',
-            exportOptions: { columns: [0, 1] },
+            exportOptions: {columns: [0, 1, 2]},
             title: 'Genres'
         }],
-        responsive: true,
         lengthMenu: [
             [10, 25, 50, -1],
             ['10', '25', '50', 'All']
         ],
         columnDefs: [{
-            targets: [2, 3, 4, 5],
+            targets: [3, 4, 5, 6],
             orderable: false,
             searchable: false,
-        }]});
+        },
+            {
+                targets: [2],
+                searchable: false,
+            }],
+
+        order: [[1, 'asc']]
+    });
 
     <!-- Styles-->
     var wrapper = $('.dataTables_wrapper');

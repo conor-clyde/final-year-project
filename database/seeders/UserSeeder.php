@@ -7,6 +7,7 @@ use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Faker\Factory as FakerFactory;
 
 class UserSeeder extends Seeder
 {
@@ -31,8 +32,8 @@ class UserSeeder extends Seeder
             ]);
 
             Patron::create([
-                'surname' => 'user surname',
-                'forename' => 'user forename',
+                'surname' => 'testSurname',
+                'forename' => 'testForename',
                 'email' => 'user@test.com',
             ]);
 
@@ -45,8 +46,8 @@ class UserSeeder extends Seeder
             ]);
 
             Staff::create([
-                'surname' => 'librarian surname',
-                'forename' => 'librarian forename',
+                'surname' => 'Librarian',
+                'forename' => 'Smith',
                 'email' => 'librarian@test.com',
             ]);
 
@@ -58,10 +59,12 @@ class UserSeeder extends Seeder
                 'role' => 3,
             ]);
 
-            User::factory(10)->create()->each(function ($user) {
+            $faker = FakerFactory::create();
+
+            User::factory(10)->create()->each(function ($user) use ($faker) {
                 Patron::create([
-                    'surname' => 'generated surname',
-                    'forename' => 'generated forename',
+                    'surname' => $faker->lastName,
+                    'forename' => $faker->firstName,
                     'email' => $user->email,
                 ]);
             });

@@ -17,19 +17,22 @@
                         </div>
                     @endif
 
-                        <!-- Return and Restore all buttons -->
-                        <div class="top-buttons d-flex justify-content-between">
-                            <a href="{{ route('author') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
-                            <div>
-                                <a href="{{ route('author.restore-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Restore All</a>
-                            </div>
+                    <!-- Return and Restore all buttons -->
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('author') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go
+                            Back</a>
+                        <div>
+                            <a href="{{ route('author.restore-all') }}" class="btn btn-primary"
+                               style="margin-bottom: 40px;">Restore All</a>
                         </div>
+                    </div>
 
                     <table id="authorDeleted" class="data-table table">
                         <thead>
                         <tr>
-                            <th>Surname</th>
+                            <th>ID</th>
                             <th>Forename</th>
+                            <th>Surname</th>
                             <th>Books</th>
                             <th></th>
                             <th></th>
@@ -39,20 +42,19 @@
                         <tbody>
 
 
-
                         @foreach ($authors as $author)
                             <tr>
-                                <td>{{ $author->surname }}</td>
+                                <td>{{ $author->id }}</td>
                                 <td>{{ $author->forename }}</td>
+                                <td>{{ $author->surname }}</td>
                                 <td>{{ $author->popularity() }}</td>
-
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a href="{{$author->id}}" class="btn btn-primary">Details</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a href="restore/{{$author->id}}" class="btn btn-primary">Restore</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     {!! Form::open(['url' => ['author/permanent-delete', $author->id], 'method' => 'POST', 'class' => 'pull-right']) !!}
 
                                     {!! Form::hidden('_method', 'DELETE') !!}
@@ -60,7 +62,6 @@
 
                                     {!! Form::close() !!}
                                 </td>
-
 
 
                             </tr>
@@ -75,7 +76,8 @@
 
     <!-- Modal -->
     <!-- Permanent Delete Modal -->
-    <div class="modal fade" id="permanentDeleteModal" tabindex="-1" aria-labelledby="permanentDeleteModalLabel" aria-hidden="true">
+    <div class="modal fade" id="permanentDeleteModal" tabindex="-1" aria-labelledby="permanentDeleteModalLabel"
+         aria-hidden="true">
         <!-- Modal content goes here -->
 
     </div>
@@ -83,8 +85,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-
-
 
 
     <script>
@@ -99,7 +99,7 @@
                 buttons: [{
                     extend: 'csv',
                     text: 'Export Author List',
-                    exportOptions: { columns: [0, 1, 2] },
+                    exportOptions: {columns: [0, 1, 2]},
                     title: 'Authors'
                 }],
                 responsive: true,
@@ -108,10 +108,16 @@
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [3, 4, 5],
+                    targets: [4, 5, 6],
                     orderable: false,
                     searchable: false,
-                }]});
+                },
+                    {
+                        targets: [3],
+                        searchable: false,
+                    }],
+                order: [[2, 'asc']]
+            });
 
             <!-- Styles-->
             var wrapper = $('.dataTables_wrapper');
@@ -130,12 +136,6 @@
             paginationContainer.addClass('float-start');
         });
     </script>
-
-
-
-
-
-
 
 
 </x-app-layout>

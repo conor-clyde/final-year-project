@@ -34,8 +34,9 @@
                         <!--  Table Headings -->
                         <thead>
                         <tr>
-                            <th>Surname</th>
+                            <th>ID</th>
                             <th>Forename</th>
+                            <th>Surname</th>
                             <th>Books</th>
                             <th></th>
                             <th></th>
@@ -48,19 +49,20 @@
                         <tbody>
                         @foreach ($authors as $author)
                             <tr>
-                                <td>{{ $author->surname }}</td>
+                                <td>{{ $author->id }}</td>
                                 <td>{{ $author->forename }}</td>
+                                <td>{{ $author->surname }}</td>
                                 <td>{{ $author->popularity() }}</td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="author/{{ $author->id }}">Details</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a href="author/{{$author->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80" value="{{ $author->id }}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80" value="{{$author->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
                                 </td>
                             </tr>

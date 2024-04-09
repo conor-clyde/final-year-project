@@ -23,12 +23,13 @@
 
 
                 <!-- Genre Details -->
-                <h1>{{ $genre->name }}</h1>
+                <h2>{{ $genre->id }}: {{ $genre->name }}</h2>
                 <div style="margin-bottom: 24px; max-height: 200px;word-wrap: break-word; overflow-y: auto;">
-                    {{ $genre->description }}
+                    Description: {{ $genre->description ? : 'N/A' }}
                 </div>
-                <p style="margin-bottom: 8px;">Added: {{ $genre->created_at->format('F d, Y') }}</p>
-                <p style="margin-bottom: 8px;">Updated: {{ $genre->updated_at->format('F d, Y') }}</p>
+
+                <p style="margin-bottom: 8px;">Added:  {{ $genre->created_at->format('jS M Y, H:i:s') }}</p>
+                <p style="margin-bottom: 8px;">Last Updated: {{ $genre->updated_at->format('jS M Y, H:i:s') }}</p>
                 <div style="padding-top: 4px;" class="border-b-2 border-gray-300 mb-2"></div>
 
 
@@ -41,14 +42,13 @@
                                 <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>PB/HC</th>
                                     <th>Title</th>
                                     <th>Author</th>
                                     <th>Publisher</th>
-                                    <th>Published</th>
-                                    <th>Condition</th>
+                                    <th>Cond.</th>
                                     <th>Status</th>
                                     <th>Loans</th>
-                                    <th></th>
                                 </tr>
 
                                 </thead>
@@ -57,14 +57,22 @@
                                     @foreach ($catalogueEntry->bookCopies as $book)
                                     <tr>
                                         <td>{{ $book->id }}</td>
+                                        <td>
+                                            @if ($book->format->name == "Paperback")
+                                                PB
+                                            @else
+                                                HC
+                                            @endif
+                                        </td>
                                         <td>{{ $catalogueEntry->title }}</td>
                                         <td>
                                             @foreach ($catalogueEntry->authors as $author)
                                                 {{ $author->surname }}, {{ $author->forename }}
                                                 <br>
                                         @endforeach
-                                        <td>{{ $book->publisher->name }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
+                                        <td>{{ $book->publisher->name }}<br>
+                                            ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
+                                        </td>
                                         <td>{{ $book->condition->name }}</td>
                                         <!-- Status column -->
                                         <td>
@@ -75,9 +83,6 @@
                                             @endif
                                         </td>
                                         <td>{{ $book->popularity() }}</td>
-                                        <td>
-                                            <a class="btn btn-primary btn-width-80" href="{{ route('book.show', ['book' => $book->id]) }}">Details</a>
-                                        </td>
                                     </tr>
                                     @endforeach
                                 @endforeach
@@ -117,7 +122,13 @@
                     [10, 25, 50, -1],
                     ['10', '25', '50', 'All']
                 ],
-                columnDefs: []
+                columnDefs: [
+                    {
+                        targets: [1, 5, 6, 7],
+                        searchable: false,
+                    }],
+
+                order: [[2, 'asc']]
             });
 
             // Styles

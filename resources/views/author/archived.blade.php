@@ -1,5 +1,3 @@
-
-
 <x-app-layout>
 
     <x-slot name="header">
@@ -22,9 +20,10 @@
 
                     <!-- Go back and Unarchive all buttons -->
                     <div class="top-buttons d-flex justify-content-between">
-                        <a href="{{ url()->previous() }}" class="btn btn-secondary">Go Back</a>
+                        <a href="{{ route('author') }}" class="btn btn-secondary">Go Back</a>
                         <div>
-                            <a href="{{ route('author.unarchive-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Unarchive All</a>
+                            <a href="{{ route('author.unarchive-all') }}" class="btn btn-primary"
+                               style="margin-bottom: 40px;">Unarchive All</a>
                         </div>
                     </div>
 
@@ -32,8 +31,9 @@
                     <table id="authorArchived" class="data-table table">
                         <thead>
                         <tr>
-                            <th>Surname</th>
+                            <th>ID</th>
                             <th>Forename</th>
+                            <th>Surname</th>
                             <th>Books</th>
                             <th></th>
                             <th></th>
@@ -43,18 +43,21 @@
                         <tbody>
                         @foreach ($authors as $author)
                             <tr>
-                                <td>{{ $author->surname }}</td>
+                                <td>{{ $author->id }}</td>
                                 <td>{{ $author->forename }}</td>
+                                <td>{{ $author->surname }}</td>
                                 <td>{{ $author->popularity() }}</td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="{{ $author->id }}">Details</a>
                                 </td>
-                                <td>
-                                    <a href="unarchive/{{$author->id}}" class="btn btn-primary btn-width-100">Unarchive</a>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <a href="unarchive/{{$author->id}}"
+                                       class="btn btn-primary btn-width-100">Unarchive</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
-                                            value="{{$author->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            value="{{$author->id}}" data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal">
                                         Delete
                                     </button>
                                 </td>
@@ -76,9 +79,12 @@
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
 
     @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('genre/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
 
@@ -96,7 +102,7 @@
                 buttons: [{
                     extend: 'csv',
                     text: 'Export Author List',
-                    exportOptions: { columns: [0, 1, 2] },
+                    exportOptions: {columns: [0, 1, 2]},
                     title: 'Authors'
                 }],
                 responsive: true,
@@ -105,10 +111,16 @@
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [3, 4, 5],
+                    targets: [4, 5, 6],
                     orderable: false,
                     searchable: false,
-                }]});
+                },
+                    {
+                        targets: [3],
+                        searchable: false,
+                    }],
+                order: [[2, 'asc']]
+            });
 
             <!-- Styles-->
             var wrapper = $('.dataTables_wrapper');

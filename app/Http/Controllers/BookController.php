@@ -70,20 +70,20 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
+        // Validation error messages
         $customMessages = [
             'genre' => 'Please select the book\'s genre.',
             'title.required_without' => 'Please select the book\'s title or enter a new book title.',
             'new_title.max' => 'The book\'s title must not exceed 255 characters',
             'description.max' => 'The book\'s description must not exceed 1500 characters',
             'publisher.required_without' => 'Please select the book\'s publisher or enter a new publisher.',
-            'publisher.max' => 'The publisher\'s name must not exceed 255 characters',
-            'isbn.max' => 'The book\'s ISBN must not exceed 30 characters.',
-            'isbn.min' => 'The book\'s ISBN must be at least 10 characters long.',
+            'new_publisher.max' => 'The publisher\'s name must not exceed 255 characters',
             'author_surname.*' => 'Please select the :attribute or enter their surname and forename.',
             'author_surname.*.max' => 'The :attribute\'s surname must not exceed 255 characters.',
             'author_forename.*.max' => 'The :attribute\'s forename must not exceed 255 characters.'
         ];
 
+        // Validation of user input
         $validator = Validator::make($request->all(), [
             'genre' => [
                 'required_with:new_title'
@@ -99,14 +99,6 @@ class BookController extends Controller
             ],
             'new_publisher' => [
                 'max:255',
-            ],
-            'isbn' => [
-                'max:30',
-                function ($attribute, $value, $fail) {
-                    if (!is_null($value) && strlen($value) < 10) {
-                        $fail('The ISBN must be at least 10 characters long.');
-                    }
-                },
             ],
             'description' => [
                 'max:1500',
@@ -142,16 +134,52 @@ class BookController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Check if the new author already exists with the same surname and forename
-        if ($request->filled('author_surname') && $request->filled('author_forename')) {
-            $existingAuthor = Author::where('surname', $request->input('author_surname'))
-                ->where('forename', $request->input('author_forename'))
-                ->first();
-
-            if ($existingAuthor) {
-                return redirect()->back()->withInput()->withErrors(['author_surname' => 'An author with the same surname and forename already exists.']);
+        // Check if the new title already exists with the same authors
+        if ($request->filled('new_title')) {
+            $existingTitle = CatalogueEntry::where('title', $request->input('new_title'))->first();
+            if ($existingTitle) {
+                // Get the IDs of authors associated with the existing title
+                $existingAuthors = $existingTitle->authors->pluck('id')->toArray();
+                // Get the IDs of authors submitted with the new title
+                $selectedAuthors = $request->input('author');
+                // Check if any selected author is already associated with the existing title
+                foreach ($selectedAuthors as $authorId) {
+                    if (in_array($authorId, $existingAuthors)) {
+                        return redirect()->back()->withInput()->withErrors(['author' => 'One or more selected author(s) already exist for the provided title.']);
+                    }
+                }
             }
         }
+
+
+
+
+
+        // Check if the new authors already exist
+        $authorSurnames = $request->input('author_surname');
+        $authorForenames = $request->input('author_forename');
+        $existingCombinations = [];
+
+        foreach ($authorSurnames as $index => $surname) {
+            if (!empty($surname) && !empty($authorForenames[$index])) {
+                $combination = $surname . '|' . $authorForenames[$index];
+
+                if (in_array($combination, $existingCombinations)) {
+                    return redirect()->back()->withInput()->withErrors(['author_surname' => 'Duplicate author entries are not allowed.']);
+                }
+
+                $existingCombinations[] = $combination;
+
+                $existingAuthor = Author::where('surname', $surname)
+                    ->where('forename', $authorForenames[$index])
+                    ->first();
+
+                if ($existingAuthor) {
+                    return redirect()->back()->withInput()->withErrors(['author_surname' => 'An author with the same surname and forename already exists.']);
+                }
+            }
+        }
+
 
 
         // Check if any of the selected authors are the same
@@ -170,15 +198,12 @@ class BookController extends Controller
 
 
 
+
         // Check if the new title already exists
         if ($request->filled('new_title')) {
             $existingTitle = CatalogueEntry::where('title', $request->input('new_title'))->first();
 
-            if ($existingTitle) {
 
-
-                return redirect()->back()->withInput()->withErrors(['new_title' => 'The title already exists. Please choose a different title.']);
-            }
         }
 
 
@@ -205,8 +230,6 @@ class BookController extends Controller
             $existingPublisher = Publisher::where('name', $request->input('new_publisher'))->first();
 
             if ($existingPublisher) {
-
-
                 return redirect()->back()->withInput()->withErrors(['new_publisher' => 'The given Publisher already exists. Please select it from the Publisher list']);
             }
         }
@@ -238,10 +261,6 @@ class BookController extends Controller
 
         // Set Format
         $book_copy->format_id = $request->input('format');
-
-        // Optional - Set ISBN
-        if ($request->filled('isbn'))
-            $book_copy->isbn = $request->input('isbn');
 
         // Optional - Set Pages
         if ($request->filled('pages'))
@@ -327,7 +346,8 @@ class BookController extends Controller
         return $formattedDate;
     }
 
-    public function conor($catalogueEntryId, $authorId) {
+    public function conor($catalogueEntryId, $authorId)
+    {
         dd('hi');
         // Count the number of authors associated with the same book
         $authorCount = Author_CatalogueEntry::where('catalogue_entry_id', $catalogueEntryId)
@@ -364,7 +384,6 @@ class BookController extends Controller
             return response()->json(['error' => 'Author catalogue entry not found'], 404);
         }
     }
-
 
 
     public function edit($id)
@@ -418,12 +437,13 @@ class BookController extends Controller
 
         $book->publish_date = $this->getPublishDate($request);
 
-        $book->isbn = $request->input('isbn');
         $book->pages = $request->input('pages');
 
-
-
         $book->save();
+
+
+
+
 
         return redirect()->route('book')->with('flashMessage', 'Book updated successfully!');
     }
@@ -446,14 +466,13 @@ class BookController extends Controller
             $customMessages);
 
         $validator->setAttributeNames([
-         ]);
+        ]);
 
 
         // Check if validation fails
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
 
 
         $title = CatalogueEntry::find($id);
@@ -464,17 +483,20 @@ class BookController extends Controller
 
         $title->genre_id = $request->input('genre');
 
-        // Update author names
-        $authorsData = $request->input('author');
+//        // Update author names
+//        $authorsData = $request->input('author');
+//
+//        foreach ($authorsData as $authorId => $authorInfo) {
+//            $author = Author::find($authorId);
+//            if ($author) {
+//                $author->surname = $authorInfo['surname'];
+//                $author->forename = $authorInfo['forename'];
+//                $author->save();
+//            }
+//        }
 
-        foreach ($authorsData as $authorId => $authorInfo) {
-            $author = Author::find($authorId);
-            if ($author) {
-                $author->surname = $authorInfo['surname'];
-                $author->forename = $authorInfo['forename'];
-                $author->save();
-            }
-        }
+
+        $title->authors()->sync($request->input('author_ids'));
 
 
 

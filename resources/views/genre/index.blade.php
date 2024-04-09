@@ -29,18 +29,12 @@
                     </div>
 
                     <!-- Genre table -->
-{{--                    <form action="{{ route('genre.bulk-delete') }}" method="post">--}}
-{{--                        @csrf--}}
-{{--                        @method('delete')--}}
-
                         <table id="genreIndex" class="data-table table">
 
                             <!-- Table headings -->
                             <thead>
                             <tr>
-{{--                                <th>--}}
-{{--                                    <input type="checkbox" id="select-all">--}}
-{{--                                </th>--}}
+                                <th>ID</th>
                                 <th>Genre</th>
                                 <th>Books</th>
                                 <th></th>
@@ -54,21 +48,19 @@
                             <tbody>
                             @foreach ($genres as $genre)
                                 <tr>
-{{--                                    <td>--}}
-{{--                                        <input class="select" type="checkbox" name="selected_genres[]" value="{{ $genre->id }}">--}}
-{{--                                    </td>--}}
+                                    <td>{{ $genre->id }}</td>
                                     <td>{{ $genre->name }}</td>
                                     <td>{{ $genre->popularity() }}</td>
-                                    <td>
+                                    <td style="padding-right:4px; padding-left: 4px;">
                                         <a class="btn btn-primary btn-width-80" href="genre/{{ $genre->id }}">Details</a>
                                     </td>
-                                    <td>
+                                    <td style="padding-right:4px; padding-left: 4px;">
                                         <a href="genre/{{ $genre->id }}/edit" class="btn btn-primary btn-width-80">Edit</a>
                                     </td>
-                                    <td>
+                                    <td style="padding-right:4px; padding-left: 4px;">
                                         <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80" value="{{$genre->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
                                     </td>
-                                    <td>
+                                    <td style="padding-right:4px; padding-left: 4px;">
                                         <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80" value="{{$genre->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
                                     </td>
                                 </tr>

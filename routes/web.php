@@ -7,6 +7,7 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublisherController;
 use App\Http\Controllers\UserController;
+use App\Models\BookCopy;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -65,6 +66,8 @@ Route::get('/genre/archive/{genre}', [GenreController::class, 'archive'])->name(
 Route::delete('/genre/permanent-delete/{id}', [GenreController::class, 'permanentDelete'])->name('genre.permanent-delete');
 Route::delete('/delete-author/{authorId}/{catalogueEntryId}', [BookController::class, 'deleteAuthorCatalogEntry'])->name('delete.author');
 
+
+Route::get('/loan/conortest/{id}', [LoanController::class, 'conortest'])->name('loan.conortest');
 //Route::post('/genre/archive/{genre}', [GenreController::class, 'archive'])->name('genre.archive');
 
 Route::get('/genre/unarchive/{genre}',  [GenreController::class, 'unarchive'])->name('genre.unarchive');
@@ -113,6 +116,7 @@ Route::get('/author/archive/{author}', [AuthorController::class, 'archive'])->na
 Route::get('/author/{author}', [AuthorController::class, 'show']);
 Route::get('/author/unarchive/{author}',  [AuthorController::class, 'unarchive'])->name('author.unarchive');
 Route::get('/author/restore/{author}',  [AuthorController::class, 'restore'])->name('author.restore');
+Route::delete('/author/permanent-delete/{id}', [AuthorController::class, 'permanentDelete'])->name('author.permanent-delete');
 
 
 
@@ -139,10 +143,12 @@ Route::delete('/book/permanent-delete/{id}', [BookController::class, 'permanentD
 
 //loan
 Route::get('/loan', [LoanController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('loan');;
+Route::get('/loan/return/{loan}',  [LoanController::class, 'return'])->name('loan.return');
+
 Route::get('/loan/create',  [LoanController::class, 'create'])->name('loan.create');
 Route::post('/loan/created', [LoanController::class, 'store'])->name('loan.store');;
-
-
+Route::get('/loan/{loan}/edit',  [LoanController::class, 'edit']);
+Route::post('/loan/delete', [LoanController::class, 'destroy'])->name('loan.delete');;
 
 
 

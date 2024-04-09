@@ -1,4 +1,5 @@
 <x-app-layout>
+
     <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -24,36 +25,35 @@
                     @endif
 
                     {{-- Return Button --}}
-                    <a href="{{ route('author') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('author') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                        <div>
+                            <h3><span class="text-danger">*</span> = required</h3>
+                        </div>
+                    </div>
 
                     <!-- Add Author Form -->
                     <form method="post" action="{{ route('author.store') }}">
+                        @csrf
+
+                        {{-- Author Forename --}}
                         <div class="row align-items-center">
+                            <label class="form-label" for="forename">Forename <span
+                                    class="text-danger">*</span></label>
+                            <input id="forename" type="text" class="form-control" name="forename"
+                                   placeholder="Enter forename..."/>
 
-                            <div class="col-md-11">
-                                <div class="top-buttons d-flex justify-content-between">
-                                    <h3>Surname <span class="text-danger">*</span></h3>
-                                    <div>
-                                        <h3><span class="text-danger">*</span> = required</h3>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    @csrf
-                                    <div class="mb-3">
-                                        <input id="surname" type="text" class="form-control" name="surname"
-                                               placeholder="Enter surname..."/>
-                                    </div>
+                            {{-- Author Surname --}}
+                            <label class="form-label" for="surname">Surname <span
+                                    class="text-danger">*</span></label>
+                            <input id="surname" type="text" class="form-control" name="surname"
+                                   placeholder="Enter surname..."/>
 
-                                    <div class="mb-3">
-                                        <h3>Forename <span class="text-danger">*</span></h3>
-                                        <input id="forename" type="text" class="form-control" name="forename"
-                                               placeholder="Enter forename..."/>
-                                    </div>
-                                </div>
-                            </div>
+                            {{-- Confirm Author Button --}}
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary confirmBtn">Confirm Author</button>
                             </div>
+
                         </div>
                     </form>
                 </div>

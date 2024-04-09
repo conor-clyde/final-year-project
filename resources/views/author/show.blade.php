@@ -22,27 +22,27 @@
                 <a href="{{ url()->previous() }}" class="btn btn-secondary mb-4">Go Back</a>
 
                 <!-- Author Details -->
-                <h1>{{ $author->surname}}, {{ $author->forename }}</h1>
-                <p style="margin-bottom: 8px;">Added: {{ $author->created_at->format('F d, Y') }}</p>
-                <p style="margin-bottom: 8px;">Updated: {{ $author->updated_at->format('F d, Y') }}</p>
+                <h2>{{ $author->id }}: {{ $author->forename }} {{ $author->surname}}</h2>
+                <p style="margin-bottom: 8px;">Added:    {{ $author->created_at->format('jS M Y, H:i:s') }}</p>
+                <p style="margin-bottom: 8px;">Last Updated:   {{ $author->updated_at->format('jS M Y, H:i:s') }}</p>
                 <div style="padding-top: 4px;" class="border-b-2 border-gray-300 mb-2"></div>
                 <div class="mb-8">
                     <div style="margin: 20px 4px;" class="row">
+
                         <!-- Book Titles -->
-                        <h2 class="text-xl font-semibold mb-4">Books Written by {{ $author->surname}}
-                            , {{ $author->forename }}</h2>
+                        <h2 class="text-xl font-semibold mb-4">Books Written
+                            by {{ $author->forename }} {{ $author->surname}}</h2>
                         @if ($author->catalogueEntries->count() > 0)
                             <table id="genreShow" class="data-table table">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>PB/HC</th>
                                     <th>Title</th>
                                     <th>Publisher</th>
-                                    <th>Published</th>
-                                    <th>Condition</th>
+                                    <th>Cond.</th>
                                     <th>Status</th>
                                     <th>Loans</th>
-                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -51,10 +51,17 @@
                                     @foreach ($catalogueEntry->bookCopies as $book)
                                         <tr>
                                             <td>{{ $book->id }}</td>
-
+                                            <td>
+                                                @if ($book->format->name == "Paperback")
+                                                    PB
+                                                @else
+                                                    HC
+                                                @endif
+                                            </td>
                                             <td>{{ $book->catalogueEntry->title }}</td>
-                                            <td>{{ $book->publisher->name }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
+                                            <td>{{ $book->publisher->name }}<br>
+                                                ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
+                                            </td>
                                             <td>{{ $book->condition->name }}</td>
                                             <!-- Status column -->
                                             <td>
@@ -65,9 +72,6 @@
                                                 @endif
                                             </td>
                                             <td>{{ $book->popularity() }}</td>
-                                            <td>
-                                                <a class="btn btn-primary btn-width-80" href="{{ route('book.show', ['book' => $book->id]) }}">Details</a>
-                                            </td>
                                         </tr>
                                     @endforeach
                                 @endforeach
@@ -92,6 +96,7 @@
     <script>
         $(document).ready(function () {
             $('#genreShow').DataTable({
+                responsive: true,
                 dom: '<"top"fli>rt<"bottom"pB>',
                 language: {
                     lengthMenu: 'Show _MENU_',
@@ -103,7 +108,6 @@
                     text: 'Export Book List',
                     title: 'Books'
                 }],
-                responsive: true,
                 lengthMenu: [
                     [10, 25, 50, -1],
                     ['10', '25', '50', 'All']

@@ -131,32 +131,50 @@ class BookSeeder extends Seeder
             "The Assassins Blade",
         ];
 
+        // Keep track of existing CatalogueEntry instances
+        $existingCatalogueEntries = [];
 
         foreach ($books as $bookTitle) {
-            $author = Author::inRandomOrder()->first();
-            $genre = Genre::inRandomOrder()->first();
+            // Determine if this BookCopy should be created for an existing CatalogueEntry or a new one
+            $createForExistingCatalogueEntry = rand(0, 9) == 0 && count($existingCatalogueEntries) > 0;
+
+            if ($createForExistingCatalogueEntry) {
+                // Randomly choose an existing CatalogueEntry
+                $catalogueEntry = $existingCatalogueEntries[array_rand($existingCatalogueEntries)];
+            } else {
+                // Create a new CatalogueEntry
+                $genre = Genre::inRandomOrder()->first();
+                $catalogueEntry = CatalogueEntry::create([
+                    'title' => $bookTitle,
+                    'genre_id' => $genre->id
+                ]);
+
+                // Store the new CatalogueEntry
+                $existingCatalogueEntries[] = $catalogueEntry;
+
+                $description = $this->generateRandomDescription();
+                $catalogueEntry->update(['description' => $description]);
+
+                $authors = Author::inRandomOrder()->limit(rand(1, min(3, Author::count())))->get();
+
+                foreach ($authors as $author) {
+                    // Use firstOrCreate to ensure uniqueness of the combination of author_id and catalogue_entry_id
+                    Author_CatalogueEntry::firstOrCreate([
+                        'author_id' => $author->id,
+                        'catalogue_entry_id' => $catalogueEntry->id,
+                    ]);
+                }
+            }
+
+            // Create a new BookCopy for the chosen CatalogueEntry
             $publisher = Publisher::inRandomOrder()->first();
             $language = Language::inRandomOrder()->first();
             $format = Format::inRandomOrder()->first();
             $condition = Condition::inRandomOrder()->first();
 
-            $startDate = Carbon::createFromDate(1970, 1, 1);
-
+            $startDate = now()->subYears(100);
             $randomTimestamp = Carbon::createFromTimestamp(rand($startDate->timestamp, time()));
 
-
-            $catalogueEntry = CatalogueEntry::create([
-                'title' => $bookTitle,
-                'genre_id' => $genre->id
-            ]);
-
-            $description = $this->generateRandomDescription();
-            $catalogueEntry->update(['description' => $description]);
-
-            Author_CatalogueEntry::create([
-                'author_id' => $author->id,
-                'catalogue_entry_id' => $catalogueEntry->id,
-            ]);
 
             BookCopy::create([
                 'catalogue_entry_id' => $catalogueEntry->id,
@@ -165,13 +183,10 @@ class BookSeeder extends Seeder
                 'publish_date' => $randomTimestamp,
                 'language_id' => $language->id,
                 'format_id' => $format->id,
-                'pages' =>  rand(50, 1000),
-                'ISBN' => '978-3-16-148410-0'
+                'pages' => rand(50, 1000)
             ]);
         }
     }
-
-
     private function generateRandomDescription(): string
     {
         $length = rand(1, 1500);

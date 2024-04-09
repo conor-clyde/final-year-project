@@ -18,7 +18,7 @@ $(document).ready(function () {
             ['10', '25', '50', 'All']
         ],
         columnDefs: [{
-            targets: [7, 8, 9, 10, 10],
+            targets: [8, 9, 10, 11],
             orderable: false,
             searchable: false,
         },
@@ -27,7 +27,7 @@ $(document).ready(function () {
                 searchable: false,
             }],
 
-        order: [[1, 'asc']]
+        order: [[2, 'asc']]
     });
 
     <!-- Styles-->
@@ -46,3 +46,5 @@ $(document).ready(function () {
     });
     paginationContainer.addClass('float-start');
 });
+
+

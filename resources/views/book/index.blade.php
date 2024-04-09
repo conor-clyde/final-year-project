@@ -1,4 +1,5 @@
 <x-app-layout>
+
     <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -35,10 +36,11 @@
                         <thead>
                         <tr>
                             <th>ID</th>
+                            <th>PB/HC</th>
                             <th>Title</th>
                             <th>Author</th>
                             <th>Publisher</th>
-                            <th>Condition</th>
+                            <th>Cond.</th>
                             <th>Status</th>
                             <th>Loans</th>
                             <th></th>
@@ -53,18 +55,30 @@
                         @foreach ($books as $book)
                             <tr>
                                 <td>{{ $book->id }}</td>
-                                <td>{{ $book->catalogueEntry->title }}</td>
                                 <td>
-                                    @foreach ($book->catalogueEntry->authors as $author)
-                                        {{ $author->surname }}, {{ $author->forename }}
-                                        <br>
+                                    @if ($book->format->name == "Paperback")
+                                        PB
+                                    @else
+                                        HC
+                                    @endif
+                                </td>
+                                <td>{{ $book->catalogueEntry->title }}</td>
+
+                                <!-- Book Authors -->
+                                <td>
+                                    @foreach($book->catalogueEntry->authors as $author)
+                                        {{ $author->forename }} {{ $author->surname }}
+                                        @if (!$loop->last)
+                                            &amp;
+                                        @endif
                                     @endforeach
                                 </td>
-                                <td>{{ $book->publisher->name }},<br>
-                                    {{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
-
+                                <td>{{ $book->publisher->name }}<br>
+                                    ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
+                                </td>
                                 <td>{{ $book->condition->name }}</td>
-                                <!-- Status column -->
+
+                                <!-- Book Status -->
                                 <td>
                                     @if ($book->isOnLoan())
                                         On Loan
@@ -73,19 +87,20 @@
                                     @endif
                                 </td>
                                 <td>{{ $book->popularity() }}</td>
-                                <td>
+                                <!-- Book Action Buttons -->
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="book/{{ $book->id }}">Details</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a href="book/{{$book->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80"
                                             value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">
                                         Archive
                                     </button>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
                                             value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         Delete
