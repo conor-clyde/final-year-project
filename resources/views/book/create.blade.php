@@ -25,15 +25,16 @@
                     @endif
 
                     {{-- Return Button --}}
-                    <a href="{{ route ('book') }}" class="btn btn-secondary mb-4">Go Back</a>
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('book') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                        <div>
+                            <h3><span class="text-danger">*</span> = required</h3>
+                        </div>
+                    </div>
 
                     {{-- Add Book Form --}}
                     <form method="post" action="{{ route('book.store') }}">
                         @csrf
-
-                        <div class="text-right">
-                            <h3><span class="text-danger">*</span> = required</h3>
-                        </div>
 
                         {{-- Book Title --}}
                         <div class="row align-items-center">
@@ -49,7 +50,7 @@
                                             value="{{ $catalogue_entry->id }}" {{ old('title') == $catalogue_entry->id ? 'selected' : '' }}>
                                             {{ $catalogue_entry->title }} by
                                             @foreach($catalogue_entry->authors as $author)
-                                                {{ $author->surname }}, {{ $author->forename }}
+                                                {{ $author->forename }} {{ $author->surname }}
                                                 @if (!$loop->last)
                                                     &amp;
                                                 @endif
@@ -87,7 +88,7 @@
                                             @foreach($authors as $author)
                                                 <option
                                                     value="{{ $author->id }}" {{ old('author.0') == $author->id ? 'selected' : '' }}>
-                                                    {{ $author->surname }}, {{ $author->forename }}
+                                                    {{ $author->forename }} {{ $author->surname }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -328,9 +329,7 @@
 
                             if (oldForenameIndex != -1)
                                 clonedAuthorContainer.querySelector('[name="author_forename[]"]').value = oldForenameIndex;
-                        }
-                        else if (addedAuthorSections == 0 && test1 == "-1" && tests2 == "yes")
-                        {
+                        } else if (addedAuthorSections == 0 && test1 == "-1" && tests2 == "yes") {
                             oldSurnameIndex = "{{ old('author_surname.1') ?? -1 }}";
                             oldForenameIndex = "{{ old('author_forename.1') ?? -1 }}";
 

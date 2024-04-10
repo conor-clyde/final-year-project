@@ -583,7 +583,7 @@ class BookController extends Controller
         $canBeDeleted = !$test;
 
         if ($canBeDeleted) {
-            return response()->json(['message' => "Are you sure that you want to delete {$book->catalogueEntry->title}?", 'deletable' => true], 200);
+            return response()->json(['message' => "Are you sure that you want to delete {$book->id}: {$book->catalogueEntry->title}?", 'deletable' => true], 200);
         } else {
             return response()->json(['message' => "{$book->catalogueEntry->title} can not be deleted because loans are assigned to this book", 'deletable' => false], 200);
         }

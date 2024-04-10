@@ -10,7 +10,7 @@ $(document).ready(function () {
         buttons: [{
             extend: 'csv',
             text: 'Export Publisher List',
-            exportOptions: { columns: [0, 1] },
+            exportOptions: {columns: [0, 1]},
             title: 'Publishers'
         }],
         responsive: true,
@@ -19,10 +19,17 @@ $(document).ready(function () {
             ['10', '25', '50', 'All']
         ],
         columnDefs: [{
-            targets: [2, 3, 4, 5],
+            targets: [3, 4, 5, 6],
             orderable: false,
             searchable: false,
-        }]});
+        },
+            {
+                targets: [2],
+                searchable: false,
+            }],
+
+        order: [[1, 'asc']]
+    });
 
     <!-- Styles-->
     var wrapper = $('.dataTables_wrapper');

@@ -25,15 +25,17 @@
                     @endif
 
                     {{-- Return Button --}}
-                    <a href="{{ route ('loan') }}" class="btn btn-secondary mb-4">Go Back</a>
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('loan') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                        <div>
+                            <h3><span class="text-danger">*</span> = required</h3>
+                        </div>
+                    </div>
 
                     {{-- Add Loan Form --}}
                     <form method="post" action="{{route('loan.store')}}">
                         @csrf
 
-                        <div class="text-right">
-                            <h3><span class="text-danger">*</span> = required</h3>
-                        </div>
 
                         <div class="row align-items-center">
 

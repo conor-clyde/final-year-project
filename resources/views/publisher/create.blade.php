@@ -1,15 +1,19 @@
 <x-app-layout>
+
+    <!-- Header-->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Add Publisher') }}
         </h2>
     </x-slot>
 
+    <!-- Publisher.create -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
 
+                    <!-- Errors -->
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul>
@@ -20,28 +24,27 @@
                         </div>
                     @endif
 
-                    <a href="{{ route('publisher') }}" class="btn btn-secondary mb-4">Go Back</a>
+                    {{-- Return Button --}}
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('publisher') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                        <div>
+                            <h3><span class="text-danger">*</span> = required</h3>
+                        </div>
+                    </div>
 
                     <form method="post" action="{{ route('publisher.store') }}">
                         @csrf
 
+                        {{-- Genre Name --}}
                         <div class="row align-items-center">
-                            <div class="col-md-11">
-                                <div class="top-buttons d-flex justify-content-between">
-                                    <h3>Publisher <span class="text-danger">*</span></h3>
-                                    <div>
-                                        <h3><span class="text-danger">*</span> = required</h3>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <input id="publisher" type="text" class="form-control" name="publisher"
-                                           placeholder="Enter Publisher..."/>
-                                </div>
-                            </div>
+                            <label class="form-label" for="forename">Publisher <span
+                                    class="text-danger">*</span></label>
+                            <input id="publisher" type="text" class="form-control" name="publisher"
+                                   required value="{{ old('publisher') }}" placeholder="Enter publisher..."/>
+                        </div>
 
-                            <div class="text-right">
-                                <button type="submit" class="btn btn-primary">Confirm Publisher</button>
-                            </div>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">Confirm Publisher</button>
                         </div>
                     </form>
                 </div>

@@ -21,7 +21,6 @@
                 <!-- Go Back button -->
                 <a href="{{ url()->previous() }}" class="btn btn-secondary mb-4">Go Back</a>
 
-
                 <!-- Genre Details -->
                 <h2>{{ $genre->id }}: {{ $genre->name }}</h2>
                 <div style="margin-bottom: 24px; max-height: 200px;word-wrap: break-word; overflow-y: auto;">

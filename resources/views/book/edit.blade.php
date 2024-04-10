@@ -97,41 +97,43 @@
                                 {{-- Update Author Surname and Forename --}}
                                 <td>
                                     <input type="hidden" name="removed_author_ids" id="removed_author_ids" value="">
+                                    <div id="author-form">
+                                        @foreach ($book->catalogueEntry->authors as $author)
+                                            <div class="author-container row align-items-center" id="test">
+                                                <div class="col-md-8">
+                                                    <select name="author_ids[{{ $author->id }}]"
+                                                            id="author_select_{{ $author->id }}" class="form-control">
+                                                        @foreach ($authors as $availableAuthor)
+                                                            <option
+                                                                value="{{ $availableAuthor->id }}" {{ $author->id == $availableAuthor->id ? 'selected' : '' }}>
+                                                                {{ $availableAuthor->forename }} {{ $availableAuthor->surname }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
 
-                                    @foreach ($book->catalogueEntry->authors as $author)
-                                        <div style="display: inline-block; margin-right: 10px; width: 250px;">
-                                            <select name="author_ids[{{ $author->id }}]"
-                                                    id="author_select_{{ $author->id }}" class="form-control"
-                                                    style="margin-bottom: 10px;">
-                                                @foreach ($authors as $availableAuthor)
-                                                    <option
-                                                        value="{{ $availableAuthor->id }}" {{ $author->id == $availableAuthor->id ? 'selected' : '' }}>
-                                                        {{ $availableAuthor->id }}
-                                                        : {{ $availableAuthor->forename }} {{ $availableAuthor->surname }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                            @if (count($book->catalogueEntry->authors) > 1)
-                                                <button style="margin-bottom: 20px;" type="button"
-                                                        id="remove-author-button-{{ $author->id }}"
-                                                        class="btn btn-danger"
-                                                        onclick="removeAuthor({{ $author->id }})">X
-                                                </button>
-                                            @endif
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <button type="button"
+                                                            id="remove-author-button-{{ $author->id }}"
+                                                            class="btn btn-danger"
+                                                            onclick="removeAuthor({{ $author->id }})">X
+                                                    </button>
 
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
 
-                                        </div>
-                                    @endforeach
-                                    <div id="author-dropdown-container">
-                                        <!-- Existing author dropdowns will be added here -->
+                                    <div class="text-right">
+                                        <button type="button" onclick="addNewAuthor()" class="btn btn-primary">Add
+                                            Author
+                                        </button>
                                     </div>
 
 
-                                    <button type="button" onclick="addNewAuthor()" class="btn btn-primary">Add Author
-                                    </button>
-
-
+                                </td>
                             </tr>
+
 
                             {{-- Book Genre --}}
                             <tr>
@@ -384,6 +386,7 @@
                 return;
             }
 
+
             console.log(activeAuthorsCount);
             // Append the author's ID to the hidden input field value
             var removedAuthorsInput = document.getElementById('removed_author_ids');
@@ -393,9 +396,8 @@
             authorSelect.disabled = true;
 
 
-            var authorSelectContainer = authorSelect.parentNode;
+            var authorSelectContainer = authorSelect.parentNode.parentNode;
             authorSelectContainer.parentNode.removeChild(authorSelectContainer);
-
 
 
             var removeButton = document.getElementById('remove-author-button-' + authorId);
@@ -426,38 +428,56 @@
     </script>
 
     <script>
-
         function addNewAuthor() {
             // Check if the maximum number of authors has already been reached
-            var authorCount = document.querySelectorAll('select[name^="author_ids[]"]').length;
-            var authorsCount = document.querySelectorAll('select[name^="author_ids"]:enabled').length;
-
-            console.log(authorsCount);
-
-
+            var authorsCount = document.querySelectorAll('.author-container').length;
 
             if (authorsCount >= 3) {
                 alert('You can only add up to three authors to a book.');
                 return;
             }
 
+            // Create a new author container
+            var authorContainer = document.createElement('div');
+            authorContainer.className = 'author-container row align-items-center';
+
             // Create a new <select> element for the author
+            var selectDiv = document.createElement('div');
+            selectDiv.className = 'col-md-8';
             var authorSelect = document.createElement('select');
             authorSelect.name = 'author_ids[]';
             authorSelect.className = 'form-control';
 
-            // Add options for authors (you may need to adjust this based on your implementation)
+            // Add options for authors
             @foreach ($authors as $availableAuthor)
             var option = document.createElement('option');
             option.value = '{{ $availableAuthor->id }}';
-            option.textContent = '{{ $availableAuthor->id }}: {{ $availableAuthor->forename }} {{ $availableAuthor->surname }}';
+            option.textContent = '{{ $availableAuthor->forename }} {{ $availableAuthor->surname }}';
             authorSelect.appendChild(option);
             @endforeach
+            selectDiv.appendChild(authorSelect);
 
-            // Append the new <select> element to the form
-            document.getElementById('author-dropdown-container').appendChild(authorSelect);
+            // Create a div for the remove button
+            var buttonDiv = document.createElement('div');
+            buttonDiv.className = 'col-md-4';
+            var removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.className = 'btn btn-danger';
+            removeButton.textContent = 'X';
+            removeButton.onclick = function () {
+                authorContainer.parentNode.removeChild(authorContainer);
+            };
+            buttonDiv.appendChild(removeButton);
+
+            // Append both elements to the author container
+            authorContainer.appendChild(selectDiv);
+            authorContainer.appendChild(buttonDiv);
+
+            // Append the new author container to the form
+            document.getElementById('author-form').appendChild(authorContainer);
         }
     </script>
+
 
 </x-app-layout>
 

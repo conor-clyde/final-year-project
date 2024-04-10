@@ -40,20 +40,19 @@
                         <div class="row align-items-center">
                             <label class="form-label" for="forename">Forename <span
                                     class="text-danger">*</span></label>
-                            <input id="forename" type="text" class="form-control" name="forename"
-                                   placeholder="Enter forename..."/>
+                            <input required id="forename" type="text" class="form-control" name="forename"
+                                   value="{{ old('forename') }}" placeholder="Enter forename..."/>
 
                             {{-- Author Surname --}}
                             <label class="form-label" for="surname">Surname <span
                                     class="text-danger">*</span></label>
-                            <input id="surname" type="text" class="form-control" name="surname"
-                                   placeholder="Enter surname..."/>
+                            <input required id="surname" type="text" class="form-control" name="surname"
+                                   value="{{ old('surname') }}" placeholder="Enter surname..."/>
 
                             {{-- Confirm Author Button --}}
                             <div class="text-right">
                                 <button type="submit" class="btn btn-primary confirmBtn">Confirm Author</button>
                             </div>
-
                         </div>
                     </form>
                 </div>

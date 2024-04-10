@@ -132,7 +132,7 @@ class AuthorController extends Controller
     public function checkArchiveStatus($id)
     {
         $author = Author::find($id);
-        return response()->json(['message' => "Are you sure that you want to archive $author->surname,  $author->forename?", 'deletable' => true], 200);
+        return response()->json(['message' => "Are you sure that you want to archive $author->id: $author->forename  $author->surname?", 'deletable' => true], 200);
     }
 
     // Archive genre
@@ -163,7 +163,7 @@ class AuthorController extends Controller
 
         if ($canBeDeleted) {
             return response()->json([
-                'message' => "Are you sure that you want to delete {$author->surname}, {$author->forename}?",
+                'message' => "Are you sure that you want to delete $author->id: $author->forename $author->surname?",
                 'deletable' => true
             ], 200);
         } else {

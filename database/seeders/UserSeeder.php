@@ -46,8 +46,8 @@ class UserSeeder extends Seeder
             ]);
 
             Staff::create([
-                'surname' => 'Librarian',
-                'forename' => 'Smith',
+                'surname' => 'Smith',
+                'forename' => 'Librarian',
                 'email' => 'librarian@test.com',
             ]);
 

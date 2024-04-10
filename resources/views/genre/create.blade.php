@@ -1,14 +1,19 @@
 <x-app-layout>
+
+    <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Add Genre') }}
         </h2>
     </x-slot>
 
+    <!-- Genre.create -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
+
+                    <!-- Errors -->
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul>
@@ -32,28 +37,21 @@
 
                         {{-- Genre Name --}}
                         <div class="row align-items-center">
-                            <div class="col-md-11">
-                                    <h3>Genre <span class="text-danger">*</span></h3>
+                            <label class="form-label" for="forename">Genre <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   value="{{ old('name') }}" placeholder="Enter genre..." required/>
 
-                                </div>
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" id="name" name="name"
-                                           value="{{ old('name') }}"
-                                           placeholder="Enter genre..." required/>
-                                </div>
 
-                                <div class="mb-3">
-                                    <h3>Description</h3>
-                                    <textarea class="form-control" id="description" name="description"
-                                              style="resize: vertical; min-height: 100px; max-height: 200px;"
-                                              placeholder="Enter description..."
-                                              rows="8">{{ old('description') }}</textarea>
-                                </div>
+                            <label class="form-label" for="forename">Description</label>
+                            <textarea class="form-control" id="description" name="description"
+                                      style="resize: vertical; min-height: 100px; max-height: 200px;"
+                                      placeholder="Enter description..."
+                                      rows="5">{{ old('description') }}</textarea>
+
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">Confirm Genre</button>
                             </div>
-                        </div>
-
-                        <div class="text-right">
-                            <button type="submit" class="btn btn-primary">Confirm Genre</button>
                         </div>
                     </form>
                 </div>

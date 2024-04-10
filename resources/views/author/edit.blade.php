@@ -10,7 +10,13 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
 
-                    <a href="{{ route('author') }}" class="btn btn-secondary mb-4">Go Back</a>
+                    {{-- Return Button --}}
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('author') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                        <div>
+                            <h3><span class="text-danger">*</span> = required</h3>
+                        </div>
+                    </div>
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -27,27 +33,21 @@
                         @method('PUT')
 
                         <div class="row align-items-center">
-                            <div class="col-md-11">
-                                <div class="top-buttons d-flex justify-content-between">
-                                    <h3>Surname <span class="text-danger">*</span></h3>
-                                    <div>
-                                        <h3><span class="text-danger">*</span> = required</h3>
-                                    </div>
-                                </div>
 
-                                <div class="mb-3">
-                                    <input type="text" class="form-control" id="surname" placeholder="Enter surname..."
-                                           name="surname" value="{{ $author->surname }}" required/>
-                                </div>
+                            {{-- Author Forename --}}
+                            <label class="form-label" for="forename">Forename <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="forename"
+                                   placeholder="Enter forename..." name="forename"
+                                   value="{{ $author->forename }}" required/>
 
-                                <div class="mb-3">
-                                    <h3>Forename</h3>
-                                    <input type="text" class="form-control" id="forename"
-                                           placeholder="Enter forename..." name="forename"
-                                           value="{{ $author->forename }}" required/>
-                                </div>
-                            </div>
+                            {{-- Author Surname --}}
+                            <label class="form-label" for="surname">Surname <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="surname" placeholder="Enter surname..."
+                                   name="surname" value="{{ $author->surname }}" required/>
                         </div>
+
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">Update Author</button>
                         </div>

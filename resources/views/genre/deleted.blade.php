@@ -33,6 +33,7 @@
                         <!-- Table headings -->
                         <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Book Titles</th>
                             <th></th>
@@ -45,20 +46,21 @@
                         <!-- Table Body -->
                         @foreach ($genres as $genre)
                             <tr>
+                                <td>{{ $genre->id }}</td>
                                 <td>{{ $genre->name }}</td>
                                 <td>{{ $genre->popularity() }}</td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="{{ $genre->id }}">Details</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a href="restore/{{$genre->id}}" class="btn btn-primary">Restore</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <form action="{{ route('genre.permanent-delete', $genre->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
 
-                                        <button type="submit" class="btn btn-danger">Permanently Delete</button>
+                                        <button type="submit" class="btn btn-danger">Perm. Delete</button>
                                     </form>
                                 </td>
                             </tr>
@@ -86,6 +88,7 @@
             $('#genreDelete').DataTable({
                 dom: '<"top"fli>rt<"bottom"pB>',
                 language: {
+                    responsive:true,
                     lengthMenu: 'Show _MENU_',
                     info: 'Displaying _START_-_END_ out of _TOTAL_',
                     search: 'Search Genres:',
@@ -102,12 +105,14 @@
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [2, 3, 4],
+                    targets: [3, 4, 5],
                     orderable: false,
                     searchable: false,
-
-                }]
-
+                },
+                    {
+                        targets: [2],
+                        searchable: false,
+                    }],
             });
 
             var wrapper = $('.dataTables_wrapper');

@@ -64,8 +64,8 @@
                         <td>
                             @foreach ($book->catalogueEntry->authors as $key => $author)
                                 <label>ID: {{ $author->id }}</label><br>
-                                Surname: {{ $author->surname }}<br>
-                                Forename: {{ $author->forename }}
+                                Forename: {{ $author->forename }}<br>
+                                Surname: {{ $author->surname }}
                                 @if (!$loop->last)
                                     <br>      <br>
                                 @endif
@@ -202,8 +202,8 @@
                                 <table id="showBookLoans" class="data-table table">
                                     <thead>
                                     <tr>
+                                        <th>id</th>
                                         <th>Patron</th>
-                                        <th>Staff</th>
                                         <th>Start Date</th>
                                         <th>Return Date</th>
                                         <th>Returned</th>
@@ -213,8 +213,8 @@
                                     <tbody>
                                     @foreach ($book->loans as $loan)
                                         <tr>
-                                            <td>{{ $loan->patron->surname }}, {{ $loan->patron->forename }}</td>
-                                            <td>{{ $loan->staff->surname }}, {{ $loan->staff->forename }}</td>
+                                            <td>{{ $loan->id }}</td>
+                                            <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }}</td>
                                             <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}</td>
                                             <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
                                             <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
@@ -319,8 +319,12 @@
                     targets: [2, 3],
                     orderable: false
                 },
+                    {
+                        targets: [4],
+                        searchable: false,
+                    }
                 ],
-                order: [[0, 'asc']]
+                order: [[0, 'desc']]
             });
 
             <!-- Styles-->

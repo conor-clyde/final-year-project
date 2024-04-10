@@ -20,20 +20,28 @@
                         </div>
                     @endif
 
-                    <a href="{{ route('genre') }}" class="btn btn-secondary mb-4">Go Back</a>
+                        {{-- Return Button --}}
+                        <div class="top-buttons d-flex justify-content-between">
+                            <a href="{{ route('genre') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
+                            <div>
+                                <h3><span class="text-danger">*</span> = required</h3>
+                            </div>
+                        </div>
 
                     <form method="post" action="{{ route('genre.update', $genre->id) }}">
                         @csrf
                         @method('PUT')
 
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Genre Name:</label>
-                            <input type="text" class="form-control" id="name" placeholder="Enter name..." name="name" value="{{ $genre->name }}" required/>
-                        </div>
+                        <div class="row align-items-center">
+                            <label class="form-label" for="forename">Genre <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" placeholder="Enter name..." name="name"
+                                   value="{{ $genre->name }}" required/>
 
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Description (Optional):</label>
-                            <textarea class="form-control" id="description" placeholder="Enter description..." name="description" rows="5">{{ $genre->description }}</textarea>
+                            <label for="description" class="form-label">Description</label>
+                            <textarea style="resize: vertical; min-height: 100px; max-height: 200px;"
+                                      class="form-control" id="description" placeholder="Enter description..."
+                                      name="description" rows="5">{{ $genre->description }}</textarea>
                         </div>
 
                         <div class="text-right">

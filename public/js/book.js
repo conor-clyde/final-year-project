@@ -10,7 +10,15 @@ $(document).ready(function () {
         buttons: [{
             extend: 'csv',
             text: 'Export Book List',
-            exportOptions: {columns: [0, 1, 2, 3, 4]},
+            exportOptions: {
+                columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                format: {
+                    body: function (data, row, column, node) {
+                        // Remove extra white space
+                        return data.trim();
+                    }
+                }
+            },
             title: 'Books'
         }],
         lengthMenu: [
@@ -46,5 +54,6 @@ $(document).ready(function () {
     });
     paginationContainer.addClass('float-start');
 });
+
 
 

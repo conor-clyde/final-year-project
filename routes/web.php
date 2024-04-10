@@ -89,16 +89,22 @@ Route::get('/genre', [GenreController::class, 'index'])->middleware(['auth', 've
 
 //publisher
 Route::get('/publisher', [PublisherController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('publisher');;
+Route::get('/publisher/restore-all',  [PublisherController::class, 'restoreAll'])->name('publisher.restore-all');
+Route::get('/publisher/unarchive-all',  [PublisherController::class, 'unarchiveAll'])->name('publisher.unarchive-all');
 Route::get('/publisher/create',  [PublisherController::class, 'create'])->name('publisher.create');
 Route::post('/publisher/created', [PublisherController::class, 'store'])->name('publisher.store');;
 Route::get('/publisher/{publisher}/edit',  [PublisherController::class, 'edit']);
 Route::put('/publisher/update/{publisher}', [PublisherController::class, 'update'])->name('publisher.update');;
-Route::delete('/publisher/delete/{publisher}', [PublisherController::class, 'destroy'])->name('publisher.delete');;
 Route::get('/publisher/archived',  [PublisherController::class, 'archived'])->name('publisher.archived');
 Route::get('/publisher/deleted', [PublisherController::class, 'deleted'])->name('publisher.deleted');
 Route::get('/publisher/{publisher}', [PublisherController::class, 'show'])->name('publisher.show');
-
-Route::post('/author/delete', [AuthorController::class, 'destroy'])->name('author.delete');
+Route::get('/publisher/archive/{publisher}', [PublisherController::class, 'archive'])->name('publisher.archive');
+Route::post('/publisher/delete', [PublisherController::class, 'destroy']);
+Route::get('/publisher/check-deletion/{id}', [PublisherController::class, 'checkDeletionStatus'])->name('publisher.check-deletion');
+Route::get('/publisher/check-archive/{id}', [PublisherController::class, 'checkArchiveStatus'])->name('publisher.check-archive');
+Route::get('/publisher/unarchive/{publisher}',  [PublisherController::class, 'unarchive'])->name('publisher.unarchive');
+Route::get('/publisher/restore/{publisher}',  [PublisherController::class, 'restore'])->name('publisher.restore');
+Route::delete('/publisher/permanent-delete/{id}', [PublisherController::class, 'permanentDelete'])->name('publisher.permanent-delete');
 
 //author
 Route::get('/author/unarchive-all',  [AuthorController::class, 'unarchiveAll'])->name('author.unarchive-all');

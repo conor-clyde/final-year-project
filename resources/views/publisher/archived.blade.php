@@ -1,8 +1,9 @@
 <x-app-layout>
+
     <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Archived Genres') }}
+            {{ __('Archived Publishers') }}
         </h2>
     </x-slot>
 
@@ -21,7 +22,7 @@
 
                         <!-- Go back and Unarchive all buttons -->
                         <div class="top-buttons d-flex justify-content-between">
-                            <a href="{{ url()->previous() }}" class="btn btn-secondary">Go Back</a>
+                            <a href="{{ route('publisher') }}" class="btn btn-secondary">Go Back</a>
                             <div>
                                 <a href="{{ route('publisher.unarchive-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Unarchive All</a>
                             </div>
@@ -33,10 +34,8 @@
                             <!-- Table headings -->
                         <thead>
                         <tr>
-                            <th>
-                                <input type="checkbox" id="select-all">
-                            </th>
-                            <th>Genre</th>
+                            <th>ID</th>
+                            <th>Publisher</th>
                             <th>Book Titles</th>
                             <th></th>
                             <th></th>
@@ -49,18 +48,22 @@
                         @foreach ($publishers as $publisher)
                             <tr>
                                 <td>
-                                    <input class="select" type="checkbox" name="selected_genres[]" value="{{ $genre->id }}">
+                                    {{$publisher->id}}
                                 </td>
                                 <td>{{ $publisher->name }}</td>
                                 <td>{{ $publisher->popularity() }}</td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="{{ $publisher->id }}">Details</a>
                                 </td>
-                                <td>
-                                    <a href="unarchive/{{$publisher->id}}" class="btn btn-primary btn-width-100 ">Unarchive</a>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <a href="unarchive/{{$publisher->id}}"
+                                       class="btn btn-primary btn-width-100">Unarchive</a>
                                 </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80 " value="{{$genre->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80 "
+                                            value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -71,7 +74,7 @@
         </div>
     </div>
 
-    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('genre/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
+    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('publisher/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
 
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -89,26 +92,31 @@
                 language: {
                     lengthMenu: 'Show _MENU_',
                     info: 'Displaying _START_-_END_ out of _TOTAL_',
-                    search: 'Search Genres:',
+                    search: 'Search Publishers:',
                 },
                 order: [[1, 'asc']],
                 buttons: [{
                     extend: 'csv',
-                    text: 'Export Genre List',
+                    text: 'Export Publisher List',
                     exportOptions: { columns: [1, 2] },
-                    title: 'Archived Genres'
+                    title: 'Archived Publishers'
                 }],
                 lengthMenu: [
                     [10, 25, 50, -1],
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [0, 3, 4, 5],
+                    targets: [],
                     orderable: false,
                     searchable: false,
 
-                }]
+                },
+                    {
+                        targets: [2],
+                        searchable: false,
+                    }],
 
+                order: [[1, 'asc']]
             });
 
             var wrapper = $('.dataTables_wrapper');
@@ -147,7 +155,7 @@
             var category_id = $(this).val();
 
             $.ajax({
-                url: '{{ route('genre.check-deletion', ':id') }}'.replace(':id', category_id),
+                url: '{{ route('publisher.check-deletion', ':id') }}'.replace(':id', category_id),
                 type: 'GET',
                 success: function (response) {
                     console.log(response.message);

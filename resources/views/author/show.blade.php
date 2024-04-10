@@ -112,7 +112,16 @@
                     [10, 25, 50, -1],
                     ['10', '25', '50', 'All']
                 ],
-                columnDefs: []
+                columnDefs: [{
+                    targets: [],
+                    orderable: false,
+                    searchable: false,
+                },
+                    {
+                        targets: [1, 4, 5, 6],
+                        searchable: false,
+                    }],
+                order: [[2, 'asc']]
             });
 
             // Styles

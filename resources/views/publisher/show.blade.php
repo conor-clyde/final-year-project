@@ -21,13 +21,11 @@
                 <!-- Go Back button -->
                 <a href="{{ url()->previous() }}" class="btn btn-secondary mb-4">Go Back</a>
 
-
                 <!-- Publisher Details -->
-                <h1>{{ $publisher->name }}</h1>
-                <p style="margin-bottom: 8px;">Added: {{ $publisher->created_at->format('F d, Y') }}</p>
-                <p style="margin-bottom: 8px;">Updated: {{ $publisher->updated_at->format('F d, Y') }}</p>
+                <h2>{{ $publisher->id}}: {{ $publisher->name }}</h2>
+                <p style="margin-bottom: 8px;">Added:  {{ $publisher->created_at->format('jS M Y, H:i:s') }}</p>
+                <p style="margin-bottom: 8px;">Last Updated: {{ $publisher->updated_at->format('jS M Y, H:i:s') }}</p>
                 <div style="padding-top: 4px;" class="border-b-2 border-gray-300 mb-2"></div>
-
 
                 <div class="mb-8">
                     <div style="margin: 20px 4px;" class="row">
@@ -38,19 +36,20 @@
                                 <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>PB/HC</th>
                                     <th>Title</th>
                                     <th>Author</th>
                                     <th>Published</th>
                                     <th>Condition</th>
                                     <th>Status</th>
                                     <th>Loans</th>
-                                    <th></th>
                                 </tr>
 
                                 </thead>
                                 <tbody>
                                 @foreach ($publisher->bookCopies as $book)
                                     <tr>
+                                        <td>{{ $book->id }}</td>
                                         <td>{{ $book->id }}</td>
                                         <td>{{ $book->catalogueEntry->title }}</td>
                                         <td>
@@ -69,9 +68,6 @@
                                             @endif
                                         </td>
                                         <td>{{ $book->popularity() }}</td>
-                                        <td>
-                                            <a class="btn btn-primary btn-width-80" href="{{ route('book.show', ['book' => $book->id]) }}">Details</a>
-                                        </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -94,6 +90,7 @@
     <script>
         $(document).ready(function () {
             $('#genreShow').DataTable({
+                responsive:true,
                 dom: '<"top"fli>rt<"bottom"pB>',
                 language: {
                     lengthMenu: 'Show _MENU_',
@@ -105,12 +102,17 @@
                     text: 'Export Genre List',
                     title: 'Genres'
                 }],
-                responsive: true,
                 lengthMenu: [
                     [10, 25, 50, -1],
                     ['10', '25', '50', 'All']
                 ],
-                columnDefs: []
+                columnDefs: [
+                    {
+                        targets: [1, 5, 6, 7],
+                        searchable: false,
+                    }],
+
+                order: [[2, 'asc']]
             });
 
             // Styles

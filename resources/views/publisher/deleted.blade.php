@@ -2,11 +2,11 @@
     <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Deleted Genres') }}
+            {{ __('Deleted Publishers') }}
         </h2>
     </x-slot>
 
-    <!-- Genre.deleted -->
+    <!-- Publisher.deleted -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -21,9 +21,9 @@
 
                         <!-- Return and Restore all buttons -->
                         <div class="top-buttons d-flex justify-content-between">
-                            <a href="{{ route('genre') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                            <a href="{{ route('publisher') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
                             <div>
-                                <a href="{{ route('genre.restore-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Restore All</a>
+                                <a href="{{ route('publisher.restore-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Restore All</a>
                             </div>
                         </div>
 
@@ -33,9 +33,7 @@
                         <!-- Table headings -->
                         <thead>
                         <tr>
-                            <th>
-                                <input type="checkbox" id="select-all">
-                            </th>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Book Titles</th>
                             <th></th>
@@ -46,30 +44,25 @@
                         <tbody>
 
                         <!-- Table Body -->
-                        @foreach ($genres as $genre)
+                        @foreach ($publishers as $publisher)
                             <tr>
-                                <td>
-                                    <input class="select" type="checkbox" name="selected_genres[]" value="{{ $genre->id }}">
+                                <td>{{ $publisher->id }}</td>
+                                <td>{{ $publisher->name }}</td>
+                                <td>{{ $publisher->popularity() }}</td>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <a class="btn btn-primary btn-width-80" href="{{ $publisher->id }}">Details</a>
                                 </td>
-                                <td>{{ $genre->name }}</td>
-                                <td>{{ $genre->popularity() }}</td>
-                                <td>
-                                    <a class="btn btn-primary btn-width-80" href="{{ $genre->id }}">Details</a>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <a href="restore/{{$publisher->id}}" class="btn btn-primary">Restore</a>
                                 </td>
-                                <td>
-                                    <a href="restore/{{$genre->id}}" class="btn btn-primary">Restore</a>
-                                </td>
-                                <td>
-                                    <form action="{{ route('genre.permanent-delete', $genre->id) }}" method="POST">
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <form action="{{ route('publisher.permanent-delete', $publisher->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
 
-                                        <button type="submit" class="btn btn-danger">Permanently Delete</button>
+                                        <button type="submit" class="btn btn-danger">Perm. Delete</button>
                                     </form>
                                 </td>
-
-
-
                             </tr>
                         @endforeach
                         </tbody>

@@ -35,6 +35,7 @@
                         <!-- Table headings -->
                         <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Publisher</th>
                             <th>Books</th>
                             <th></th>
@@ -48,24 +49,20 @@
                         <tbody>
                         @foreach ($publishers as $publisher)
                             <tr>
+                                <td>{{ $publisher->id }}</td>
                                 <td>{{ $publisher->name }}</td>
                                 <td>{{ $publisher->popularity() }}</td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="publisher/{{ $publisher->id }}">Details</a>
                                 </td>
-                                <td>
-                                    <a href="publisher/{{$publisher->id}}/edit" class="btn btn-primary">Edit</a>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <a href="publisher/{{$publisher->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
                                 </td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80" value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
                                 </td>
-                                <td>
-                                    {!! Form::open(['url' => ['publisher/delete', $publisher->id], 'method' => 'POST', 'class' => 'pull-right']) !!}
-
-                                    {!! Form::hidden('_method', 'DELETE') !!}
-                                    {!! Form::submit('Delete', ['class' => 'btn btn-danger', 'style' => "background-color: #dc3545;"]) !!}
-
-                                    {!! Form::close() !!}
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80" value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -77,6 +74,11 @@
         </div>
     </div>
 
+    <!-- Modal for archive and delete -->
+    @include('partials.archive-modal', ['modalId' => 'archiveModal', 'formAction' => url('publisher/archive'), 'textareaId' => 'archiveQuestion', 'categoryId' => 'category_id', 'confirmArchiveBtn' => 'confirmArchiveBtn'])
+    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('publisher/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
+
+
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
@@ -86,5 +88,69 @@
 
     <!-- My scripts -->
     <script src="{{ asset('js/publisher.js') }}"></script>
+
+    <!-- Confirm delete-->
+    <script>
+        $('.deleteCategoryBtn').click(function (e) {
+            e.preventDefault();
+
+            var category_id = $(this).val();
+
+            $.ajax({
+                url: '{{ route('publisher.check-deletion', ':id') }}'.replace(':id', category_id),
+                type: 'GET',
+                success: function (response) {
+                    console.log(response.message);
+                    $('#deleteQuestion').val(response.message);
+                    $('#category_id').val(category_id);
+
+                    var deletable = response.deletable;
+
+                    if (deletable) {
+                        $('#confirmDeletionBtn').show();
+                    } else {
+                        $('#confirmDeletionBtn').hide();
+                    }
+
+                    // Show the modal
+                    $('#deleteModal').modal('show');
+                },
+                error: function (error) {
+                    // Handle errors, e.g., show an alert
+                    alert('Error checking deletion status');
+                }
+            });
+        });
+    </script>
+
+    <!-- Confirm archive-->
+    <script>
+        $('.archiveCategoryBtn').click(function (e) {
+            e.preventDefault();
+
+            var category_id = $(this).val();
+            var test ="publisher/archive/" + category_id;
+
+            $.ajax({
+                url: '{{ route('publisher.check-archive', ':id') }}'.replace(':id', category_id),
+                type: 'GET',
+                success: function (response) {
+                    // Set the modal content
+                    console.log(response.message);
+                    $('#archiveQuestion').val(response.message);
+                    $('#archive_genre_id').val(category_id);
+
+                    // Set the href attribute of the confirm button
+                    $('#confirmArchiveBtn').attr('href', test);
+
+                    // Show the modal
+                    $('#archiveModal').modal('show');
+                },
+                error: function (error) {
+                    alert('Error checking deletion status');
+                }
+            });
+        });
+    </script>
 
 </x-app-layout>

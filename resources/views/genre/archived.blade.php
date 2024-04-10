@@ -19,20 +19,22 @@
                         </div>
                     @endif
 
-                        <!-- Go back and Unarchive all buttons -->
-                        <div class="top-buttons d-flex justify-content-between">
-                            <a href="{{ route('genre') }}" class="btn btn-secondary">Go Back</a>
-                            <div>
-                                <a href="{{ route('genre.all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Unarchive All</a>
-                            </div>
+                    <!-- Go back and Unarchive all buttons -->
+                    <div class="top-buttons d-flex justify-content-between">
+                        <a href="{{ route('genre') }}" class="btn btn-secondary">Go Back</a>
+                        <div>
+                            <a href="{{ route('genre.all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Unarchive
+                                All</a>
                         </div>
+                    </div>
 
                     <!-- Archived Genre table -->
-                        <table id="genreArchive" class="data-table table">
+                    <table id="genreArchive" class="data-table table">
 
-                            <!-- Table headings -->
+                        <!-- Table headings -->
                         <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Genre</th>
                             <th>Book Titles</th>
                             <th></th>
@@ -45,16 +47,21 @@
                         <!-- Table Body -->
                         @foreach ($genres as $genre)
                             <tr>
+                                <td>{{ $genre->id }}</td>
                                 <td>{{ $genre->name }}</td>
                                 <td>{{ $genre->popularity() }}</td>
-                                <td>
+                                <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="{{ $genre->id }}">Details</a>
                                 </td>
-                                <td>
-                                    <a href="unarchive/{{$genre->id}}" class="btn btn-primary btn-width-100">Unarchive</a>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <a href="unarchive/{{$genre->id}}"
+                                       class="btn btn-primary btn-width-100">Unarchive</a>
                                 </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80 " value="{{$genre->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                                <td style="padding-right:4px; padding-left: 4px;">
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80 "
+                                            value="{{$genre->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        Delete
+                                    </button>
                                 </td>
                             </tr>
                         @endforeach
@@ -70,15 +77,18 @@
     <!-- Imported scripts -->
     <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
 
 
     <script>
         $(document).ready(function () {
             $('#genreArchive').DataTable({
+                responsive: true,
                 dom: '<"top"fli>rt<"bottom"pB>',
                 language: {
                     lengthMenu: 'Show _MENU_',
@@ -89,7 +99,7 @@
                 buttons: [{
                     extend: 'csv',
                     text: 'Export Genre List',
-                    exportOptions: { columns: [1, 2] },
+                    exportOptions: {columns: [1, 2]},
                     title: 'Archived Genres'
                 }],
                 lengthMenu: [
@@ -97,12 +107,14 @@
                     ['10', '25', '50', 'All']
                 ],
                 columnDefs: [{
-                    targets: [2],
+                    targets: [3, 4, 5],
                     orderable: false,
                     searchable: false,
-
-                }]
-
+                },
+                    {
+                        targets: [2],
+                        searchable: false,
+                    }],
             });
 
             var wrapper = $('.dataTables_wrapper');
@@ -166,12 +178,6 @@
             });
         });
     </script>
-
-
-
-
-
-
 
 
 </x-app-layout>
