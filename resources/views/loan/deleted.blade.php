@@ -20,10 +20,15 @@
                         </div>
                     @endif
 
-                    <!-- Add, archived, and deleted buttons -->
+                    <!-- Return and Restore all buttons -->
                     <div class="top-buttons d-flex justify-content-between">
-                        <a href="{{ route('loan.create') }}" class="btn btn-primary">Add Loan</a>
+                        <a href="{{ route('loan') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                        <div>
+                            <a href="{{ route('loan') }}" class="btn btn-primary"
+                               style="margin-bottom: 40px;">Restore All</a>
+                        </div>
                     </div>
+
 
                     <!-- Book table -->
                     <table id="indexLoan" class="data-table table">
@@ -57,21 +62,20 @@
                                     @endforeach
                                 ({{ $loan->bookCopy->id }})</td>
                                 <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }} ({{ $loan->patron->id }})
-                                </td>
                                 <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
                                 <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
-
                                 <td style="padding-right:4px; padding-left: 4px;">
-                                    @if (!$loan->is_returned)
-                                        <a class="btn btn-primary btn-width-80" href="loan/return/{{ $loan->id }}">
-                                            Return</a>
-                                    @else
-                                    @endif
+                                    <a href="restore/{{$loan->id}}" class="btn btn-primary">Restore</a>
                                 </td>
                                 <td style="padding-right:4px; padding-left: 4px;">
-                                    <a href="loan/{{$loan->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
+                                    {!! Form::open(['url' => ['book/permanent-delete', $loan->id], 'method' => 'POST', 'class' => 'pull-right']) !!}
+
+                                    {!! Form::hidden('_method', 'DELETE') !!}
+                                    {!! Form::submit('Perm. Delete', ['class' => 'btn btn-danger', 'style' => "background-color: #dc3545;", 'onclick' => 'confirmPermanentDelete(event, ' . $loan->id . ')']) !!}
+
+                                    {!! Form::close() !!}
                                 </td>
                             </tr>
                         @endforeach

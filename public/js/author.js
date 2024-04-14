@@ -1,6 +1,5 @@
-// Create genre.index datatable
 $(document).ready(function () {
-    $('#authorIndex').DataTable({
+    $('#indexAuthor').DataTable({
         responsive: true,
         dom: '<"top"fli>rt<"bottom"pB>',
         language: {
@@ -23,11 +22,11 @@ $(document).ready(function () {
             orderable: false,
             searchable: false,
         },
-                {
-                    targets: [3, 4, 5, 6, 7],
-                    searchable: false,
-                }],
-            order: [[2, 'asc']]
+            {
+                targets: [3, 4, 5, 6, 7],
+                searchable: false,
+            }],
+        order: [[2, 'asc']]
     });
 
     <!-- Styles-->
@@ -46,5 +45,3 @@ $(document).ready(function () {
     });
     paginationContainer.addClass('float-start');
 });
-
-

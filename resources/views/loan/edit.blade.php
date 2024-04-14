@@ -37,7 +37,7 @@
                     <!-- Update Book Title Details-->
                     <h2>Loan Details</h2>
 
-                    <form method="post" action="{{ route('book.title-update', $book->catalogue_entry_id) }}">
+                    <form method="post" action="{{ route('loan.update', $loan->id) }}">
                         @csrf
                         @method('PUT')
                         <table id="updateBookTitle" class="data-table table">
@@ -57,9 +57,16 @@
                             {{-- Book Title --}}
                             <tr>
                                 <td>Book</td>
-                                <td>{{ $book->catalogueEntry->title }}</td>
-                                <td><input type="text" name="title" id="title" class="form-control"
-                                           value="{{ $book->catalogueEntry->title }}">
+                                <td>{{ $loan->bookCopy->catalogueEntry->title }}</td>
+                                <td>
+                                    <select name="title" class="form-control">
+                                        @foreach ($books as $book)
+                                            <option
+                                                value="{{ $book->id }}" {{ $loan->book_copy_id == $book->id ? 'selected' : '' }}>
+                                                {{ $book->catalogueEntry->title }} ({{ $book->id }})
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </td>
                             </tr>
 
@@ -67,27 +74,15 @@
                             <tr>
                                 <td>Patron</td>
                                 <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }}</td>
-
-                                {{-- Update Author Surname and Forename --}}
                                 <td>
-                                    <div style="display: inline-block; margin-right: 10px; width:70px;">
-                                        <label for="id">ID:</label><br>
-                                        <input disabled type="text" name="" id="id"
-                                               class="form-control" style="margin-bottom: 10px;"
-                                               value="{{ $loan->patron_id }}">
-                                    </div>
-                                    <div style="display: inline-block; margin-right: 10px; width: 160px;">
-                                        <label for="surname">Surname:</label><br>
-                                        <input type="text" name="" id="surname"
-                                               class="form-control" style="margin-bottom: 10px;"
-                                               value="{{ $loan->patron->forename  }}">
-                                    </div>
-                                    <div style="display: inline-block; width: 160px;">
-                                        <label for="forename">Forename:</label><br>
-                                        <input type="text" name="" id="forename"
-                                               class="form-control"
-                                               value="{{ $loan->patron->surname }}">
-                                    </div>
+                                    <select name="patron" class="form-control">
+                                        @foreach ($patrons as $patron)
+                                            <option
+                                                value="{{ $patron->id }}" {{ $loan->patron_id == $patron->id ? 'selected' : '' }}>
+                                                {{ $patron->forename }} {{ $patron->surname }} ({{ $patron->id }})
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </td>
 
                             {{-- Book Returned --}}
@@ -102,9 +97,45 @@
                                 </td>
                             </tr>
 
+                            @php
+                                $startTime = \Carbon\Carbon::parse($loan->start_time);
+                                $endTime = \Carbon\Carbon::parse($loan->end_time);
+                                $type = "";
 
+                                // Create separate instances for comparison
+                                $startPlusMonth = $startTime->copy()->addMonth();
+                                $startPlusTwoWeeks = $startTime->copy()->addWeeks(2);
 
+                                if ($startPlusMonth->equalTo($endTime)) {
+                                    $type = "Month";
+                                } elseif ($startPlusTwoWeeks->equalTo($endTime)) {
+                                    $type = "2Week";
+                                }
+                            @endphp
 
+                            <tr>
+                                <td>Loan Duration</td>
+                                <td>
+                                    @if ($type=="Month")
+                                        One Month
+                                    @elseif ($type=="2Week")
+                                        Two Weeks
+                                    @endif
+
+                                </td>
+                                <td>
+                                    @if ($endTime->greaterThan(now()))
+                                            <select name="loan_duration" id="loan_duration" class="form-control">
+                                                <option value="2_weeks" {{ $type == "2Week" ? "selected" : "" }}>Two
+                                                    Weeks
+                                                </option>
+                                                <option value="1_month" {{ $type == "Month" ? "selected" : "" }}>One
+                                                    Month
+                                                </option>
+                                            </select>
+                                    @endif
+                                </td>
+                            </tr>
 
 
                             </tbody>
@@ -112,13 +143,11 @@
 
                         {{-- Submit Book Title Details Button --}}
                         <div class="text-right">
-                            <button type="submit" class="btn-primary btn">Confirm Book Title Details</button>
+                            <button type="submit" class="btn-primary btn">Confirm Loan Details</button>
                         </div>
                     </form>
 
-
                     <td></td>
-
 
                 </div>
 

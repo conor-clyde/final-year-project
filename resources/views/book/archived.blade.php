@@ -1,11 +1,13 @@
 <x-app-layout>
 
+    <!-- Header -->
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Archived Books') }}
         </h2>
     </x-slot>
 
+    <!-- Book.archive -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -18,15 +20,19 @@
                         </div>
                     @endif
 
-                    <!-- Go back and Unarchive all buttons -->
+                    <!-- Go back and Un-archive all buttons -->
                     <div class="top-buttons d-flex justify-content-between">
                         <a href="{{ route('book') }}" class="btn btn-secondary">Go Back</a>
                         <div>
-                            <a href="{{ route('book.unarchive-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Unarchive All</a>
+                            <a href="{{ route('book.unarchive-all') }}" class="btn btn-primary"
+                               style="margin-bottom: 40px;">Unarchive All</a>
                         </div>
                     </div>
 
+                    <!-- Book archived table -->
                     <table id="archivedBook" class="data-table table">
+
+                        <!-- Table headings -->
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -42,9 +48,10 @@
                             <th></th>
                         </tr>
                         </thead>
+
+                        <!-- Table body -->
                         <tbody>
                         @foreach ($books as $book)
-
                             <tr>
                                 <td>{{ $book->id }}</td>
                                 <td>
@@ -55,17 +62,21 @@
                                     @endif
                                 </td>
                                 <td>{{ $book->catalogueEntry->title }}</td>
+
+                                <!-- Book Authors -->
                                 <td>
-                                @foreach ($book->catalogueEntry->authors as $author)
-                                    {{ $author->forename }} {{ $author->surname }}
+                                    @foreach ($book->catalogueEntry->authors as $author)
+                                        {{ $author->forename }} {{ $author->surname }}
                                         @if (!$loop->last)
                                             &amp;
                                         @endif
-                                @endforeach
+                                    @endforeach
                                 </td>
                                 <td>{{ $book->publisher->name }}<br>
-                                    ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})</td>
+                                    ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
+                                </td>
                                 <td>{{ $book->condition->name }}</td>
+
                                 <!-- Status column -->
                                 <td>
                                     @if ($book->isOnLoan())
@@ -75,6 +86,8 @@
                                     @endif
                                 </td>
                                 <td>{{ $book->popularity() }}</td>
+
+                                <!-- Book Action Buttons -->
                                 <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="{{ $book->id }}">Details</a>
                                 </td>
@@ -98,28 +111,24 @@
 
     @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('book/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeleteBtn' => 'confirmDeleteBtn'])
 
-    <!-- Imported scripts -->
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <!-- DataTables Buttons JS -->
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
-
-    <!-- DataTables Responsive CSS -->
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 
     <!-- DataTables Responsive JS -->
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
@@ -137,8 +146,10 @@
                 buttons: [{
                     extend: 'csv',
                     text: 'Export Book List',
-                    exportOptions: {columns: [0, 1, 2, 3, 4]},
-                    title: 'Books'
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    },
+                    title: 'Archived Books'
                 }],
                 lengthMenu: [
                     [10, 25, 50, -1],

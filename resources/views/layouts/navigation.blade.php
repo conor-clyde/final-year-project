@@ -91,8 +91,25 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('catalogue')" :active="request()->routeIs('dashboard')">
-                {{ __('Catalogue') }}
+                {{ __('Home') }}
             </x-responsive-nav-link>
+            @if(auth()->check() && auth()->user()->role==2)
+                <x-responsive-nav-link :href="route('book')" :active="request()->routeIs('dashboard')">
+                    {{ __('Books') }}
+                </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('loan')" :active="request()->routeIs('dashboard')">
+                {{ __('Loans') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('author')" :active="request()->routeIs('dashboard')">
+                {{ __('Authors') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('genre')" :active="request()->routeIs('dashboard')">
+                {{ __('Genres') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('publisher')" :active="request()->routeIs('dashboard')">
+                {{ __('Publishers') }}
+            </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

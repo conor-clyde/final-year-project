@@ -73,6 +73,7 @@
                                         @endif
                                     @endforeach
                                 </td>
+
                                 <td>{{ $book->publisher->name }}<br>
                                     ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
                                 </td>
@@ -86,7 +87,9 @@
                                         Available
                                     @endif
                                 </td>
+
                                 <td>{{ $book->popularity() }}</td>
+
                                 <!-- Book Action Buttons -->
                                 <td style="padding-right:4px; padding-left: 4px;">
                                     <a class="btn btn-primary btn-width-80" href="book/{{ $book->id }}">Details</a>
@@ -141,7 +144,7 @@
     <!-- DataTables Responsive JS -->
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
-    <!-- Your custom script -->
+    <!-- My script -->
     <script src="{{ asset('js/book.js') }}"></script>
 
     <!-- Confirm delete-->
@@ -150,7 +153,7 @@
             e.preventDefault();
 
             var book_id = $(this).val();
-            var url = "book/delete/" + book_id;
+
             $.ajax({
                 url: '{{ route('book.check-delete', ':id') }}'.replace(':id', book_id),
                 type: 'GET',
@@ -163,23 +166,20 @@
 
                     if (deletable) {
                         $('#confirmDeletionBtn').show();
-                        // Set the href attribute of the confirm button
                     } else {
                         $('#confirmDeletionBtn').hide();
                     }
 
-                    // Show the modal
                     $('#deleteModal').modal('show');
                 },
                 error: function (error) {
-                    // Handle errors, e.g., show an alert
                     alert('Error checking deletion status');
                 }
             });
         });
     </script>
 
-    <!-- Confirm archive-->
+    <!-- Confirm archive script -->
     <script>
         $('.archiveCategoryBtn').click(function (e) {
             e.preventDefault();
@@ -191,15 +191,12 @@
                 url: '{{ route('book.check-archive', ':id') }}'.replace(':id', book_id),
                 type: 'GET',
                 success: function (response) {
-                    // Set the modal content
                     console.log(response.message);
                     $('#archiveQuestion').val(response.message);
                     $('#archive_genre_id').val(book_id);
 
-                    // Set the href attribute of the confirm button
                     $('#confirmArchiveBtn').attr('href', url);
 
-                    // Show the modal
                     $('#archiveModal').modal('show');
                 },
                 error: function (error) {
@@ -208,6 +205,4 @@
             });
         });
     </script>
-
-
 </x-app-layout>

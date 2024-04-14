@@ -86,9 +86,7 @@
                                 {{ $book->catalogueEntry->description }}
                             </div>
                             @if (strlen($book->catalogueEntry->description) > 200)
-                                <button id="toggleDescriptionBtn" class="btn btn-link" type="button">See Full
-                                    Description
-                                </button>
+                                <button id="toggleDescriptionBtn" class="btn btn-link" type="button">See Full Description</button>
                             @endif
                         </td>
                     </tr>
@@ -197,12 +195,13 @@
                 <div class="mb-8">
                     <div class="row">
                         <div class="col-md-12">
+
                             <!-- Book Titles -->
                             @if ($book->loans->count() > 0)
                                 <table id="showBookLoans" class="data-table table">
                                     <thead>
                                     <tr>
-                                        <th>id</th>
+                                        <th>ID</th>
                                         <th>Patron</th>
                                         <th>Start Date</th>
                                         <th>Return Date</th>
@@ -232,35 +231,27 @@
         </div>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Imported scripts -->
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <!-- DataTables Buttons JS -->
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
-
-    <!-- DataTables Responsive CSS -->
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-
     <!-- DataTables Responsive JS -->
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-
-    <!-- Data Table Initialization -->
-
 
     <script>
         $(document).ready(function () {
@@ -293,8 +284,8 @@
                 }],
             });
         });
-
     </script>
+
     <script>
         $(document).ready(function () {
             $('#showBookLoans').DataTable({
@@ -308,7 +299,7 @@
                 buttons: [{
                     extend: 'csv',
                     text: 'Export Loan List',
-                    exportOptions: {columns: [1]},
+                    exportOptions: {columns: [0, 1, 2, 3]},
                     title: 'Loans'
                 }],
                 lengthMenu: [

@@ -9,7 +9,7 @@ $(document).ready(function () {
         buttons: [{
             extend: 'csv',
             text: 'Export Loan List',
-            exportOptions: {columns: [0, 1, 2, 3, 4]},
+            exportOptions: {columns: [0, 1, 2, 3, 4, 5]},
             title: 'Loans'
         }],
         lengthMenu: [
@@ -17,7 +17,11 @@ $(document).ready(function () {
             ['10', '25', '50', 'All']
         ],
         columnDefs: [{
-            targets: [6, 7, 8],
+            targets: [3, 4],
+            orderable: false,
+        },
+            {
+            targets: [5, 6, 7],
             orderable: false,
             searchable: false,
         }],

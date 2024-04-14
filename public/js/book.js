@@ -13,14 +13,10 @@ $(document).ready(function () {
             exportOptions: {
                 columns: [0, 1, 2, 3, 4, 5, 6, 7],
                 format: {
-                    body: function (data, row, column, node) {
-                        // Remove extra white space
-                        return data.trim();
-                    }
                 }
             },
-            title: 'Books'
-        }],
+                title: 'Books'
+            }],
         lengthMenu: [
             [10, 25, 50, -1],
             ['10', '25', '50', 'All']
@@ -31,7 +27,7 @@ $(document).ready(function () {
             searchable: false,
         },
             {
-                targets: [4, 5, 6],
+                targets: [1, 5, 6],
                 searchable: false,
             }],
 
@@ -53,7 +49,8 @@ $(document).ready(function () {
         'width': '340px'
     });
     paginationContainer.addClass('float-start');
-});
+})
+    ;
 
 
 

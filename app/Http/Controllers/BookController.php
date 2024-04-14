@@ -152,9 +152,6 @@ class BookController extends Controller
         }
 
 
-
-
-
         // Check if the new authors already exist
         $authorSurnames = $request->input('author_surname');
         $authorForenames = $request->input('author_forename');
@@ -181,7 +178,6 @@ class BookController extends Controller
         }
 
 
-
         // Check if any of the selected authors are the same
         if ($request->filled('author')) {
             $selectedAuthors = $request->input('author');
@@ -195,8 +191,6 @@ class BookController extends Controller
                 return redirect()->back()->withInput()->withErrors(['author' => 'You cannot select the same author multiple times.']);
             }
         }
-
-
 
 
         // Check if the new title already exists
@@ -442,9 +436,6 @@ class BookController extends Controller
         $book->save();
 
 
-
-
-
         return redirect()->route('book')->with('flashMessage', 'Book updated successfully!');
     }
 
@@ -499,7 +490,6 @@ class BookController extends Controller
         $title->authors()->sync($request->input('author_ids'));
 
 
-
         $title->save();
 
         return redirect()->route('book')->with('flashMessage', 'Title updated successfully!');
@@ -513,7 +503,27 @@ class BookController extends Controller
             return abort(404);
         }
 
+        $entry = CatalogueEntry::find($book->catalogue_entry_id);
+
+        //dd($entry->popularity());
+
+        //dd($entry);
+
+
+
         $book->forceDelete();
+
+        if ($entry->popularity() == 0) {
+            $entry->forceDelete();
+
+            //$authorCat = Author_CatalogueEntry::find([$book->catalogue_entry_id, $book->author_id]);
+
+
+
+        }
+
+
+
         return redirect()->route('book.deleted')->with('flashMessage', 'Book permanently deleted!');
     }
 
@@ -572,7 +582,7 @@ class BookController extends Controller
     {
 
         $book = BookCopy::find($id);
-        return response()->json(['message' => "Are you sure that you want to archive {$book->catalogueEntry->title}?", 'deletable' => true], 200);
+        return response()->json(['message' => "Are you sure that you want to archive {$book->id}: {$book->catalogueEntry->title}?", 'deletable' => true], 200);
     }
 
     public function checkDeleteStatus($id)

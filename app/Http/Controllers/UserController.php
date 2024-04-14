@@ -2,24 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Author;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
 class UserController extends Controller
 {
-    public function index() {
-
-        if (request()->ajax()) {
-            return datatables()->of(User::select('*'))
-                ->addColumn('action', 'employee-action')
-                ->rawColumns(['action'])
-                ->addIndexColumn()
-                ->make(true);
-        }
+    public function index()
+    {
+        $test = User::orderBy('name')->get();
 
 
-
-        return view ('user.index');
+        return view('user.index', compact('test'));
     }
 }

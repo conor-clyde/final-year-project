@@ -22,9 +22,6 @@ class Author extends Model
     {
         return $this->catalogueEntries()
             ->with('bookCopies')
-            ->whereHas('bookCopies', function ($query) {
-                $query->whereNull('deleted_at')->where('archived', '=', 0);
-            })
             ->count();
 
        // return $this->catalogueEntries()->bookCopies()->whereNull('deleted_at')->where('archived', '=', 0)->count();

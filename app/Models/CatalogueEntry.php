@@ -28,8 +28,22 @@ class CatalogueEntry extends Model
         return $this->belongsToMany(Author::class, 'author_catalogue_entries');
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($catalogueEntry) {
+            $catalogueEntry->authors()->detach();
+        });
+    }
+
     public function bookCopies()
     {
         return $this->hasMany(BookCopy::class);
+    }
+
+    public function popularity()
+    {
+        return $this->bookCopies()->count();
     }
 }

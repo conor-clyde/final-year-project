@@ -10,6 +10,10 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Loan extends Model
 {
+    use SoftDeletes;
+
+
+
     public function bookCopy()
     {
         return $this->belongsTo(BookCopy::class);

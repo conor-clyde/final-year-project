@@ -68,6 +68,7 @@ Route::delete('/delete-author/{authorId}/{catalogueEntryId}', [BookController::c
 
 
 Route::get('/loan/conortest/{id}', [LoanController::class, 'conortest'])->name('loan.conortest');
+Route::get('/loan/conortest2/{id}', [LoanController::class, 'conortest2'])->name('loan.conortest2');
 //Route::post('/genre/archive/{genre}', [GenreController::class, 'archive'])->name('genre.archive');
 
 Route::get('/genre/unarchive/{genre}',  [GenreController::class, 'unarchive'])->name('genre.unarchive');
@@ -82,10 +83,12 @@ Route::post('/genre/bulk-archive', [GenreController::class, 'bulkArchive'])->nam
 
 Route::get('/genre', [GenreController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('genre');;
 
+Route::get('/user', [UserController::class, 'index'])->middleware(['auth', 'verified'])->name('user');;
 
 
 //
 //Route::resource('genres', 'GenreController');
+
 
 //publisher
 Route::get('/publisher', [PublisherController::class, 'index'])->middleware(['auth', 'verified'])->middleware(['auth', 'is_librarian'])->name('publisher');;
@@ -123,7 +126,7 @@ Route::get('/author/{author}', [AuthorController::class, 'show']);
 Route::get('/author/unarchive/{author}',  [AuthorController::class, 'unarchive'])->name('author.unarchive');
 Route::get('/author/restore/{author}',  [AuthorController::class, 'restore'])->name('author.restore');
 Route::delete('/author/permanent-delete/{id}', [AuthorController::class, 'permanentDelete'])->name('author.permanent-delete');
-
+Route::post('/author/delete', [AuthorController::class, 'destroy'])->name('author.delete');;
 
 
 //book
@@ -154,13 +157,17 @@ Route::get('/loan/return/{loan}',  [LoanController::class, 'return'])->name('loa
 Route::get('/loan/create',  [LoanController::class, 'create'])->name('loan.create');
 Route::post('/loan/created', [LoanController::class, 'store'])->name('loan.store');;
 Route::get('/loan/{loan}/edit',  [LoanController::class, 'edit']);
-Route::post('/loan/delete', [LoanController::class, 'destroy'])->name('loan.delete');;
+Route::post('/loan/delete', [LoanController::class, 'destroy']);
+Route::get('/loan/check-deletion/{id}', [LoanController::class, 'checkDeletionStatus'])->name('loan.check-deletion');
+Route::get('/loan/deleted', [LoanController::class, 'deleted'])->name('loan.deleted');
+Route::put('/loan/update/{loan}', [LoanController::class, 'update'])->name('loan.update');;
 
 
 
-Route::get('/user', function () {
-    return view('user.index');
-})->middleware(['auth', 'verified'])->middleware(['auth', 'is_admin'])->name('user');
+//
+//Route::get('/user', function () {
+//    return view('user.index');
+//})->middleware(['auth', 'verified'])->middleware(['auth', 'is_admin'])->name('user');
 
 
 

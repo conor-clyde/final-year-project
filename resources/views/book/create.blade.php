@@ -1,19 +1,19 @@
 <x-app-layout>
 
-    {{-- Header --}}
+    <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-gray-800 leading-tight" style="margin: 16px;">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Add Book') }}
         </h2>
     </x-slot>
 
-    {{-- Book.Create --}}
+    <!-- Book.create -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 genres">
 
-                    {{-- Error Message --}}
+                    <!-- Error message -->
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul>
@@ -24,7 +24,7 @@
                         </div>
                     @endif
 
-                    {{-- Return Button --}}
+                    <!-- Return button and required message -->
                     <div class="top-buttons d-flex justify-content-between">
                         <a href="{{ route('book') }}" class="btn btn-secondary mb-4 returnBtn">Go Back</a>
                         <div>
@@ -32,7 +32,7 @@
                         </div>
                     </div>
 
-                    {{-- Add Book Form --}}
+                    <!-- Add book form -->
                     <form method="post" action="{{ route('book.store') }}">
                         @csrf
 
@@ -102,12 +102,12 @@
                                     <div class="col-md-5">
                                         <div class="form-group">
                                             <div id="author-inputs">
-                                                <input class="form-control" type="text" name="author_surname[]"
-                                                       value="{{ old('author.0') ? '' : old('author_surname.0') }}"
-                                                       placeholder="Enter Surname...">
                                                 <input class="form-control" type="text" name="author_forename[]"
                                                        value="{{ old('author.0') ? '' : old('author_forename.0') }}"
                                                        placeholder="Enter Forename...">
+                                                <input class="form-control" type="text" name="author_surname[]"
+                                                       value="{{ old('author.0') ? '' : old('author_surname.0') }}"
+                                                       placeholder="Enter Surname...">
                                             </div>
                                         </div>
                                     </div>
@@ -143,7 +143,7 @@
                             {{-- Book Description --}}
                             <label class="form-label" for="description">Description</label>
                             <textarea style="resize: none;" class="form-control" id="description" name="description"
-                                      placeholder="Enter description ..."
+                                      placeholder="Enter Description ..."
                                       rows="5">{{ old('description') ? old('description') : '' }}</textarea>
                         </div>
 

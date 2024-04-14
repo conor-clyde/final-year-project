@@ -2,7 +2,7 @@
 
     {{-- Header --}}
     <x-slot name="header">
-        <h2 class="font-semibold text-gray-800 leading-tight" style="margin: 16px;">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Add Loan') }}
         </h2>
     </x-slot>
@@ -36,7 +36,6 @@
                     <form method="post" action="{{route('loan.store')}}">
                         @csrf
 
-
                         <div class="row align-items-center">
 
                             {{-- Book Title --}}
@@ -48,7 +47,8 @@
                                     <input type="text" id="search_title" class="form-control">
                                 </div>
                                 <div class="col-md-1">
-                                    <button style="width:100%" type="button" id="conortest" class="conortest btn btn-primary" value="101">
+                                    <button style="width:100%" type="button" id="conortest"
+                                            class="conortest btn btn-primary" value="101">
                                         Search
                                     </button>
                                 </div>
@@ -58,14 +58,14 @@
                                 {{-- Container for displaying matching book titles --}}
                                 <div class="col-md-7">
                                     <div id="matching_titles_container">
-                                        <select id="returned_books" class="form-control" name="title" size="20"
+                                        <select id="returned_books" class="form-control" name="title" size="16"
                                                 style="margin-top: 0; ">
-
 
 
                                         </select>
                                     </div>
                                 </div>
+
                                 {{-- Container for Book Details  --}}
                                 <div class="col-md-5">
                                     <div id="book_details_container" class="p-3 border rounded">
@@ -73,7 +73,6 @@
                                     </div>
                                 </div>
                             </div>
-
 
                             {{-- Patron--}}
                             <div class="row align-items-center">
@@ -88,7 +87,8 @@
                                         @foreach($patrons as $patron)
                                             <option
                                                 value="{{ $patron->id }}">
-                                                {{ $patron->id }}: {{ $patron->surname }}, {{ $patron->forename }}</option>
+                                                {{ $patron->surname }}  {{ $patron->forename }} ({{ $patron->id }})
+                                            </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -119,27 +119,36 @@
     </div>
 
 
-    <!-- Confirm archive-->
     <script>
+        $(document).ready(function () {
+            // Simulate click event on page load
+            $('.conortest').trigger('click');
+        });
+
+
         $('.conortest').click(function (e) {
             e.preventDefault();
 
-            var book_id = $('#search_title').val();
-            console.log(book_id);
-            var url = "book/archive/" + book_id;
+            var book_id
+            var url
+
+            if ($('#search_title').val().trim() == '') {
+                book_id = 'test'
+                url = '{{ route('loan.conortest2', ':id') }}'.replace(':id', book_id);
+            } else {
+                book_id = $('#search_title').val();
+                url = '{{ route('loan.conortest', ':id') }}'.replace(':id', book_id);
+            }
 
             $.ajax({
-                url: '{{ route('loan.conortest', ':id') }}'.replace(':id', book_id),
+                url: url,
                 type: 'GET',
                 success: function (response) {
                     var books = response.books;
                     var selectDropdown = $('#returned_books');
-                    var container = $('#matching_titles_container');
+                    var groupedBooks = {};
 
                     selectDropdown.empty();
-
-                    console.log(books);
-                    var groupedBooks = {};
 
                     books.forEach(function (book) {
                         if (!groupedBooks[book.catalogue_entry.title]) {
@@ -152,7 +161,6 @@
                         var booksWithTitle = groupedBooks[title];
                         var section = `<optgroup label="${title}`;
 
-                        // Display authors if available (only for the first book in the group)
                         if (booksWithTitle[0].catalogue_entry.authors.length > 0) {
                             var authors = booksWithTitle[0].catalogue_entry.authors.map(function (author) {
                                 return author.forename + ' ' + author.surname;
@@ -192,14 +200,11 @@
 
                 },
                 error: function (error) {
-                    alert('Error checking archive status');
+                    alert('Error');
                 }
             });
         });
     </script>
-
-
-
 
     <link rel="stylesheet" type="text/css" href="{{ asset('css/styles.css') }}">
 </x-app-layout>

@@ -96,42 +96,32 @@
                         @endforeach
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-
-
-    <!-- Imported scripts -->
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+
+    <!-- DataTables Buttons JS -->
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
     <script type="text/javascript" charset="utf8"
             src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
-
-    <!-- DataTables Responsive CSS -->
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-
     <!-- DataTables Responsive JS -->
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-
 
     <script>
         $(document).ready(function () {
@@ -146,8 +136,10 @@
                 buttons: [{
                     extend: 'csv',
                     text: 'Export Book List',
-                    exportOptions: {columns: [0, 1, 2, 3, 4]},
-                    title: 'Books'
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    },
+                    title: 'Deleted Books'
                 }],
                 lengthMenu: [
                     [10, 25, 50, -1],
@@ -162,7 +154,6 @@
                         targets: [1, 5, 6, 7, 8, 9, 10],
                         searchable: false,
                     }],
-
                 order: [[2, 'asc']]
             });
 
