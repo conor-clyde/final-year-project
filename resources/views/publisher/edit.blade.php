@@ -40,7 +40,7 @@
                         <div class="row align-items-center">
                             <label class="form-label" for="forename">Publisher <span
                                     class="text-danger">*</span></label>
-                            <input id="publisher" type="text" class="form-control" name="publisher"
+                            <input id="name" type="text" class="form-control" name="name"
                                    required placeholder="Enter Publisher..." value="{{ $publisher->name }}"/>
                         </div>
 

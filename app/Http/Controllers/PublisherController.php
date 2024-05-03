@@ -9,6 +9,7 @@ use App\Models\Genre;
 use App\Models\Publisher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Yajra\DataTables\DataTables;
 
 
@@ -51,32 +52,57 @@ class PublisherController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'publisher' => 'required|max:255'
+        // Validation error messages
+        $customMessages = [
+            'publisher.max' => 'The publishers\'s name must not exceed 255 characters',
+        ];
+
+        $validatedData = $request->validate([
+            'name' => 'required|max:255|unique:publishers'
+        ],
+            $customMessages
+        );
+
+        $publisher = new Publisher([
+            'name' => $validatedData['name']
         ]);
 
+
         // Create publisher
-        $publisher = new Publisher;
-        $publisher->name = $request->input('publisher');
         $publisher->save();
 
         return redirect('/publisher')->with('flashMessage', 'Publisher added successfully!');
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $publisher = Publisher::find($id);
 
         return view('publisher.edit')->with('publisher', $publisher);
     }
 
-    public function update(Request $request, $id) {
-        $this->validate($request, [
-            'publisher' => 'required|max:255'
-        ]);
+    public function update(Request $request, $id)
+    {
+        // Validation error messages
+        $customMessages = [
+            'name.max' => 'The genre\'s name must not exceed 255 characters',
+        ];
 
-        $publisher = Publisher::find($id);
-        $publisher->name = $request->input('publisher');
+
+        $validatedData = $request->validate([
+            'name' => [
+                'required',
+                'max:255',
+                Rule::unique('publishers')->ignore($id),
+            ]
+        ],
+            $customMessages
+        );
+
+        $publisher = Publisher::findOrFail($id);
+        $publisher->fill($validatedData);
         $publisher->save();
+
 
         return redirect('/publisher')->with('flashMessage', 'Publisher updated successfully!');
     }
@@ -179,10 +205,6 @@ class PublisherController extends Controller
         $publisher->forceDelete();
         return redirect()->route('publisher.deleted')->with('flashMessage', 'Publisher permanently deleted!');
     }
-
-
-
-
 
 
 }

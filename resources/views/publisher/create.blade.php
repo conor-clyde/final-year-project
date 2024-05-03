@@ -39,8 +39,8 @@
                         <div class="row align-items-center">
                             <label class="form-label" for="forename">Publisher <span
                                     class="text-danger">*</span></label>
-                            <input id="publisher" type="text" class="form-control" name="publisher"
-                                   required value="{{ old('publisher') }}" placeholder="Enter publisher..."/>
+                            <input id="name" type="text" class="form-control" name="name"
+                                   required value="{{ old('name') }}" placeholder="Enter publisher..."/>
                         </div>
 
                         <div class="text-right">

@@ -29,8 +29,8 @@
                         $books = \App\Models\BookCopy::where('catalogue_entry_id', $book->catalogue_entry_id)->get();
                         ?>
                     <p style="margin-bottom: 10px;">The library has {{ count($books) }} book(s) under this title. ID(s):
-                        @foreach ($books as $book)
-                            {{ $book->id }}
+                        @foreach ($books as $book2)
+                            {{ $book2->id }}
                             @if (!$loop->last)
                                 <!-- Check if it's not the last book -->
                                 , <!-- Add comma if it's not the last book -->
@@ -86,13 +86,14 @@
                                 {{ $book->catalogueEntry->description }}
                             </div>
                             @if (strlen($book->catalogueEntry->description) > 200)
-                                <button id="toggleDescriptionBtn" class="btn btn-link" type="button">See Full Description</button>
+                                <button id="toggleDescriptionBtn" class="btn btn-link" type="button">See Full
+                                    Description
+                                </button>
                             @endif
                         </td>
                     </tr>
                     </tbody>
                 </table>
-
 
                 <h2>Book Copy Details</h2>
                 <table id="showBook" class="data-table table">
@@ -102,36 +103,28 @@
                         <th>Value</th>
                     </tr>
                     </thead>
-
                     <tbody>
-
-
                     <tr>
                         <td>ID</td>
+
                         <td>{{ $book->id }}</td>
                     </tr>
-
                     <tr>
                         <td>Format</td>
                         <td>{{ $book->format->name }}</td>
                     </tr>
-
-
                     <tr>
                         <td>Language</td>
                         <td>{{ $book->language->name }}</td>
                     </tr>
-
                     <tr>
                         <td>Condition</td>
                         <td>{{ $book->condition->name }}</td>
                     </tr>
-
                     <tr>
                         <td>Publisher</td>
                         <td>{{ $book->publisher->name }}</td>
                     </tr>
-
                     <tr>
                         <td>Publish Date</td>
                         <td>{{ date('jS M Y', strtotime($book->publish_date)) }}</td>

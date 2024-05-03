@@ -12,6 +12,11 @@ class Publisher extends Model
 {
     use SoftDeletes;
 
+    protected $fillable = [
+        'name'
+    ];
+
+
     public function bookCopies()
     {
         return $this->hasMany(BookCopy::class);

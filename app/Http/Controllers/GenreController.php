@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
 class GenreController extends Controller
 {
     // Genre.index
-    public function index(Request $request)
+    public function index()
     {
         $genres = Genre::orderBy('name')->where('archived', 0)->get();
         return view('genre.index', compact('genres'));

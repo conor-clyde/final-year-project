@@ -33,7 +33,9 @@ class BookController extends Controller
 
     public function show($id)
     {
+
         $book = BookCopy::withTrashed()->find($id);
+        //dd($book);
         $book->load('loans');
         $book->load('catalogueEntry');
         $book->load('catalogueEntry.genre');

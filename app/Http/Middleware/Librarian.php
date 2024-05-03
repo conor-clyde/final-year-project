@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class librarian
+class Librarian
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,8 @@ class librarian
         {
             return $next($request);
         }
-        else
+        else {
             abort(403);
+        }
     }
 }
