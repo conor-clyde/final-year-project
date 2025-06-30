@@ -2,7 +2,7 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Authors') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Author.index -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -56,23 +56,17 @@
                                 <td>{{ $author->popularity() }}</td>
 
                                 <!--  Author action buttons -->
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a class="btn btn-primary btn-width-80" href="author/{{ $author->id }}">Details</a>
+                                <td>
+                                    <a class="btn btn-primary" href="author/{{ $author->id }}">Details</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a href="author/{{$author->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
+                                <td>
+                                    <a href="author/{{$author->id}}/edit" class="btn btn-primary">Edit</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80"
-                                            value="{{ $author->id }}" data-bs-toggle="modal"
-                                            data-bs-target="#archiveModal">Archive
-                                    </button>
+                                <td>
+                                    <button type="button" class="btn btn-primary archiveCategoryBtn" value="{{ $author->id }}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
-                                            value="{{$author->id}}" data-bs-toggle="modal"
-                                            data-bs-target="#deleteModal">Delete
-                                    </button>
+                                <td>
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$author->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -120,7 +114,7 @@
             var category_id = $(this).val();
 
             $.ajax({
-                url: '{{ route('author.check-deletion', ':id') }}'.replace(':id', category_id),
+                url: '{{ route('author.check-delete', ':id') }}'.replace(':id', category_id),
                 type: 'GET',
                 success: function (response) {
                     console.log(response.message);

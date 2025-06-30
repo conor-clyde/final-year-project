@@ -2,7 +2,7 @@
 
     <!-- Header-->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Update Publisher') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Publisher.edit-->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Errors-->
                     @if ($errors->any())
@@ -54,5 +54,4 @@
         </div>
     </div>
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
 </x-app-layout>

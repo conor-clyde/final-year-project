@@ -146,14 +146,12 @@ class BookSeeder extends Seeder
                 $genre = Genre::inRandomOrder()->first();
                 $catalogueEntry = CatalogueEntry::create([
                     'title' => $bookTitle,
-                    'genre_id' => $genre->id
+                    'genre_id' => $genre->id,
+                    'description' => \App\Helpers\DataGenerator::randomText(30)
                 ]);
 
                 // Store the new CatalogueEntry
                 $existingCatalogueEntries[] = $catalogueEntry;
-
-                $description = $this->generateRandomDescription();
-                $catalogueEntry->update(['description' => $description]);
 
                 $authors = Author::inRandomOrder()->limit(rand(1, min(3, Author::count())))->get();
 
@@ -172,15 +170,13 @@ class BookSeeder extends Seeder
             $format = Format::inRandomOrder()->first();
             $condition = Condition::inRandomOrder()->first();
 
-            $startDate = now()->subYears(100);
-            $randomTimestamp = Carbon::createFromTimestamp(rand($startDate->timestamp, time()));
-
+            $publishDate = \App\Helpers\DataGenerator::randomDate(1920, 2024);
 
             BookCopy::create([
                 'catalogue_entry_id' => $catalogueEntry->id,
                 'condition_id' => $condition->id,
                 'publisher_id' => $publisher->id,
-                'publish_date' => $randomTimestamp,
+                'publish_date' => $publishDate,
                 'language_id' => $language->id,
                 'format_id' => $format->id,
                 'pages' => rand(50, 1000)

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +11,11 @@ class Author_CatalogueEntry extends Model
 {
     protected $table = 'author_catalogue_entries';
     public $timestamps = false;
-    protected $primaryKey = ['authorId', 'catalogueEntryId'];
+    protected $primaryKey = ['author_id', 'catalogue_entry_id'];
     public $incrementing = false;
 
+    protected $fillable = [
+        'author_id',
+        'catalogue_entry_id'
+    ];
 }

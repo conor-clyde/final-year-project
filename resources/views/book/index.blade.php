@@ -2,7 +2,7 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Books') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Book.index -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -19,6 +19,11 @@
                             {{ Session::get('flashMessage') }}
                         </div>
                     @endif
+
+                    <!-- Debug info -->
+                    <div class="alert alert-info">
+                        Number of books: {{ $books->count() }}
+                    </div>
 
                     <!-- Add, archived, and deleted buttons -->
                     <div class="top-buttons d-flex justify-content-between">
@@ -56,28 +61,37 @@
                             <tr>
                                 <td>{{ $book->id }}</td>
                                 <td>
-                                    @if ($book->format->name == "Paperback")
+                                    @if ($book->format && $book->format->name == "Paperback")
                                         PB
                                     @else
                                         HC
                                     @endif
                                 </td>
-                                <td>{{ $book->catalogueEntry->title }}</td>
+                                <td>{{ $book->catalogueEntry ? $book->catalogueEntry->title : 'No Title' }}</td>
 
                                 <!-- Book Authors -->
                                 <td>
-                                    @foreach($book->catalogueEntry->authors as $author)
-                                        {{ $author->forename }} {{ $author->surname }}
-                                        @if (!$loop->last)
-                                            &amp;
-                                        @endif
-                                    @endforeach
+                                    @if($book->catalogueEntry && $book->catalogueEntry->authors)
+                                        @foreach($book->catalogueEntry->authors as $author)
+                                            {{ $author->forename }} {{ $author->surname }}
+                                            @if (!$loop->last)
+                                                &amp;
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        No Author
+                                    @endif
                                 </td>
 
-                                <td>{{ $book->publisher->name }}<br>
-                                    ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
+                                <td>
+                                    @if($book->publisher)
+                                        {{ $book->publisher->name }}<br>
+                                        ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
+                                    @else
+                                        No Publisher
+                                    @endif
                                 </td>
-                                <td>{{ $book->condition->name }}</td>
+                                <td>{{ $book->condition ? $book->condition->name : 'No Condition' }}</td>
 
                                 <!-- Book Status -->
                                 <td>
@@ -91,21 +105,19 @@
                                 <td>{{ $book->popularity() }}</td>
 
                                 <!-- Book Action Buttons -->
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a class="btn btn-primary btn-width-80" href="book/{{ $book->id }}">Details</a>
+                                <td>
+                                    <a class="btn btn-primary" href="book/{{ $book->id }}">Details</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a href="book/{{$book->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
+                                <td>
+                                    <a href="book/{{$book->id}}/edit" class="btn btn-primary">Edit</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <button type="button" class="btn btn-primary archiveCategoryBtn btn-width-80"
-                                            value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">
+                                <td>
+                                    <button type="button" class="btn btn-primary archiveCategoryBtn" value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">
                                         Archive
                                     </button>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
-                                            value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <td>
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         Delete
                                     </button>
                                 </td>
@@ -205,4 +217,5 @@
             });
         });
     </script>
+
 </x-app-layout>

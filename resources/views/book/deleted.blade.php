@@ -4,15 +4,15 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Deleted Books') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     @if(Session::has('flashMessage'))
                         <div class="alert alert-success">
@@ -22,10 +22,9 @@
 
                     <!-- Return and Restore all buttons -->
                     <div class="top-buttons d-flex justify-content-between">
-                        <a href="{{ route('book') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                        <a href="{{ route('book') }}" class="btn btn-secondary">Go Back</a>
                         <div>
-                            <a href="{{ route('book.restore-all') }}" class="btn btn-primary"
-                               style="margin-bottom: 40px;">Restore All</a>
+                            <a href="{{ route('book.restore-all') }}" class="btn btn-primary">Restore All</a>
                         </div>
                     </div>
 
@@ -78,17 +77,17 @@
                                     @endif
                                 </td>
                                 <td>{{ $book->popularity() }}</td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a class="btn btn-primary btn-width-80" href="{{ $book->id }}">Details</a>
+                                <td>
+                                    <a class="btn btn-primary" href="{{ $book->id }}">Details</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
+                                <td>
                                     <a href="restore/{{$book->id}}" class="btn btn-primary">Restore</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <form action="{{ route('book.permanent-delete', $book->id) }}" method="POST" class="pull-right" style="display: inline;">
+                                <td>
+                                    <form action="{{ route('book.permanent-delete', $book->id) }}" method="POST" class="pull-right">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" style="background-color: #dc3545;" onclick="return confirmPermanentDelete(event, {{ $book->id }})">
+                                        <button type="submit" class="btn btn-danger" onclick="return confirmPermanentDelete(event, {{ $book->id }})">
                                             Perm. Delete
                                         </button>
                                     </form>

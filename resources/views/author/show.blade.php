@@ -1,7 +1,7 @@
 <x-app-layout>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Author Details') }}
         </h2>
     </x-slot>
@@ -9,7 +9,7 @@
     <!-- Author.show -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div >
 
                 <!-- Flash message -->
                 @if(session('flashMessage'))
@@ -23,11 +23,11 @@
 
                 <!-- Author Details -->
                 <h2>{{ $author->id }}: {{ $author->forename }} {{ $author->surname}}</h2>
-                <p style="margin-bottom: 8px;">Added:    {{ $author->created_at->format('jS M Y, H:i:s') }}</p>
-                <p style="margin-bottom: 8px;">Last Updated:   {{ $author->updated_at->format('jS M Y, H:i:s') }}</p>
-                <div style="padding-top: 4px;" class="border-b-2 border-gray-300 mb-2"></div>
+                <p>Added:    {{ $author->created_at->format('jS M Y, H:i:s') }}</p>
+                <p>Last Updated:   {{ $author->updated_at->format('jS M Y, H:i:s') }}</p>
+                <div ></div>
                 <div class="mb-8">
-                    <div style="margin: 20px 4px;" class="row">
+                    <div class="row">
 
                         <!-- Book Titles -->
                         <h2 class="text-xl font-semibold mb-4">Books Written
@@ -78,7 +78,7 @@
                                 </tbody>
                             </table>
                         @else
-                            <p class="text-gray-600">No books are written by this author</p>
+                            <p >No books are written by this author</p>
                         @endif
                     </div>
 

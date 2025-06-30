@@ -1,7 +1,7 @@
 <x-app-layout>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Deleted Publishers') }}
         </h2>
     </x-slot>
@@ -9,8 +9,8 @@
     <!-- Publisher.deleted -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -21,9 +21,9 @@
 
                         <!-- Return and Restore all buttons -->
                         <div class="top-buttons d-flex justify-content-between">
-                            <a href="{{ route('publisher') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                            <a href="{{ route('publisher') }}" class="btn btn-secondary">Go Back</a>
                             <div>
-                                <a href="{{ route('publisher.restore-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Restore All</a>
+                                <a href="{{ route('publisher.restore-all') }}" class="btn btn-primary">Restore All</a>
                             </div>
                         </div>
 
@@ -49,13 +49,13 @@
                                 <td>{{ $publisher->id }}</td>
                                 <td>{{ $publisher->name }}</td>
                                 <td>{{ $publisher->popularity() }}</td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a class="btn btn-primary btn-width-80" href="{{ $publisher->id }}">Details</a>
+                                <td>
+                                    <a class="btn btn-primary" href="{{ $publisher->id }}">Details</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
+                                <td>
                                     <a href="restore/{{$publisher->id}}" class="btn btn-primary">Restore</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
+                                <td>
                                     <form action="{{ route('publisher.permanent-delete', $publisher->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')

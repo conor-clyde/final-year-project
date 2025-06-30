@@ -9,7 +9,7 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" name="genre_id" id="archive_genre_id">
-                <textarea style="border: none; border-color: transparent; width:100%; resize: none;" readonly id="archiveQuestion" cols="50" rows="2"></textarea>
+                <textarea readonly id="archiveQuestion" cols="50" rows="2"></textarea>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

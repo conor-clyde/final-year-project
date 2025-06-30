@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CatalogueEntry extends Model
 {
-    use HasFactory;
+    use SoftDeletes;
 
     protected $dates = [
         'publish_date'
@@ -17,10 +17,10 @@ class CatalogueEntry extends Model
 
     protected $fillable = [
         'title',
-        'description',
         'genre_id',
+        'description',
         'language_id',
-        'format_id',
+        'format_id'
     ];
 
     public function genre()
@@ -35,7 +35,7 @@ class CatalogueEntry extends Model
 
     public function authors()
     {
-        return $this->belongsToMany(Author::class, 'author_catalogue_entry');
+        return $this->belongsToMany(Author::class, 'author_catalogue_entries');
     }
 
     protected static function boot()

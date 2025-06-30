@@ -2,29 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class Loan extends Model
 {
-    use HasFactory, SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'book_copy_id',
         'patron_id',
         'staff_id',
-        'start_time',
-        'end_time',
-        'is_returned',
+        'loan_date',
+        'due_date',
+        'return_date'
     ];
 
     protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
-        'is_returned' => 'boolean',
+        'loan_date' => 'date',
+        'due_date' => 'date',
+        'return_date' => 'date',
     ];
 
     public function bookCopy()

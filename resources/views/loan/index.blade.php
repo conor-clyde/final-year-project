@@ -2,7 +2,7 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl leading-tight">
             {{ __('Loans') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Loan.index -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div class="overflow-hidden">
+                <div class="p-6 genres">
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -58,20 +58,19 @@
                                 ({{ $loan->bookCopy->id }})</td>
                                 <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }} ({{ $loan->patron->id }})
                                 </td>
-                                <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}
-                                </td>
-                                <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($loan->loan_date)->format('jS M Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($loan->due_date)->format('jS M Y') }}</td>
                                 <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
 
-                                <td style="padding-right:4px; padding-left: 4px;">
+                                <td>
                                     @if (!$loan->is_returned)
-                                        <a class="btn btn-primary btn-width-80" href="loan/return/{{ $loan->id }}">
+                                        <a class="btn btn-primary" href="loan/return/{{ $loan->id }}">
                                             Return</a>
                                     @else
                                     @endif
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a href="loan/{{$loan->id}}/edit" class="btn btn-primary btn-width-80">Edit</a>
+                                <td>
+                                    <a href="loan/{{$loan->id}}/edit" class="btn btn-primary">Edit</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -93,7 +92,7 @@
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
 
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>

@@ -2,12 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Format;
-use App\Models\Genre;
-use App\Models\Language;
-use App\Models\Publisher;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Language;
 use Illuminate\Support\Facades\DB;
 
 class LanguageSeeder extends Seeder
@@ -18,17 +14,13 @@ class LanguageSeeder extends Seeder
     public function run(): void
     {
         DB::table('languages')->delete();
-
         $languages = [
-            'English'
+            'English', 'French', 'Spanish', 'German', 'Italian', 'Chinese', 'Japanese', 'Russian', 'Arabic', 'Hindi'
         ];
-
-        // Insert publishers into the database
         foreach ($languages as $language) {
             Language::create([
-                'name' => $language,
+                'name' => $language
             ]);
         }
-
     }
 }

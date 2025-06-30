@@ -2,7 +2,7 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Archived Books') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Book.archive -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -24,8 +24,7 @@
                     <div class="top-buttons d-flex justify-content-between">
                         <a href="{{ route('book') }}" class="btn btn-secondary">Go Back</a>
                         <div>
-                            <a href="{{ route('book.unarchive-all') }}" class="btn btn-primary"
-                               style="margin-bottom: 40px;">Unarchive All</a>
+                            <a href="{{ route('book.unarchive-all') }}" class="btn btn-primary">Unarchive All</a>
                         </div>
                     </div>
 
@@ -88,15 +87,14 @@
                                 <td>{{ $book->popularity() }}</td>
 
                                 <!-- Book Action Buttons -->
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a class="btn btn-primary btn-width-80" href="{{ $book->id }}">Details</a>
+                                <td>
+                                    <a class="btn btn-primary" href="{{ $book->id }}">Details</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
+                                <td>
                                     <a href="unarchive/{{$book->id}}" class="btn btn-primary">Unarchive</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80"
-                                            value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <td>
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         Delete
                                     </button>
                                 </td>

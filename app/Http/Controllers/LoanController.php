@@ -24,7 +24,7 @@ class LoanController extends Controller
 {
     public function index(Request $request)
     {
-        $loans = Loan::orderBy('start_time')
+        $loans = Loan::orderBy('loan_date')
             ->get();
 
         return view('loan.index', compact('loans'));
@@ -164,8 +164,8 @@ class LoanController extends Controller
         }
 
         // Set start and end time
-        $loan->start_time = now();
-        $loan->end_time = $endTime;
+        $loan->loan_date = now();
+        $loan->due_date = $endTime;
 
         $user = Auth::user();
 
@@ -216,17 +216,17 @@ class LoanController extends Controller
 
         $loan = Loan::find($id);
 
-        $startTime = \Carbon\Carbon::parse($loan->start_time);
-        $endTime = \Carbon\Carbon::parse($loan->end_time);
+        $startTime = \Carbon\Carbon::parse($loan->loan_date);
+        $endTime = \Carbon\Carbon::parse($loan->due_date);
 
         $loan->patron_id = $request->input('patron');
         $loan->book_copy_id = $request->input('title');
         $loan->is_returned = $request->input('is_returned');
 
         if ($loanDuration === '2_weeks') {
-            $loan->end_time = $startTime->addWeeks(2);
+            $loan->due_date = $startTime->addWeeks(2);
         } else { // Default to one month if loan duration is not specified or invalid
-            $loan->end_time = $startTime->addMonth();
+            $loan->due_date = $startTime->addMonth();
         }
 
 

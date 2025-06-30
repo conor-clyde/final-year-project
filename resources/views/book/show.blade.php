@@ -1,7 +1,7 @@
 <x-app-layout>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Book Details') }}
         </h2>
     </x-slot>
@@ -9,7 +9,7 @@
     <!-- Genre.show -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div >
 
                 <!-- Flash message -->
                 @if(session('flashMessage'))
@@ -28,7 +28,7 @@
                         <?php
                         $books = \App\Models\BookCopy::where('catalogue_entry_id', $book->catalogue_entry_id)->get();
                         ?>
-                    <p style="margin-bottom: 10px;">The library has {{ count($books) }} book(s) under this title. ID(s):
+                    <p>The library has {{ count($books) }} book(s) under this title. ID(s):
                         @foreach ($books as $book2)
                             {{ $book2->id }}
                             @if (!$loop->last)
@@ -45,7 +45,7 @@
                     <!-- Table Headers -->
                     <thead>
                     <tr>
-                        <th style="width: 20px">Detail</th>
+                        <th>Detail</th>
                         <th>Value</th>
                     </tr>
                     </thead>
@@ -78,11 +78,11 @@
                     </tr>
                     <tr>
                         <td>Description</td>
-                        <td style="max-width: 200px; word-wrap: break-word;">
+                        <td>
                             <div id="shortDescription">
                                 {{ \Illuminate\Support\Str::limit($book->catalogueEntry->description, 200) }}
                             </div>
-                            <div id="fullDescription" style="display: none;">
+                            <div id="fullDescription">
                                 {{ $book->catalogueEntry->description }}
                             </div>
                             @if (strlen($book->catalogueEntry->description) > 200)
@@ -99,7 +99,7 @@
                 <table id="showBook" class="data-table table">
                     <thead>
                     <tr>
-                        <th style="max-width: 20px;">Detail</th>
+                        <th>Detail</th>
                         <th>Value</th>
                     </tr>
                     </thead>
@@ -207,15 +207,15 @@
                                         <tr>
                                             <td>{{ $loan->id }}</td>
                                             <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($loan->loan_date)->format('jS M Y') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($loan->due_date)->format('jS M Y') }}</td>
                                             <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
                             @else
-                                <p class="text-gray-600">This book has not been loaned.</p>
+                                <p >This book has not been loaned.</p>
                             @endif
                         </div>
                     </div>

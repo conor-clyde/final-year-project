@@ -2,7 +2,7 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Archived Publishers') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Genre.archived -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -24,7 +24,7 @@
                         <div class="top-buttons d-flex justify-content-between">
                             <a href="{{ route('publisher') }}" class="btn btn-secondary">Go Back</a>
                             <div>
-                                <a href="{{ route('publisher.unarchive-all') }}" class="btn btn-primary" style="margin-bottom: 40px;">Unarchive All</a>
+                                <a href="{{ route('publisher.unarchive-all') }}" class="btn btn-primary">Unarchive All</a>
                             </div>
                         </div>
 
@@ -52,16 +52,14 @@
                                 </td>
                                 <td>{{ $publisher->name }}</td>
                                 <td>{{ $publisher->popularity() }}</td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a class="btn btn-primary btn-width-80" href="{{ $publisher->id }}">Details</a>
+                                <td>
+                                    <a class="btn btn-primary" href="{{ $publisher->id }}">Details</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <a href="unarchive/{{$publisher->id}}"
-                                       class="btn btn-primary btn-width-100">Unarchive</a>
+                                <td>
+                                    <a href="unarchive/{{$publisher->id}}" class="btn btn-primary">Unarchive</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn btn-width-80 "
-                                            value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <td>
+                                    <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         Delete
                                     </button>
                                 </td>
@@ -155,7 +153,7 @@
             var category_id = $(this).val();
 
             $.ajax({
-                url: '{{ route('publisher.check-deletion', ':id') }}'.replace(':id', category_id),
+                url: '{{ route('publisher.check-delete', ':id') }}'.replace(':id', category_id),
                 type: 'GET',
                 success: function (response) {
                     console.log(response.message);

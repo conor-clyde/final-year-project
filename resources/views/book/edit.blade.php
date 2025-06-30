@@ -2,7 +2,7 @@
 
     {{-- Header --}}
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Update Book') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     {{-- Book.Edit --}}
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     {{-- Error Message --}}
                     @if ($errors->any())
@@ -32,7 +32,7 @@
                     @endif
 
                     <!-- Go back button -->
-                    <a href="{{ route('book') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                    <a href="{{ route('book') }}" class="btn btn-secondary">Go Back</a>
 
                     <!-- Update Book Title Details-->
                     <h2>Book Title Details</h2>
@@ -40,7 +40,7 @@
                             <?php
                             $books = \App\Models\BookCopy::where('catalogue_entry_id', $book->catalogue_entry_id)->get();
                             ?>
-                        <p style="margin-bottom: 10px;">The library has {{ count($books) }} book(s) under this title.
+                        <p>The library has {{ count($books) }} book(s) under this title.
                             ID(s):
                             @foreach ($books as $book)
                                 {{ $book->id }}
@@ -62,7 +62,7 @@
                             <!-- Table Headers -->
                             <thead>
                             <tr>
-                                <th style="width: 20px">Detail</th>
+                                <th>Detail</th>
                                 <th>Current Value</th>
                                 <th>New Value</th>
                             </tr>
@@ -151,13 +151,13 @@
 
                             {{-- Book Description --}}
                             <tr>
-                                <td style="vertical-align: top; max-width: 200px; word-wrap: break-word;">Description
+                                <td>Description
                                 </td>
-                                <td style="max-width: 200px; word-wrap: break-word;">
+                                <td>
                                     <div id="shortDescription">
                                         {{ \Illuminate\Support\Str::limit($book->catalogueEntry->description, 200) }}
                                     </div>
-                                    <div id="fullDescription" style="display: none;">
+                                    <div id="fullDescription">
                                         {{ $book->catalogueEntry->description }}
                                     </div>
                                     @if (strlen($book->catalogueEntry->description) > 200)
@@ -167,8 +167,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <textarea style="resize: vertical; min-height: 100px; max-height: 800px;"
-                                              class="form-control" id="description" name="description"
+                                    <textarea class="form-control" id="description" name="description"
                                               rows="5">{{ $book->catalogueEntry->description }} </textarea>
                                 </td>
                             </tr>
@@ -189,7 +188,7 @@
                         <table id="updateBook" class="data-table table">
                             <thead>
                             <tr>
-                                <th style="max-width: 20px;">Detail</th>
+                                <th>Detail</th>
                                 <th>Current Value</th>
                                 <th>New Value</th>
                             </tr>

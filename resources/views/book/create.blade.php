@@ -2,7 +2,7 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Add Book') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Book.create -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Error message -->
                     @if ($errors->any())
@@ -72,10 +72,9 @@
                         </div>
 
                         {{-- IF entering a new book title --}}
-                        <div id="newCatalogueEntryFields"
-                             style="display: none; margin-top:20px; margin-bottom:20px; padding: 20px 30px;background-color: #E5DFD8; border-radius: 20px;">
-                            <h3 style=" text-align: center;">New Book Title Details</h3>
-                            <hr style="margin-bottom: 10px;">
+                        <div id="newCatalogueEntryFields">
+                            <h3>New Book Title Details</h3>
+                            <hr>
 
                             {{-- Pre-existing book author selection --}}
                             <div class="form-group">
@@ -94,7 +93,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="col-md-2 text-center" style="text-align: center;">
+                                    <div class="col-md-2 text-center">
                                         <p class="or-divider">OR</p>
                                     </div>
 
@@ -115,11 +114,10 @@
 
                                 {{-- Add/remove author buttons --}}
                                 <div class="text-right">
-                                    <button style="width:40px; margin-bottom: 20px;" type="button"
-                                            id="remove-author-button" class="btn btn-danger">X
+                                    <button type="button"
+                                            id="remove-author-button">X
                                     </button>
-                                    <button style="width:120px; margin-bottom: 20px;" class='btn btn-primary'
-                                            type="button" id="add-author">Add Author
+                                    <button class='btn btn-primary' type="button" id="add-author">Add Author
                                     </button>
                                 </div>
                             </div>
@@ -142,7 +140,7 @@
 
                             {{-- Book Description --}}
                             <label class="form-label" for="description">Description</label>
-                            <textarea style="resize: none;" class="form-control" id="description" name="description"
+                            <textarea class="form-control" id="description" name="description"
                                       placeholder="Enter Description ..."
                                       rows="5">{{ old('description') ? old('description') : '' }}</textarea>
                         </div>
@@ -214,7 +212,7 @@
                                     </select>
                                 </div>
 
-                                <div class="col-md-2 text-center" style="text-align: center;">
+                                <div class="col-md-2 text-center">
                                     <p class="or-divider">OR</p>
                                 </div>
 
@@ -571,6 +569,4 @@
         });
     </script>
 
-
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/styles.css') }}">
 </x-app-layout>

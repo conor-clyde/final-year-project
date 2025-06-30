@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('start_time')->default(today());
-            $table->timestamp('end_time')->default(today());
-            $table->boolean('is_returned');
+            $table->date('loan_date')->nullable();
+            $table->date('due_date')->nullable();
+            $table->date('return_date')->nullable();
             $table->foreignId('book_copy_id');
             $table->foreignId('patron_id');
             $table->foreignId('staff_id');

@@ -1,15 +1,15 @@
 <x-app-layout>
 
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Update Genre') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     @if ($errors->any())
                         <div class="alert alert-danger">
@@ -40,9 +40,8 @@
                                    value="{{ $genre->name }}" required/>
 
                             <label for="description" class="form-label">Description</label>
-                            <textarea style="resize: vertical; min-height: 100px; max-height: 200px;"
-                                      class="form-control" id="description" placeholder="Enter description..."
-                                      name="description" rows="5">{{ $genre->description }}</textarea>
+                            <textarea class="form-control" id="description" name="description"
+                                      placeholder="Enter description..." rows="5">{{ $genre->description }}</textarea>
                         </div>
 
                         <div class="text-right">
@@ -54,5 +53,8 @@
         </div>
     </div>
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('styles.css') }}">
+    <script>
+        // ... existing script ...
+    </script>
+
 </x-app-layout>

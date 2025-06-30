@@ -2,16 +2,16 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Users') }}
         </h2>
     </x-slot>
 
-    <!-- Author.index -->
+    <!-- User.index -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -20,29 +20,39 @@
                         </div>
                     @endif
 
-                    <!-- Add, archived, and deleted buttons -->
-                    <div class="top-buttons d-flex justify-content-between">
-                        <a href="{{ route('author.create') }}" class="btn btn-primary">Add Author</a>
-                        <div>
-                            <a href="{{ route('author.archived') }}" class="btn btn-primary">Archived Authors</a>
-                            <a href="{{ route('author.deleted') }}" class="btn btn-primary">Deleted Authors</a>
-                        </div>
-                    </div>
-
-                    <!-- Author Index Table -->
-                    <table id="indexAuthor" class="data-table table">
+                    <!-- User Index Table -->
+                    <table id="indexUser" class="data-table table">
 
                         <!--  Table Headings -->
                         <thead>
                         <tr>
-                            <th>name</th>
-
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
                         </tr>
                         </thead>
 
                         <!--  Table Body -->
                         <tbody>
-
+                        @foreach($test as $user)
+                            <tr>
+                                <td>{{ $user->id }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if($user->role == 1)
+                                        Patron
+                                    @elseif($user->role == 2)
+                                        Librarian
+                                    @elseif($user->role == 3)
+                                        Admin
+                                    @else
+                                        Unknown
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -72,5 +82,17 @@
 
     <!-- DataTables Responsive JS -->
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#indexUser').DataTable({
+                responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+        });
+    </script>
 
 </x-app-layout>

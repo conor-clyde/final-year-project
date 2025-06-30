@@ -2,11 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Format;
-use App\Models\Genre;
-use App\Models\Publisher;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Format;
 use Illuminate\Support\Facades\DB;
 
 class FormatSeeder extends Seeder
@@ -17,18 +14,11 @@ class FormatSeeder extends Seeder
     public function run(): void
     {
         DB::table('formats')->delete();
-
-        $formats = [
-            'Hardcover',
-            'Paperback',
-        ];
-
-        // Insert publishers into the database
+        $formats = ['Hardcover', 'Paperback', 'Ebook', 'Audiobook'];
         foreach ($formats as $format) {
             Format::create([
-                'name' => $format,
+                'name' => $format
             ]);
         }
-
     }
 }

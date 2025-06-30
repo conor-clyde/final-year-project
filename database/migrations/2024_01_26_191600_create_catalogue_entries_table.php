@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('title');
             $table->timestamps();
             $table->foreignId('genre_id');
+            $table->softDeletes();
 
             $table->foreign('genre_id')->references('id')->on('genres')->onDelete('cascade');
            });

@@ -2,7 +2,7 @@
 
     {{-- Header --}}
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Update Loan') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     {{-- Loan.Edit --}}
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     {{-- Error Message --}}
                     @if ($errors->any())
@@ -32,7 +32,7 @@
                     @endif
 
                     <!-- Go back button -->
-                    <a href="{{ route('loan') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                    <a href="{{ route('loan') }}" class="btn btn-secondary">Go Back</a>
 
                     <!-- Update Book Title Details-->
                     <h2>Loan Details</h2>
@@ -45,7 +45,7 @@
                             <!-- Table Headers -->
                             <thead>
                             <tr>
-                                <th style="width: 20px">Detail</th>
+                                <th>Detail</th>
                                 <th>Current Value</th>
                                 <th>New Value</th>
                             </tr>
@@ -98,8 +98,8 @@
                             </tr>
 
                             @php
-                                $startTime = \Carbon\Carbon::parse($loan->start_time);
-                                $endTime = \Carbon\Carbon::parse($loan->end_time);
+                                $startTime = \Carbon\Carbon::parse($loan->loan_date);
+                                $endTime = \Carbon\Carbon::parse($loan->due_date);
                                 $type = "";
 
                                 // Create separate instances for comparison

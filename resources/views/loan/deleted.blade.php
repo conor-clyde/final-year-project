@@ -2,7 +2,7 @@
 
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Loans') }}
         </h2>
     </x-slot>
@@ -10,8 +10,8 @@
     <!-- Loan.index -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 genres">
+            <div >
+                <div >
 
                     <!-- Flash message -->
                     @if(Session::has('flashMessage'))
@@ -22,10 +22,10 @@
 
                     <!-- Return and Restore all buttons -->
                     <div class="top-buttons d-flex justify-content-between">
-                        <a href="{{ route('loan') }}" class="btn btn-secondary" style="margin-bottom: 40px;">Go Back</a>
+                        <a href="{{ route('loan') }}" class="btn btn-secondary">Go Back</a>
                         <div>
                             <a href="{{ route('loan') }}" class="btn btn-primary"
-                               style="margin-bottom: 40px;">Restore All</a>
+                              >Restore All</a>
                         </div>
                     </div>
 
@@ -66,14 +66,14 @@
                                 </td>
                                 <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
                                 <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
-                                <td style="padding-right:4px; padding-left: 4px;">
+                                <td>
                                     <a href="restore/{{$loan->id}}" class="btn btn-primary">Restore</a>
                                 </td>
-                                <td style="padding-right:4px; padding-left: 4px;">
-                                    <form action="{{ route('book.permanent-delete', $loan->id) }}" method="POST" class="pull-right" style="display: inline;">
+                                <td>
+                                    <form action="{{ route('book.permanent-delete', $loan->id) }}" method="POST" class="pull-right">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger" style="background-color: #dc3545;" onclick="return confirmPermanentDelete(event, {{ $loan->id }})">
+                                        <button type="submit" class="btn btn-danger" onclick="return confirmPermanentDelete(event, {{ $loan->id }})">
                                             Perm. Delete
                                         </button>
                                     </form>

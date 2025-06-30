@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Genre;
-use App\Models\Publisher;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Publisher;
 use Illuminate\Support\Facades\DB;
 
 class PublisherSeeder extends Seeder
@@ -16,39 +14,20 @@ class PublisherSeeder extends Seeder
     public function run(): void
     {
         DB::table('publishers')->delete();
-
         $publishers = [
-            'Independently Published',
-            'Atlantic Books',
-            'Penguin',
-            'Wordsworth Editions',
-            'Hodder Children\'s Books',
-            'Piatkus',
-            '1000Vultures',
-            'Penguin Classics',
-            'Head of Zeus',
-            'Bloomsbury Children\'s Books',
-            'New York Review Books',
-            'Knopf',
-            'Thorndike Press Large Print',
-            'Vintage',
-            'Pushkin Press',
-            'Dialogue Books',
-            'Tor',
-            'Hannah Bonam-Young',
-            'Pan',
-            'St. Martin\'s Press',
-            'Berkley Publishing Corporation,U.S.',
-            'Simon & Schuster',
-            'HarperCollins',
-            'Fourth Estate',
-            'Harper Perennial',
+            'Penguin Random House', 'HarperCollins', 'Simon & Schuster', 'Macmillan',
+            'Hachette Book Group', 'Scholastic', 'Bloomsbury', 'Faber & Faber',
+            'Vintage Books', 'Knopf Doubleday', 'Crown Publishing', 'Ballantine Books',
+            'Bantam Books', 'Del Rey', 'Anchor Books', 'Vintage Classics',
+            'Modern Library', 'Everyman\'s Library', 'Oxford University Press', 'Cambridge University Press',
+            'MIT Press', 'Harvard University Press', 'Yale University Press', 'Princeton University Press',
+            'Stanford University Press', 'University of Chicago Press', 'Columbia University Press',
+            'Johns Hopkins University Press', 'Cornell University Press', 'University of California Press'
         ];
-
-        // Insert publishers into the database
         foreach ($publishers as $publisher) {
             Publisher::create([
                 'name' => $publisher,
+                'archived' => false
             ]);
         }
     }

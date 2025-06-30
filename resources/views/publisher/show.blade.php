@@ -1,7 +1,7 @@
 <x-app-layout>
     <!-- Header -->
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 >
             {{ __('Publisher Details') }}
         </h2>
     </x-slot>
@@ -9,7 +9,7 @@
     <!-- Publisher.show -->
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <div >
 
                 <!-- Flash message -->
                 @if(session('flashMessage'))
@@ -23,12 +23,12 @@
 
                 <!-- Publisher Details -->
                 <h2>{{ $publisher->id}}: {{ $publisher->name }}</h2>
-                <p style="margin-bottom: 8px;">Added:  {{ $publisher->created_at->format('jS M Y, H:i:s') }}</p>
-                <p style="margin-bottom: 8px;">Last Updated: {{ $publisher->updated_at->format('jS M Y, H:i:s') }}</p>
-                <div style="padding-top: 4px;" class="border-b-2 border-gray-300 mb-2"></div>
+                <p>Added:  {{ $publisher->created_at->format('jS M Y, H:i:s') }}</p>
+                <p>Last Updated: {{ $publisher->updated_at->format('jS M Y, H:i:s') }}</p>
+                <div ></div>
 
                 <div class="mb-8">
-                    <div style="margin: 20px 4px;" class="row">
+                    <div class="row">
                         <!-- Book Titles -->
                         <h2 class="text-xl font-semibold mb-4">Books Published by {{ $publisher->name }}</h2>
                         @if ($publisher->bookCopies->count() > 0)
@@ -73,7 +73,7 @@
                                 </tbody>
                             </table>
                         @else
-                            <p class="text-gray-600">No books are published by this publisher.</p>
+                            <p >No books are published by this publisher.</p>
                         @endif
                     </div>
                 </div>
