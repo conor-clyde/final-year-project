@@ -7,7 +7,8 @@
 /vendor
 .env
 .env.backup
-.env.production
+.env.example
+.flaretool.json
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -19,3 +20,5 @@ yarn-error.log
 /.vscode
 .DS_Store
 **/.DS_Store
+/resources/views/test.blade.php
+cookies.txt
