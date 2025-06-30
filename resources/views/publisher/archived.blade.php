@@ -1,13 +1,12 @@
-<x-app-layout>
+@extends('layouts.app')
 
-    <!-- Header -->
-    <x-slot name="header">
-        <h2 >
-            {{ __('Archived Publishers') }}
-        </h2>
-    </x-slot>
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Archived Publishers') }}
+    </h2>
+@endsection
 
-    <!-- Genre.archived -->
+@section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div >
@@ -45,7 +44,7 @@
                         <tbody>
 
                         <!-- Table Body -->
-                        @foreach ($publishers as $publisher)
+                        @forelse ($publishers as $publisher)
                             <tr>
                                 <td>
                                     {{$publisher->id}}
@@ -53,18 +52,26 @@
                                 <td>{{ $publisher->name }}</td>
                                 <td>{{ $publisher->popularity() }}</td>
                                 <td>
-                                    <a class="btn btn-primary" href="{{ $publisher->id }}">Details</a>
+                                    <a class="btn btn-primary" href="{{ $publisher->id }}">{{ __('Details') }}</a>
                                 </td>
                                 <td>
-                                    <a href="unarchive/{{$publisher->id}}" class="btn btn-primary">Unarchive</a>
+                                    <a href="unarchive/{{$publisher->id}}" class="btn btn-primary">{{ __('Unarchive') }}</a>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                        Delete
+                                        {{ __('Delete') }}
                                     </button>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No archived publishers'),
+                                'message' => __('No archived publishers found. Archived publishers will appear here and can be restored or permanently removed.'),
+                                'actionRoute' => route('publisher'),
+                                'actionLabel' => __('Back to Publishers')
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
                 </div>

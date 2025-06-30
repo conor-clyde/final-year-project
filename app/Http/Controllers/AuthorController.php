@@ -2,223 +2,105 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Requests\UpdateAuthorRequest;
 use App\Models\Author;
-use App\Models\Author_CatalogueEntry;
-use App\Models\BookCopy;
-use App\Models\CatalogueEntry;
-use App\Models\Genre;
-use App\Models\Publisher;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
-use Yajra\DataTables\DataTables;
 
-
-class AuthorController extends Controller
-{
-    public function index(Request $request)
-    {
-        $authors = Author::orderBy('surname')->orderBy('forename')->where('archived', '=', '0')->get();
-
+class AuthorController extends Controller {
+    public function index() {
+        $authors = Author::orderBy('surname')->orderBy('forename')->where('archived', false)->get();
         return view('author.index', compact('authors'));
     }
 
-    public function create()
-    {
+    public function create() {
         return view('author.create');
     }
 
-    public function show(Author $author)
-    {
+    public function show(Author $author) {
         $author->load('catalogueEntries');
         return view('author.show', compact('author'));
     }
 
-    public function store(Request $request)
-    {
-        $customMessages = [
-            'forename.unique' => 'An author with the given surname and forename already exists.',
-            'surname.max' => 'The author\'s surname must not exceed 255 characters.',
-            'forename.max' => 'The author\'s forename must not exceed 255 characters.',
-            'surname.required' => 'Please provide the author\'s surname.',
-            'forename.required' => 'Please provide the author\'s forename.'
-        ];
-
-
-        $this->validate($request, [
-            'surname' => 'required|max:255',
-            'forename' => [
-                'required',
-                'max:255',
-                Rule::unique('authors')->where(function ($query) use ($request) {
-                    return $query->where('surname', $request->input('surname'));
-                }),
-            ],
-        ], $customMessages);
-
-        $author = new Author;
-        $author->surname = $request->input('surname');
-        $author->forename = $request->input('forename');
-
-        $author->save();
-
-        return redirect('/author')->with('flashMessage', 'Author added successfully!');
+    public function store(StoreAuthorRequest $request) {
+        Author::create($request->validated());
+        return $this->redirectWithSuccess('author.index', 'Author added successfully.');
     }
 
-    public function edit($id)
-    {
-        $author = Author::find($id);
-
-        return view('author.edit')->with('author', $author);
-
-
+    public function edit(Author $author) {
+        return view('author.edit', compact('author'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $this->validate($request, [
-            'surname' => 'required|max:255',
-            'forename' => [
-                'required',
-                'max:255',
-                Rule::unique('authors')->where(function ($query) use ($request) {
-                    return $query->where('surname', $request->input('surname'));
-                })->ignore($id),
-            ],
-        ], [
-            'forename.unique' => 'The given author\'s full name already exists',
-        ]);
-
-        $author = Author::find($id);
-        $author->surname = $request->input('surname');
-        $author->forename = $request->input('forename');
-        $author->save();
-
-        return redirect('/author')->with('flashMessage', 'Author updated successfully!');
+    public function update(UpdateAuthorRequest $request, Author $author) {
+        $author->update($request->validated());
+        return $this->redirectWithSuccess('author.index', 'Author updated successfully.');
     }
 
-    public function permanentDelete($id)
-    {
-        $author = Author::withTrashed()->find($id);
+    public function destroy(Request $request, Author $author) {
+        $author->delete();
+        return back()->with('success', 'Author deleted successfully!');
+    }
 
-        if (!$author) {
-            return abort(404);
-        }
-
+    public function permanentDelete(int $id) {
+        $author = Author::withTrashed()->findOrFail($id);
         $author->forceDelete();
-        return redirect()->route('author.deleted')->with('flashMessage', 'Author permanently deleted!');
+        return $this->redirectWithSuccess('author.deleted', 'Author permanently deleted!');
     }
 
-    public function destroy(Request $request)
-    {
-        $authorId = $request->id;
-        $author = Author::find($authorId);
-
-        if ($author && $author->archived == 1) {
-            $author->archived = 0;
-            $author->save();
-
-            $author->delete();
-
-            return redirect()->route('author.archived')->with('flashMessage', 'Author deleted successfully!');
-        } else {
-            $author->delete();
-
-            return redirect()->route('author')->with('flashMessage', 'Author deleted successfully!');
-        }
+    public function checkArchiveStatus(Author $author) {
+        return response()->json([
+            'message' => "Are you sure you want to archive {$author->full_name}?",
+        ]);
     }
 
-
-    public function checkArchiveStatus($id)
-    {
-        $author = Author::find($id);
-        return response()->json(['message' => "Are you sure that you want to archive $author->id: $author->forename  $author->surname?", 'deletable' => true], 200);
+    public function archive(Author $author) {
+        $author->update(['archived' => true]);
+        return $this->redirectWithSuccess('author.index', 'Author archived successfully!');
     }
 
-    // Archive genre
-    public function archive($id)
-    {
-        //dd($id);
-        $author = Author::find($id);
-        // dd($author);
-        $author->archived = 1;
-        $author->save();
+    public function checkDeletionStatus(Author $author) {
+        $canBeDeleted = !$author->catalogueEntries()->exists();
 
-        return redirect()->route('author')->with('flashMessage', 'Author archived successfully!');
+        return response()->json([
+            'message' => $canBeDeleted
+                ? "Are you sure you want to delete {$author->full_name}?"
+                : "{$author->full_name} cannot be deleted because they are assigned to existing books.",
+            'deletable' => $canBeDeleted
+        ]);
     }
 
-    public function checkDeletionStatus($id)
-    {
-        $author = Author::find($id);
-
-        if (!$author) {
-            return response()->json(['message' => 'Author not found', 'deletable' => false], 404);
-        }
-
-        $formAction = url('author/delete');
-
-
-        $catalogueEntriesCount = $author->catalogueEntries()->count();
-        $canBeDeleted = $catalogueEntriesCount === 0;
-
-        if ($canBeDeleted) {
-            return response()->json([
-                'message' => "Are you sure that you want to delete $author->id: $author->forename $author->surname?",
-                'deletable' => true
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => "{$author->surname}, {$author->forename} cannot be deleted because books are assigned to this author",
-                'deletable' => false,
-                'formAction' => $formAction
-            ], 200);
-        }
-    }
-
-    public function archived(Request $request)
-    {
-        $authors = Author::where('archived', 1)->orderBy('surname')->get();
+    public function archived() {
+        $authors = Author::where('archived', true)->orderBy('surname')->get();
         return view('author.archived', compact('authors'));
     }
 
-    public function unarchive(Request $request, $id)
-    {
-        $author = Author::find($id);
-        $author->archived = 0;
-        $author->save();
-
-        return redirect()->route('author.archived')->with('flashMessage', 'Author unarchived successfully!');
+    public function unarchive(Author $author) {
+        $author->update(['archived' => false]);
+        return $this->redirectWithSuccess('author.archived', 'Author unarchived successfully!');
     }
 
-    public function deleted(Request $request)
-    {
-        $authors = Author::onlyTrashed()->get();
+    public function deleted() {
+        $authors = Author::onlyTrashed()->orderBy('surname')->get();
         return view('author.deleted', compact('authors'));
     }
 
-    public function restore(Request $request, $id)
-    {
-        $author = Author::withTrashed()->find($id);
-
-        if ($author) {
-            $author->restore();
-            return redirect()->route('author.deleted')->with('flashMessage', 'Author restored successfully!');
-        } else {
-            return redirect()->route('author.deleted')->with('flashMessage', 'Error: Author not found');
-        }
+    public function restore(int $id) {
+        $author = Author::withTrashed()->findOrFail($id);
+        $author->restore();
+        return $this->redirectWithSuccess('author.deleted', 'Author restored successfully!');
     }
 
-    public function unarchiveAll()
-    {
-        Author::where('archived', 1)->update(['archived' => 0]);
-        return redirect()->route('author.archived')->with('flashMessage', 'All authors unarchived successfully!');
+    public function unarchiveAll() {
+        Author::where('archived', true)->update(['archived' => false]);
+        return $this->redirectWithSuccess('author.archived', 'All authors unarchived successfully!');
     }
 
-    public function restoreAll()
-    {
+    public function restoreAll() {
         Author::onlyTrashed()->restore();
-        return redirect()->route('author.deleted')->with('flashMessage', 'All authors restored successfully!');
+        return $this->redirectWithSuccess('author.deleted', 'All authors restored successfully!');
     }
 
-
+    private function redirectWithSuccess($route, $message) {
+        return redirect()->route($route)->with('success', $message);
+    }
 }

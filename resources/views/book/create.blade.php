@@ -1,5 +1,12 @@
-<x-app-layout>
+@extends('layouts.app')
 
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Create a new Book') }}
+    </h2>
+@endsection
+
+@section('content')
     <!-- Header -->
     <x-slot name="header">
         <h2 >
@@ -568,5 +575,4 @@
 
         });
     </script>
-
-</x-app-layout>
+@endsection

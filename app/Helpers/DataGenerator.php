@@ -2,8 +2,7 @@
 
 namespace App\Helpers;
 
-class DataGenerator
-{
+class DataGenerator {
     private static $firstNames = [
         'John', 'Jane', 'Michael', 'Sarah', 'David', 'Emily', 'James', 'Emma',
         'Robert', 'Olivia', 'William', 'Ava', 'Richard', 'Isabella', 'Joseph', 'Sophia',
@@ -60,18 +59,15 @@ class DataGenerator
         'Fitness', 'Education', 'Reference', 'Poetry', 'Drama', 'Comedy'
     ];
 
-    public static function firstName(): string
-    {
+    public static function firstName(): string {
         return self::$firstNames[array_rand(self::$firstNames)];
     }
 
-    public static function lastName(): string
-    {
+    public static function lastName(): string {
         return self::$lastNames[array_rand(self::$lastNames)];
     }
 
-    public static function fullName(): string
-    {
+    public static function fullName(): string {
         return self::firstName() . ' ' . self::lastName();
     }
 
@@ -82,41 +78,34 @@ class DataGenerator
         return $name . '@' . $domains[array_rand($domains)];
     }
 
-    public static function bookTitle(): string
-    {
+    public static function bookTitle(): string {
         return self::$bookTitles[array_rand(self::$bookTitles)];
     }
 
-    public static function publisher(): string
-    {
+    public static function publisher(): string {
         return self::$publishers[array_rand(self::$publishers)];
     }
 
-    public static function genre(): string
-    {
+    public static function genre(): string {
         return self::$genres[array_rand(self::$genres)];
     }
 
-    public static function randomDate(int $startYear = 1900, int $endYear = 2024): string
-    {
+    public static function randomDate(int $startYear = 1900, int $endYear = 2024): string {
         $year = rand($startYear, $endYear);
         $month = rand(1, 12);
         $day = rand(1, 28); // Using 28 to avoid month/day issues
         return sprintf('%04d-%02d-%02d', $year, $month, $day);
     }
 
-    public static function randomYear(int $startYear = 1900, int $endYear = 2024): int
-    {
+    public static function randomYear(int $startYear = 1900, int $endYear = 2024): int {
         return rand($startYear, $endYear);
     }
 
-    public static function randomNumber(int $min = 1, int $max = 100): int
-    {
+    public static function randomNumber(int $min = 1, int $max = 100): int {
         return rand($min, $max);
     }
 
-    public static function randomText(int $words = 10): string
-    {
+    public static function randomText(int $words = 10): string {
         $lorem = [
             'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
             'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et',

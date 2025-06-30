@@ -15,165 +15,180 @@ use Yajra\DataTables\DataTables;
 
 class PublisherController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Display a listing of active publishers.
+     */
+    public function index()
     {
         $publishers = Publisher::orderBy('name')->where('archived', 0)->get();
-
         return view('publisher.index', compact('publishers'));
-
-
     }
 
+    /**
+     * Unarchive all publishers.
+     */
     public function unarchiveAll()
     {
         Publisher::where('archived', 1)->update(['archived' => 0]);
-        return redirect()->route('publisher.archived')->with('flashMessage', 'All publisher unarchived successfully!');
+        return $this->redirectWithSuccess('publisher.archived', 'All publishers unarchived successfully!');
     }
 
-    public function unarchive(Request $request, $id)
+    /**
+     * Unarchive a specific publisher.
+     */
+    public function unarchive(int $id)
     {
-        $publisher = Publisher::find($id);
+        $publisher = Publisher::findOrFail($id);
         $publisher->archived = 0;
         $publisher->save();
-
-        return redirect()->route('publisher.archived')->with('flashMessage', 'Publisher unarchived successfully!');
+        return $this->redirectWithSuccess('publisher.archived', 'Publisher unarchived successfully!');
     }
 
+    /**
+     * Show the form to create a new publisher.
+     */
     public function create()
     {
         return view('publisher.create');
     }
 
+    /**
+     * Display a specific publisher.
+     */
     public function show(Publisher $publisher)
     {
         $publisher->load('bookCopies.catalogueEntry.authors');
         return view('publisher.show', compact('publisher'));
     }
 
+    /**
+     * Store a new publisher in the database.
+     */
     public function store(Request $request)
     {
-        // Validation error messages
-        $customMessages = [
-            'publisher.max' => 'The publishers\'s name must not exceed 255 characters',
-        ];
-
         $validatedData = $request->validate([
-            'name' => 'required|max:255|unique:publishers'
-        ],
-            $customMessages
-        );
-
-        $publisher = new Publisher([
-            'name' => $validatedData['name']
+            'name' => 'required|max:255|unique:publishers',
+        ], [
+            'name.max' => 'The publisher\'s name must not exceed 255 characters',
         ]);
-
-
-        // Create publisher
+        $publisher = new Publisher(['name' => $validatedData['name']]);
         $publisher->save();
-
-        return redirect('/publisher')->with('flashMessage', 'Publisher added successfully!');
+        return $this->redirectWithSuccess('publisher.index', 'Publisher added successfully!');
     }
 
-    public function edit($id)
+    /**
+     * Show the form to edit a publisher.
+     */
+    public function edit(int $id)
     {
-        $publisher = Publisher::find($id);
-
-        return view('publisher.edit')->with('publisher', $publisher);
+        $publisher = Publisher::findOrFail($id);
+        return view('publisher.edit', compact('publisher'));
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Update a publisher in the database.
+     */
+    public function update(Request $request, int $id)
     {
-        // Validation error messages
-        $customMessages = [
-            'name.max' => 'The genre\'s name must not exceed 255 characters',
-        ];
-
-
         $validatedData = $request->validate([
             'name' => [
                 'required',
                 'max:255',
                 Rule::unique('publishers')->ignore($id),
             ]
-        ],
-            $customMessages
-        );
-
+        ], [
+            'name.max' => 'The publisher\'s name must not exceed 255 characters',
+        ]);
         $publisher = Publisher::findOrFail($id);
         $publisher->fill($validatedData);
         $publisher->save();
-
-
-        return redirect('/publisher')->with('flashMessage', 'Publisher updated successfully!');
+        return $this->redirectWithSuccess('publisher.index', 'Publisher updated successfully!');
     }
 
-    public function destroy(Request $request)
+    /**
+     * Archive a publisher.
+     */
+    public function archive(int $id)
     {
-
-        $publisherId = $request->id;
-
-        $publisher = Publisher::find($publisherId);
-
-        if ($publisher && $publisher->archived == 1) {
-            $publisher->archived = 0;
-            $publisher->save();
-
-            Publisher::findOrFail($publisherId)->delete();;
-
-            return redirect()->route('publisher.archived')->with('flashMessage', 'Publisher deleted successfully!');
-        } else {
-            if (BookCopy::where('publisher_id', $publisherId)->exists())
-                return redirect()->route('publisher')->with('flashMessage', 'Delete unsuccessful. Books are currently using this publisher.');
-
-            Publisher::findOrFail($publisherId)->delete();;
-            return redirect()->route('publisher')->with('flashMessage', 'Publisher deleted successfully!');
-        }
-
+        $publisher = Publisher::findOrFail($id);
+        $publisher->archived = 1;
+        $publisher->save();
+        return $this->redirectWithSuccess('publisher.index', 'Publisher archived successfully!');
     }
 
-    // Reverse soft delete genre
-    public function restore(Request $request, $id)
-    {
-        $publisher = Publisher::withTrashed()->find($id);
-
-        if ($publisher) {
-            $publisher->restore();
-            return redirect()->route('publisher.deleted')->with('flashMessage', 'Publisher restored successfully!');
-        } else {
-            return redirect()->route('publisher.deleted')->with('flashMessage', 'Error: Publisher not found');
-        }
-    }
-
-    // View archived genres
-    public function archived(Request $request)
+    /**
+     * Show a list of archived publishers.
+     */
+    public function archived()
     {
         $publishers = Publisher::where('archived', 1)->orderBy('name')->get();
         return view('publisher.archived', compact('publishers'));
     }
 
-    // View soft deleted genres
-    public function deleted(Request $request)
+    /**
+     * Show a list of soft-deleted publishers.
+     */
+    public function deleted()
     {
         $publishers = Publisher::onlyTrashed()->get();
         return view('publisher.deleted', compact('publishers'));
     }
 
-    public function archive($id)
+    /**
+     * Restore a soft-deleted publisher.
+     */
+    public function restore(Publisher $publisher)
     {
-        $publisher = Publisher::find($id);
-        $publisher->archived = 1;
-        $publisher->save();
-
-        return redirect()->route('publisher')->with('flashMessage', 'Publisher archived successfully!');
+        $publisher->restore();
+        return $this->redirectWithSuccess('publisher.deleted', 'Publisher restored successfully!');
     }
 
-    public function checkDeletionStatus($id)
+    /**
+     * Restore all soft-deleted publishers.
+     */
+    public function restoreAll()
     {
-        $publisher = Publisher::find($id);
-        $test = BookCopy::where('publisher_id', $id)->first();
+        Publisher::onlyTrashed()->restore();
+        return $this->redirectWithSuccess('publisher.deleted', 'All publishers restored successfully!');
+    }
 
-        $canBeDeleted = !$test;
+    /**
+     * Permanently delete a soft-deleted publisher.
+     */
+    public function permanentDelete(Publisher $publisher)
+    {
+        $publisher->forceDelete();
+        return $this->redirectWithSuccess('publisher.deleted', 'Publisher permanently deleted!');
+    }
 
+    /**
+     * Delete a publisher (soft delete).
+     */
+    public function destroy(Request $request)
+    {
+        $publisherId = $request->id;
+        $publisher = Publisher::findOrFail($publisherId);
+        if ($publisher->archived == 1) {
+            $publisher->archived = 0;
+            $publisher->save();
+            $publisher->delete();
+            return $this->redirectWithSuccess('publisher.archived', 'Publisher deleted successfully!');
+        } else {
+            if (BookCopy::where('publisher_id', $publisherId)->exists()) {
+                return $this->redirectWithError('publisher.index', 'Delete unsuccessful. Books are currently using this publisher.');
+            }
+            $publisher->delete();
+            return $this->redirectWithSuccess('publisher.index', 'Publisher deleted successfully!');
+        }
+    }
+
+    /**
+     * Check if a publisher can be deleted.
+     */
+    public function checkDeletionStatus(int $id)
+    {
+        $publisher = Publisher::findOrFail($id);
+        $canBeDeleted = !BookCopy::where('publisher_id', $id)->exists();
         if ($canBeDeleted) {
             return response()->json(['message' => "Are you sure that you want to delete {$publisher->name}?", 'deletable' => true], 200);
         } else {
@@ -181,32 +196,30 @@ class PublisherController extends Controller
         }
     }
 
-    public function restoreAll()
+    /**
+     * Check if a publisher can be archived.
+     */
+    public function checkArchiveStatus(int $id)
     {
-        Publisher::onlyTrashed()->restore();
-        return redirect()->route('publisher.deleted')->with('flashMessage', 'All Publishers restored successfully!');
+        $publisher = Publisher::findOrFail($id);
+        return response()->json(['message' => "Are you sure that you want to archive {$publisher->name}?"], 200);
     }
 
-    // Create confirm archive message
-    public function checkArchiveStatus($id)
+    /**
+     * Helper for redirecting with a success message.
+     */
+    private function redirectWithSuccess($route, $message)
     {
-        $publisher = Publisher::find($id);
-        return response()->json(['message' => "Are you sure that you want to archive {$publisher->name}?", 'deletable' => true], 200);
+        return redirect()->route($route)->with('success', $message);
     }
 
-    public function permanentDelete($id)
+    /**
+     * Helper for redirecting with an error message.
+     */
+    private function redirectWithError($route, $message)
     {
-        $publisher = Publisher::withTrashed()->find($id);
-
-        if (!$publisher) {
-            return abort(404);
-        }
-
-        $publisher->forceDelete();
-        return redirect()->route('publisher.deleted')->with('flashMessage', 'Publisher permanently deleted!');
+        return redirect()->route($route)->with('error', $message);
     }
-
-
 }
 
 

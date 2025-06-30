@@ -35,24 +35,32 @@
 
                         <!--  Table Body -->
                         <tbody>
-                        @foreach($test as $user)
+                        @forelse($test as $user)
                             <tr>
                                 <td>{{ $user->id }}</td>
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>
                                     @if($user->role == 1)
-                                        Patron
+                                        {{ __('Patron') }}
                                     @elseif($user->role == 2)
-                                        Librarian
+                                        {{ __('Librarian') }}
                                     @elseif($user->role == 3)
-                                        Admin
+                                        {{ __('Admin') }}
                                     @else
-                                        Unknown
+                                        {{ __('Unknown') }}
                                     @endif
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No users found'),
+                                'message' => __('No users are currently registered.'),
+                                'actionRoute' => '',
+                                'actionLabel' => ''
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
                 </div>

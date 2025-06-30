@@ -1,4 +1,12 @@
-<x-app-layout>
+@extends('layouts.app')
+
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ $author->name }}
+    </h2>
+@endsection
+
+@section('content')
     <!-- Header -->
     <x-slot name="header">
         <h2 >
@@ -63,12 +71,11 @@
                                                 ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
                                             </td>
                                             <td>{{ $book->condition->name }}</td>
-                                            <!-- Status column -->
                                             <td>
                                                 @if ($book->isOnLoan())
-                                                    On Loan
+                                                    {{ __('On Loan') }}
                                                 @else
-                                                    Available
+                                                    {{ __('Available') }}
                                                 @endif
                                             </td>
                                             <td>{{ $book->popularity() }}</td>
@@ -78,7 +85,13 @@
                                 </tbody>
                             </table>
                         @else
-                            <p >No books are written by this author</p>
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No books found'),
+                                'message' => __('No books are written by this author.'),
+                                'actionRoute' => '',
+                                'actionLabel' => ''
+                            ])
                         @endif
                     </div>
 
@@ -150,4 +163,4 @@
             });
         });
     </script>
-</x-app-layout>
+@endsection

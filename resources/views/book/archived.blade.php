@@ -1,5 +1,12 @@
-<x-app-layout>
+@extends('layouts.app')
 
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Archived Books') }}
+    </h2>
+@endsection
+
+@section('content')
     <!-- Header -->
     <x-slot name="header">
         <h2 >
@@ -50,7 +57,7 @@
 
                         <!-- Table body -->
                         <tbody>
-                        @foreach ($books as $book)
+                        @forelse ($books as $book)
                             <tr>
                                 <td>{{ $book->id }}</td>
                                 <td>
@@ -61,45 +68,44 @@
                                     @endif
                                 </td>
                                 <td>{{ $book->catalogueEntry->title }}</td>
-
-                                <!-- Book Authors -->
                                 <td>
                                     @foreach ($book->catalogueEntry->authors as $author)
-                                        {{ $author->forename }} {{ $author->surname }}
-                                        @if (!$loop->last)
-                                            &amp;
-                                        @endif
+                                        {{ $author->forename }} {{ $author->surname }}@if (!$loop->last) &amp; @endif
                                     @endforeach
                                 </td>
                                 <td>{{ $book->publisher->name }}<br>
                                     ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})
                                 </td>
                                 <td>{{ $book->condition->name }}</td>
-
-                                <!-- Status column -->
                                 <td>
                                     @if ($book->isOnLoan())
-                                        On Loan
+                                        {{ __('On Loan') }}
                                     @else
-                                        Available
+                                        {{ __('Available') }}
                                     @endif
                                 </td>
                                 <td>{{ $book->popularity() }}</td>
-
-                                <!-- Book Action Buttons -->
                                 <td>
-                                    <a class="btn btn-primary" href="{{ $book->id }}">Details</a>
+                                    <a class="btn btn-primary" href="{{ $book->id }}">{{ __('Details') }}</a>
                                 </td>
                                 <td>
-                                    <a href="unarchive/{{$book->id}}" class="btn btn-primary">Unarchive</a>
+                                    <a href="unarchive/{{$book->id}}" class="btn btn-primary">{{ __('Unarchive') }}</a>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$book->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                        Delete
+                                        {{ __('Delete') }}
                                     </button>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No archived books'),
+                                'message' => __('No archived books found. Archived books will appear here and can be restored or permanently removed.'),
+                                'actionRoute' => route('book'),
+                                'actionLabel' => __('Back to Books')
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -217,5 +223,5 @@
             });
         });
     </script>
-</x-app-layout>
+@endsection
 

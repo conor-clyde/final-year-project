@@ -10,6 +10,9 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    const ROLE_LIBRARIAN = 2;
+    const ROLE_ADMIN = 3;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -44,5 +47,15 @@ class User extends Authenticatable
     public function staff()
     {
         return $this->hasOne(Staff::class, 'email', 'email');
+    }
+
+    public function isAdmin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isLibrarian()
+    {
+        return $this->role === self::ROLE_LIBRARIAN;
     }
 }

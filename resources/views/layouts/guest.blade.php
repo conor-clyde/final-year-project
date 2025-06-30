@@ -7,26 +7,29 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+        <style>
+            body {
+                background-color: #f8fafc;
+            }
+        </style>
     </head>
     <body>
-        <div class="d-flex flex-column justify-content-center align-items-center pt-5">
-            <div>
-                <a href="/">
-                    <x-application-logo class="w-20 h-20 fill-current" />
-                </a>
-            </div>
-
-            <div class="w-100" style="max-width: 400px;">
-                <div class="card">
-                    <div class="card-body p-4">
-                        {{ $slot }}
+        <div class="container">
+            <div class="row justify-content-center mt-5">
+                <div class="col-md-8">
+                    <div class="text-center mb-4">
+                        <a href="/">
+                            <x-application-logo style="width: 8rem; height: auto;" />
+                        </a>
                     </div>
+                    @yield('content')
                 </div>
             </div>
         </div>

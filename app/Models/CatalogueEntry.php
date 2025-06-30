@@ -38,6 +38,31 @@ class CatalogueEntry extends Model
         return $this->belongsToMany(Author::class, 'author_catalogue_entries');
     }
 
+    public function getFormattedAuthorsAttribute()
+    {
+        $authors = $this->authors;
+        $count = $authors->count();
+
+        if ($count === 0) {
+            return 'N/A';
+        }
+
+        if ($count === 1) {
+            return $authors->first()->full_name;
+        }
+
+        $names = $authors->map(function ($author) {
+            return $author->full_name;
+        });
+
+        if ($count === 2) {
+            return $names->implode(' & ');
+        }
+
+        $lastAuthor = $names->pop();
+        return $names->implode(', ') . ' & ' . $lastAuthor;
+    }
+
     protected static function boot()
     {
         parent::boot();

@@ -1,154 +1,148 @@
-<x-app-layout>
+@extends('layouts.app')
 
-    <!-- Header -->
-    <x-slot name="header">
-        <h2 >
-            {{ __('Genres') }}
-        </h2>
-    </x-slot>
+@section('title', __('Genres') . ' | Library Management System')
 
-    <!-- Genre.index -->
+@section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div >
-                <div >
+            <div class="card shadow genre-card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center rounded-top position-relative" style="min-height: 3.5rem;">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-tags me-2 text-primary genre-empty-animate" style="font-size:1.7rem;"></i>
+                        <h3 class="fw-bold mb-0">{{ __('Genres') }}</h3>
+                    </div>
+                    <div>
+                        <a href="{{ route('genre.create') }}" class="btn btn-primary me-2" aria-label="{{ __('Add Genre') }}">
+                            <i class="bi bi-plus-circle me-1"></i> {{ __('Add Genre') }}
+                        </a>
+                        <a href="{{ route('genre.archived') }}" class="btn btn-outline-secondary me-2" aria-label="{{ __('View Archived Genres') }}">
+                            <i class="bi bi-archive"></i>
+                        </a>
+                        <a href="{{ route('genre.deleted') }}" class="btn btn-outline-danger" aria-label="{{ __('View Deleted Genres') }}">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                        <span data-bs-toggle="tooltip" class="ms-3" title="{{ __('\'Archived\' genres are hidden from active lists but can be restored. \'Deleted\' genres are removed but can be restored from the deleted list.') }}">
+                            <i class="bi bi-question-circle-fill text-info" style="font-size: 1.3rem;"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @if(session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert" aria-live="polite">
+                            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('Close') }}"></button>
+                        </div>
+                    @endif
+                    @if(session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert" aria-live="polite">
+                            <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="{{ __('Close') }}"></button>
+                        </div>
+                    @endif
 
-                    <!-- Flash message -->
-                        @if(Session::has('flashMessage'))
-                            <div class="alert alert-success">
-                                {{ Session::get('flashMessage') }}
+                    <!-- Filter Section -->
+                    <div class="mb-1 p-3 bg-light rounded">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="flex-grow-1 me-3" style="max-width: 400px;">
+                                <div class="input-group shadow-sm rounded">
+                                    <span class="input-group-text bg-white border-end-0" id="search-icon">
+                                        <i class="bi bi-search text-muted"></i>
+                                    </span>
+                                    <input
+                                        type="search"
+                                        id="genreSearch"
+                                        class="form-control form-control-sm border-start-0"
+                                        placeholder="{{ __('Search genres...') }}"
+                                        aria-label="{{ __('Search Genres') }}"
+                                        aria-describedby="search-icon"
+                                    >
+                                </div>
                             </div>
-                        @endif
-
-                    <!-- Add, archived, and deleted buttons -->
-                    <div class="top-buttons d-flex justify-content-between">
-                        <a href="{{ route('genre.create') }}" class="btn btn-primary">Add Genre</a>
-                        <div>
-                            <a href="{{ route('genre.archived') }}" class="btn btn-primary">Archived Genres</a>
-                            <a href="{{ route('genre.deleted') }}" class="btn btn-primary">Deleted Genres</a>
+                            <div id="lengthDropdownContainer"></div>
                         </div>
                     </div>
+                    <!-- Removed default DataTables search input; only custom search bar is shown -->
 
-                    <!-- Genre table -->
-                        <table id="genreIndex" class="data-table table">
-
-                            <!-- Table headings -->
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Genre</th>
-                                <th>Books</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-
-                            <!-- Table body -->
-                            <tbody>
-                            @foreach ($genres as $genre)
+                    @if($genres->isEmpty())
+                        @include('partials.empty-state', [
+                            'icon' => 'bi-emoji-frown',
+                            'title' => __('No genres found'),
+                            'message' => __('Get started by adding your first genre to organize your library.'),
+                            'actionRoute' => route('genre.create'),
+                            'actionLabel' => __('Add Genre')
+                        ])
+                    @else
+                    <div class="table-responsive">
+                        <table id="genreIndex" class="table table-hover table-striped align-middle genre-table" aria-label="{{ __('Genres Table') }}">
+                            <thead class="table-light">
                                 <tr>
-                                    <td>{{ $genre->id }}</td>
-                                    <td>{{ $genre->name }}</td>
-                                    <td>{{ $genre->popularity() }}</td>
-                                    <td class="px-2">
-                                        <a class="btn btn-primary" href="genre/{{ $genre->id }}">Details</a>
-                                    </td>
-                                    <td class="px-2">
-                                        <a href="genre/{{ $genre->id }}/edit" class="btn btn-primary">Edit</a>
-                                    </td>
-                                    <td class="px-2">
-                                        <button type="button" class="btn btn-primary archiveCategoryBtn" value="{{$genre->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
-                                    </td>
-                                    <td class="px-2">
-                                        <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$genre->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
-                                    </td>
+                                    <th scope="col">{{ __('ID') }}</th>
+                                    <th scope="col">{{ __('Genre Name') }}</th>
+                                    <th scope="col">{{ __('Description') }}</th>
+                                    <th scope="col">
+                                        {{ __('Titles') }}
+                                    </th>
+                                    <th scope="col" class="text-center">{{ __('Actions') }}</th>
                                 </tr>
-                            @endforeach
+                            </thead>
+                            <tbody>
+                                @forelse ($genres as $genre)
+                                    <tr>
+                                        <td>{{ $genre->id }}</td>
+                                        <td>
+                                            <a href="{{ route('genre.show', $genre) }}" class="fw-semibold text-decoration-underline text-primary" aria-label="{{ __('View details for') }} {{ $genre->name }}">
+                                                {{ $genre->name }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            @if($genre->description)
+                                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $genre->description }}">
+                                                    {{ \Illuminate\Support\Str::limit($genre->description, 40) }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted">{{ __('—') }}</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @php
+                                                $books = $genre->catalogueEntries;
+                                                $bookTitles = $books->pluck('title');
+                                                $tooltipTitles = $bookTitles->take(10)->implode(', ');
+                                                $remaining = $bookTitles->count() - 10;
+                                                $tooltip = $tooltipTitles;
+                                                if ($remaining > 0) {
+                                                    $tooltip .= ', ... ' . __('and') . ' ' . $remaining . ' ' . __('more');
+                                                }
+                                            @endphp
+                                            @if($books->count() > 0)
+                                                <span class="badge bg-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $tooltip }}">
+                                                    {{ $books->count() }}
+                                                </span>
+                                            @else
+                                                <span class="text-muted">0</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            @include('partials.genre-actions', ['genre' => $genre])
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">{{ __('No genres found.') }}</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
-{{--                    </form>--}}
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+    @include('partials.archive-modal')
+    @include('partials.delete-modal')
+@endsection
 
-    <!-- Modal for archive and delete -->
-    @include('partials.archive-modal', ['modalId' => 'archiveModal', 'formAction' => url('genre/archive'), 'textareaId' => 'archiveQuestion', 'categoryId' => 'category_id', 'confirmArchiveBtn' => 'confirmArchiveBtn'])
-    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('genre/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
-
-    <!-- Imported scripts -->
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-
-    <!-- My scripts -->
+@push('scripts')
     <script src="{{ asset('js/genre.js') }}"></script>
-
-    <!-- Confirm delete-->
-    <script>
-        $('.deleteCategoryBtn').click(function (e) {
-            e.preventDefault();
-
-            var category_id = $(this).val();
-
-            $.ajax({
-                url: '{{ route('genre.check-delete', ':id') }}'.replace(':id', category_id),
-                type: 'GET',
-                success: function (response) {
-                    console.log(response.message);
-                    $('#deleteQuestion').val(response.message);
-                    $('#category_id').val(category_id);
-
-                    var deletable = response.deletable;
-
-                    if (deletable) {
-                        $('#confirmDeletionBtn').show();
-                    } else {
-                        $('#confirmDeletionBtn').hide();
-                    }
-
-                    // Show the modal
-                    $('#deleteModal').modal('show');
-                },
-                error: function (error) {
-                    // Handle errors, e.g., show an alert
-                    alert('Error checking deletion status');
-                }
-            });
-        });
-    </script>
-
-    <!-- Confirm archive-->
-    <script>
-        $('.archiveCategoryBtn').click(function (e) {
-            e.preventDefault();
-
-            var category_id = $(this).val();
-            var test ="genre/archive/" + category_id;
-
-            $.ajax({
-                url: '{{ route('genre.check-archive', ':id') }}'.replace(':id', category_id),
-                type: 'GET',
-                success: function (response) {
-                    // Set the modal content
-                    console.log(response.message);
-                    $('#archiveQuestion').val(response.message);
-                    $('#archive_genre_id').val(category_id);
-
-                    // Set the href attribute of the confirm button
-                    $('#confirmArchiveBtn').attr('href', test);
-
-                    // Show the modal
-                    $('#archiveModal').modal('show');
-                },
-                error: function (error) {
-                    alert('Error checking deletion status');
-                }
-            });
-        });
-    </script>
-</x-app-layout>
+@endpush

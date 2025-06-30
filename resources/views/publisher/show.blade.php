@@ -1,12 +1,12 @@
-<x-app-layout>
-    <!-- Header -->
-    <x-slot name="header">
-        <h2 >
-            {{ __('Publisher Details') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <!-- Publisher.show -->
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ $publisher->name }}
+    </h2>
+@endsection
+
+@section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div >
@@ -54,17 +54,16 @@
                                         <td>{{ $book->catalogueEntry->title }}</td>
                                         <td>
                                             @foreach ($book->catalogueEntry->authors as $author)
-                                                {{ $author->surname }}, {{ $author->forename }}
-                                                <br>
-                                        @endforeach
+                                                {{ $author->surname }}, {{ $author->forename }}<br>
+                                            @endforeach
+                                        </td>
                                         <td>{{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }}</td>
                                         <td>{{ $book->condition->name }}</td>
-                                        <!-- Status column -->
                                         <td>
                                             @if ($book->isOnLoan())
-                                                On Loan
+                                                {{ __('On Loan') }}
                                             @else
-                                                Available
+                                                {{ __('Available') }}
                                             @endif
                                         </td>
                                         <td>{{ $book->popularity() }}</td>
@@ -73,7 +72,13 @@
                                 </tbody>
                             </table>
                         @else
-                            <p >No books are published by this publisher.</p>
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No books found'),
+                                'message' => __('No books are published by this publisher.'),
+                                'actionRoute' => '',
+                                'actionLabel' => ''
+                            ])
                         @endif
                     </div>
                 </div>
@@ -141,4 +146,4 @@
             });
         });
     </script>
-</x-app-layout>
+@endsection

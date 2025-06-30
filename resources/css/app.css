@@ -1,3 +1,177 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Library Management System Color Scheme */
+:root {
+    --primary: #234075;
+    --primary-light: #2563eb;
+    --secondary: #e9f1fa;
+    --accent: #2ecc40;
+    --gold: #b8860b;
+    --background: #f7f8fa;
+    --background-alt: #eceff3;
+    --text: #2c3e50;
+    --danger: #c0392b;
+    --danger-bg: #ffeaea;
+    --success: #2ecc40;
+    --success-bg: #eaffea;
+}
+
+body {
+    background-color: var(--background-alt);
+    color: var(--text);
+}
+
+.card {
+    background-color: var(--background);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border-radius: 1rem;
+    border: none;
+}
+
+/* Genre Page Enhancements */
+.genre-card {
+    border-radius: 1rem;
+    border: none;
+    background: #f8fafc;
+    padding: 1.5rem;
+}
+.genre-table th, .genre-table td {
+    vertical-align: middle;
+}
+.genre-table th {
+    background: var(--secondary);
+    color: var(--text);
+    font-weight: 600;
+}
+.genre-table tbody tr:nth-child(even) {
+    background: #f4f8fb;
+}
+.genre-table tbody tr:hover {
+    background: #e3eefd;
+    transition: background 0.2s;
+}
+.genre-table a {
+    color: var(--primary-light);
+    text-decoration: none;
+}
+.genre-table a:hover {
+    text-decoration: underline;
+}
+.btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+.btn-primary:hover, .btn-primary:focus {
+    background: var(--primary-light);
+    border-color: var(--primary-light);
+    color: #fff;
+}
+.btn-outline-secondary {
+    color: var(--primary);
+    border-color: var(--secondary);
+    background: #fff;
+}
+.btn-outline-secondary:hover {
+    background: var(--secondary);
+    color: var(--primary);
+}
+.btn-outline-warning {
+    color: var(--gold);
+    border-color: #ffe066;
+    background: #fffbe6;
+}
+.btn-outline-warning:hover {
+    background: #ffe066;
+    color: #856404;
+}
+.btn-outline-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+    background: #fff;
+}
+.btn-outline-danger:hover {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+.btn-outline-success {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: #fff;
+}
+.btn-outline-success:hover {
+    background: var(--success-bg);
+    color: var(--accent);
+}
+.card-header.bg-light {
+    background: var(--secondary) !important;
+}
+@media (max-width: 768px) {
+    .genre-table th, .genre-table td {
+        font-size: 0.95rem;
+        padding: 0.5rem;
+    }
+    .genre-card {
+        padding: 1rem;
+    }
+}
+
+.alert-success {
+    background: var(--success-bg);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+.alert-danger {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.genre-empty-animate {
+    animation: genreBounce 1.2s infinite alternate;
+}
+@keyframes genreBounce {
+    0% { transform: translateY(0); opacity: 0.8; }
+    100% { transform: translateY(-8px); opacity: 1; }
+}
+
+.modal-footer .btn:focus, .modal-footer .btn:active {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+
+#genreIndex_paginate {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  #genreIndex_paginate,
+  #genreIndex_paginate * {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  #genreIndex_paginate {
+    margin-top: 0 !important;
+  }
+  
+  .dataTables_wrapper .dataTables_paginate {
+    margin-top: 0 !important;
+  }
+  .dataTables_wrapper .bottom {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .dataTables_length {
+    margin-bottom: 0 !important;
+  }
+  .dataTables_info {
+    margin-bottom: 0 !important;
+  }
+  div#genreIndex_paginate {
+    margin-top: 0px !important;
+  }
+  div.dataTables_wrapper .row {
+    margin-top: 0 !important;
+  }
+            
+
+

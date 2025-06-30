@@ -17,6 +17,11 @@ class Author extends Model
         'archived'
     ];
 
+    public function getFullNameAttribute()
+    {
+        return "{$this->forename} {$this->surname}";
+    }
+
     public function catalogueEntries()
     {
         return $this->belongsToMany(CatalogueEntry::class, 'author_catalogue_entries');

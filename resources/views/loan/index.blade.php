@@ -27,8 +27,6 @@
 
                     <!-- Book table -->
                     <table id="indexLoan" class="data-table table">
-
-                        <!-- Table headings -->
                         <thead>
                         <tr>
                             <th>ID</th>
@@ -41,39 +39,37 @@
                             <th></th>
                         </tr>
                         </thead>
-
-                        <!-- Table body -->
                         <tbody>
-                        @foreach ($loans as $loan)
+                        @forelse ($loans as $loan)
                             <tr>
                                 <td>{{ $loan->id }}</td>
                                 <td>{{ $loan->bookCopy->CatalogueEntry->title }} by
                                     @foreach ($loan->bookCopy->CatalogueEntry->authors as $author)
-                                        {{ $author->forename }} {{ $author->surname }}
-                                        @if (!$loop->last)
-                                            &amp;
-                                        @endif
-
+                                        {{ $author->forename }} {{ $author->surname }}@if (!$loop->last) &amp; @endif
                                     @endforeach
                                 ({{ $loan->bookCopy->id }})</td>
-                                <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }} ({{ $loan->patron->id }})
-                                </td>
+                                <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }} ({{ $loan->patron->id }})</td>
                                 <td>{{ \Carbon\Carbon::parse($loan->loan_date)->format('jS M Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($loan->due_date)->format('jS M Y') }}</td>
-                                <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
-
+                                <td>{{ $loan->is_returned ? __('Yes') : __('No') }}</td>
                                 <td>
                                     @if (!$loan->is_returned)
-                                        <a class="btn btn-primary" href="loan/return/{{ $loan->id }}">
-                                            Return</a>
-                                    @else
+                                        <a class="btn btn-primary" href="loan/return/{{ $loan->id }}">{{ __('Return') }}</a>
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="loan/{{$loan->id}}/edit" class="btn btn-primary">Edit</a>
+                                    <a href="loan/{{$loan->id}}/edit" class="btn btn-primary">{{ __('Edit') }}</a>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No loans found'),
+                                'message' => __('Get started by adding your first loan.'),
+                                'actionRoute' => route('loan.create'),
+                                'actionLabel' => __('Add Loan')
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
                 </div>

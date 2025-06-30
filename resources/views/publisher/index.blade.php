@@ -1,12 +1,12 @@
-<x-app-layout>
-    <!-- Header -->
-    <x-slot name="header">
-        <h2 >
-            {{ __('Publishers') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <!-- Publisher.index -->
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Publishers') }}
+    </h2>
+@endsection
+
+@section('content')
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div >
@@ -31,41 +31,33 @@
 
                     <!-- Publisher table -->
                     <table id="publisherIndex" class="data-table table">
-
-                        <!-- Table headings -->
                         <thead>
                         <tr>
                             <th>ID</th>
                             <th>Publisher</th>
                             <th>Books</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th class="text-end">Actions</th>
                         </tr>
                         </thead>
-
-                        <!-- Table body -->
                         <tbody>
-                        @foreach ($publishers as $publisher)
+                        @forelse ($publishers as $publisher)
                             <tr>
                                 <td>{{ $publisher->id }}</td>
                                 <td>{{ $publisher->name }}</td>
                                 <td>{{ $publisher->popularity() }}</td>
-                                <td>
-                                    <a class="btn btn-primary" href="publisher/{{ $publisher->id }}">Details</a>
-                                </td>
-                                <td>
-                                    <a href="publisher/{{$publisher->id}}/edit" class="btn btn-primary">Edit</a>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-primary archiveCategoryBtn" value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#archiveModal">Archive</button>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$publisher->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete</button>
+                                <td class="text-end">
+                                    @include('partials.publisher-actions', ['publisher' => $publisher])
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No publishers found'),
+                                'message' => __('Get started by adding your first publisher.'),
+                                'actionRoute' => route('publisher.create'),
+                                'actionLabel' => __('Add Publisher')
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
 
@@ -152,5 +144,4 @@
             });
         });
     </script>
-
-</x-app-layout>
+@endsection

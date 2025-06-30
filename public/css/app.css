@@ -1,0 +1,32 @@
+
+
+/* DataTables custom controls layout for genre index */
+.dt-search {
+    float: left;
+    margin-bottom: 2rem !important;
+}
+.dt-length {
+    float: right;
+}
+
+/* Add spacing below DataTables controls (including export button) and above the table */
+.dataTables_wrapper .d-flex {
+    margin-bottom: 2rem !important;
+}
+
+/* Genre index row hover effect */
+#genreIndex.genre-table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+/* Soften the background behind main content */
+body {
+    background-color: #eceff3;
+}
+
+.card {
+    background-color: #f7f8fa;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+

@@ -22,10 +22,11 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Cache;
 
 
-class BookController extends Controller
-{
-    public function index(Request $request)
-    {
+class BookController extends Controller {
+    /**
+     * Display a listing of the books.
+     */
+    public function index(Request $request) {
         $books = BookCopy::with([
             'catalogueEntry.authors',
             'catalogueEntry.genre',
@@ -42,8 +43,10 @@ class BookController extends Controller
         return view('book.index', compact('books'));
     }
 
-    public function show($id)
-    {
+    /**
+     * Display the specified book.
+     */
+    public function show(int $id) {
         $book = BookCopy::withTrashed()
             ->with([
                 'loans',
@@ -59,8 +62,10 @@ class BookController extends Controller
         return view('book.show', compact('book'));
     }
 
-    public function create()
-    {
+    /**
+     * Show the form for creating a new book.
+     */
+    public function create() {
         $authors = Author::where('archived', false)
             ->orderByRaw('LOWER(surname)')
             ->get();
@@ -91,15 +96,21 @@ class BookController extends Controller
         ));
     }
 
-    public function deleted(Request $request)
-    {
+    /**
+     * Display a listing of the deleted books.
+     */
+    public function deleted(Request $request) {
         $books = BookCopy::onlyTrashed()->get();
         return view('book.deleted', compact('books'));
     }
 
 
-    public function store(Request $request)
-    {
+    /**
+     * Store a newly created book in storage.
+     *
+     * Note: Consider moving validation to a Form Request for better maintainability.
+     */
+    public function store(Request $request) {
         // Validation error messages
         $customMessages = [
             'genre' => 'Please select the book\'s genre.',
@@ -355,10 +366,13 @@ class BookController extends Controller
         $book_copy->save();
 
         // Redirect with a success message
-        return redirect('/book')->with('flashMessage', 'Book added successfully!');
+        return $this->redirectWithSuccess('book.index', 'Book added successfully!');
     }
 
-    private function getPublishDate($request)
+    /**
+     * Get the formatted publish date from the request.
+     */
+    private function getPublishDate(Request $request): string
     {
         $day = $request->input('publish_day');
         $month = $request->input('publish_month');
@@ -370,7 +384,10 @@ class BookController extends Controller
         return $formattedDate;
     }
 
-    public function removeAuthor($catalogueEntryId, $authorId)
+    /**
+     * Remove an author from a catalogue entry.
+     */
+    public function removeAuthor(int $catalogueEntryId, int $authorId)
     {
         // Count the number of authors associated with the same book
         $authorCount = Author_CatalogueEntry::where('catalogue_entry_id', $catalogueEntryId)
@@ -378,7 +395,7 @@ class BookController extends Controller
 
         // If there's only one author associated with the book, don't delete
         if ($authorCount <= 1) {
-            return back()->with('flashMessage', 'Cannot remove the last author for this book!');
+            return back()->with('success', 'Cannot remove the last author for this book!');
         }
 
         // Otherwise, delete the author from the Author_CatalogueEntry table
@@ -386,13 +403,16 @@ class BookController extends Controller
             ->where('catalogue_entry_id', $catalogueEntryId)
             ->delete();
 
-        return back()->with('flashMessage', 'Author removed successfully!');
+        return back()->with('success', 'Author removed successfully!');
     }
 
-    public function deleteAuthorCatalogEntry($authorId, $catalogueEntryId)
+    /**
+     * Delete an author-catalogue entry relationship.
+     */
+    public function deleteAuthorCatalogEntry(int $authorId, int $catalogueEntryId)
     {
         // Find the author catalogue entry by authorId and catalogueEntryId
-        $authorCatalogueEntry = AuthorCatalogueEntry::where('author_id', $authorId)
+        $authorCatalogueEntry = Author_CatalogueEntry::where('author_id', $authorId)
             ->where('catalogue_entry_id', $catalogueEntryId)
             ->first();
 
@@ -409,7 +429,10 @@ class BookController extends Controller
     }
 
 
-    public function edit($id)
+    /**
+     * Show the form for editing the specified book.
+     */
+    public function edit(int $id)
     {
         $book = BookCopy::findOrFail($id);
 
@@ -433,7 +456,10 @@ class BookController extends Controller
         ));
     }
 
-    public function getDetails($book)
+    /**
+     * Get details for a book by title.
+     */
+    public function getDetails(string $book)
     {
         $bookDetails = BookCopy::where('title', $book)->first();
 
@@ -441,7 +467,12 @@ class BookController extends Controller
         return response()->json($bookDetails);
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Update the specified book in storage.
+     *
+     * Note: Consider moving validation to a Form Request for better maintainability.
+     */
+    public function update(Request $request, int $id)
     {
         // dd($request);
 
@@ -460,10 +491,15 @@ class BookController extends Controller
         $book->save();
 
 
-        return redirect()->route('book')->with('flashMessage', 'Book updated successfully!');
+        return $this->redirectWithSuccess('book.index', 'Book updated successfully!');
     }
 
-    public function titleUpdate(Request $request, $id)
+    /**
+     * Update the title and related info for a book.
+     *
+     * Note: Consider moving validation to a Form Request for better maintainability.
+     */
+    public function titleUpdate(Request $request, int $id)
     {
         $customMessages = [
             'title.max' => 'The book\'s title must not exceed 255 characters',
@@ -497,29 +533,18 @@ class BookController extends Controller
         $title->description = $request->input('description');
 
         $title->genre_id = $request->input('genre');
-
-//        // Update author names
-//        $authorsData = $request->input('author');
-//
-//        foreach ($authorsData as $authorId => $authorInfo) {
-//            $author = Author::find($authorId);
-//            if ($author) {
-//                $author->surname = $authorInfo['surname'];
-//                $author->forename = $authorInfo['forename'];
-//                $author->save();
-//            }
-//        }
-
-
         $title->authors()->sync($request->input('author_ids'));
 
 
         $title->save();
 
-        return redirect()->route('book')->with('flashMessage', 'Title updated successfully!');
+        return $this->redirectWithSuccess('book.index', 'Title updated successfully!');
     }
 
-    public function permanentDelete($id)
+    /**
+     * Permanently delete the specified book.
+     */
+    public function permanentDelete(int $id)
     {
         $book = BookCopy::withTrashed()->find($id);
 
@@ -548,73 +573,82 @@ class BookController extends Controller
 
 
 
-        return redirect()->route('book.deleted')->with('flashMessage', 'Book permanently deleted!');
+        return $this->redirectWithSuccess('book.deleted', 'Book permanently deleted!');
     }
 
 
-    public function destroy(Request $request)
+    /**
+     * Soft delete the specified book.
+     */
+    public function destroy(BookCopy $book)
     {
-        $bookId = $request->id;
-        $book = BookCopy::find($bookId);
-
-        if ($book && $book->archived == 1) {
-            $book->archived = 0;
-            $book->save();
-
-            $book->delete();
-
-            return redirect()->route('book.archived')->with('flashMessage', 'Book deleted successfully!');
-        } else {
-
-            $book->delete();
-
-            return redirect()->route('book')->with('flashMessage', 'Book deleted successfully!');
-        }
-
+        $book->delete();
+        return $this->redirectWithSuccess('book.index', 'Book deleted successfully!');
     }
 
-    public function archive(Request $request, $id)
+    /**
+     * Archive the specified book.
+     */
+    public function archive(BookCopy $book)
     {
-        $book = BookCopy::find($id);
-        $book->archived = 1;
-        $book->save();
-
-        return redirect('/book')->with('flashMessage', 'Book archived successfully!');
+        $book->update(['archived' => true]);
+        return $this->redirectWithSuccess('book.index', 'Book archived successfully!');
     }
 
 
+    /**
+     * Display a listing of the archived books.
+     */
     public function archived(Request $request)
     {
-        $books = BookCopy::orderBy('publish_date')
-            ->where('book_copies.archived', '=', '1')->get();
+        $books = BookCopy::with([
+            'catalogueEntry.authors', 
+            'catalogueEntry.genre',
+            'publisher',
+            'condition',
+            'format',
+            'language'
+            ])
+            ->where('archived', true)
+            ->orderBy('publish_date')
+            ->get();
 
         return view('book.archived', compact('books'));
     }
 
-    public function unarchive(Request $request, $id)
+    /**
+     * Unarchive the specified book.
+     */
+    public function unarchive(Request $request, int $id)
     {
         $book = BookCopy::find($id);
 
         $book->archived = 0;
         $book->save();
 
-        return redirect()->route('book.archived')->with('flashMessage', 'Book unarchived successfully!');
+        return back()->with('success', 'Book unarchived successfully');
     }
 
-    // Create confirm archive message
-    public function checkArchiveStatus($id)
+    /**
+     * Check if a book can be archived.
+     */
+    public function checkArchive(int $id)
     {
+        $book = BookCopy::findOrFail($id);
+        $message = "Are you sure you want to archive this book: '{$book->catalogueEntry->title}'?";
 
-        $book = BookCopy::find($id);
-        return response()->json(['message' => "Are you sure that you want to archive {$book->id}: {$book->catalogueEntry->title}?", 'deletable' => true], 200);
+        return response()->json(['message' => $message]);
     }
 
-    public function checkDeleteStatus($id)
+    /**
+     * Check if a book can be deleted.
+     */
+    public function checkDelete(int $id)
     {
-        $book = BookCopy::find($id);
-        $test = Loan::where('book_copy_id', $id)->first();
+        $book = BookCopy::findOrFail($id);
+        $loanCount = $book->loans()->count();
 
-        $canBeDeleted = !$test;
+        $canBeDeleted = !$loanCount;
 
         if ($canBeDeleted) {
             return response()->json(['message' => "Are you sure that you want to delete {$book->id}: {$book->catalogueEntry->title}?", 'deletable' => true], 200);
@@ -623,32 +657,46 @@ class BookController extends Controller
         }
     }
 
-    public function restore(Request $request, $id)
+    /**
+     * Restore a soft-deleted book.
+     */
+    public function restore(Request $request, int $id)
     {
         $book = BookCopy::withTrashed()->find($id);
 
         if ($book) {
             $book->restore();
-            return redirect()->route('book.deleted')->with('flashMessage', 'Book restored successfully!');
+            return $this->redirectWithSuccess('book.deleted', 'Book restored successfully!');
         } else {
-            return redirect()->route('book.deleted')->with('flashMessage', 'Error: Book not found');
+            return $this->redirectWithSuccess('book.deleted', 'Error: Book not found');
         }
     }
 
-    // Reverse archive every genre
+    /**
+     * Unarchive all archived books.
+     */
     public function unarchiveAll()
     {
         BookCopy::where('archived', 1)->update(['archived' => 0]);
-        return redirect()->route('book.archived')->with('flashMessage', 'All books unarchived successfully!');
+        return $this->redirectWithSuccess('book.archived', 'All books unarchived successfully!');
     }
 
+    /**
+     * Restore all soft-deleted books.
+     */
     public function restoreAll()
     {
         BookCopy::onlyTrashed()->restore();
-        return redirect()->route('book.deleted')->with('flashMessage', 'All books restored successfully!');
+        return $this->redirectWithSuccess('book.deleted', 'All books restored successfully!');
     }
 
-
+    /**
+     * Helper for redirecting with a success message.
+     */
+    private function redirectWithSuccess($route, $message)
+    {
+        return redirect()->route($route)->with('success', $message);
+    }
 }
 
 

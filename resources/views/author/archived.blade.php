@@ -1,173 +1,67 @@
-<x-app-layout>
+@extends('layouts.app')
 
-    <x-slot name="header">
-        <h2 >
-            {{ __('Archived Authors') }}
-        </h2>
-    </x-slot>
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Archived Authors') }}
+    </h2>
+@endsection
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div >
-                <div >
-
-                    <!-- Flash message -->
-                    @if(session('flashMessage'))
-                        <div class="alert alert-success mb-4">
-                            {{ session('flashMessage') }}
-                        </div>
-                    @endif
-
-                    <!-- Go back and Unarchive all buttons -->
-                    <div class="top-buttons d-flex justify-content-between">
-                        <a href="{{ route('author') }}" class="btn btn-secondary">Go Back</a>
-                        <div>
-                            <a href="{{ route('author.unarchive-all') }}" class="btn btn-primary">Unarchive All</a>
-                        </div>
+@section('content')
+    <div class="container-fluid py-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="mb-0">Archived Authors</h5>
+                <div>
+                    <a href="{{ route('author.index') }}" class="btn btn-secondary btn-sm">Return to Authors</a>
+                    <a href="{{ route('author.unarchive-all') }}" class="btn btn-primary btn-sm">Unarchive All</a>
+                </div>
+            </div>
+            <div class="card-body">
+                @if(session('flashMessage'))
+                    <div class="alert alert-success mb-4">
+                        {{ session('flashMessage') }}
                     </div>
+                @endif
 
-
-                    <table id="authorArchived" class="data-table table">
+                <div class="table-responsive">
+                    <table id="authorArchived" class="table table-striped table-hover">
                         <thead>
                         <tr>
                             <th>ID</th>
                             <th>Forename</th>
                             <th>Surname</th>
                             <th>Books</th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
+                            <th class="text-end">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($authors as $author)
+                        @forelse ($authors as $author)
                             <tr>
                                 <td>{{ $author->id }}</td>
                                 <td>{{ $author->forename }}</td>
                                 <td>{{ $author->surname }}</td>
                                 <td>{{ $author->popularity() }}</td>
-                                <td>
-                                    <a class="btn btn-primary" href="{{ $author->id }}">Details</a>
-                                </td>
-                                <td>
-                                    <a href="unarchive/{{$author->id}}" class="btn btn-primary">Unarchive</a>
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-danger deleteCategoryBtn" value="{{$author->id}}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                        Delete
-                                    </button>
+                                <td class="text-end">
+                                    <a href="{{ route('author.unarchive', $author->id) }}" class="btn btn-primary btn-sm">{{ __('Unarchive') }}</a>
                                 </td>
                             </tr>
-
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No archived authors'),
+                                'message' => __('No archived authors found. Archived authors will appear here and can be restored or permanently removed.'),
+                                'actionRoute' => route('author.index'),
+                                'actionLabel' => __('Back to Authors')
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
-
                 </div>
             </div>
         </div>
     </div>
+@endsection
 
-
-    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('author/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeleteBtn' => 'confirmDeleteBtn'])
-
-
-    <!-- Imported scripts -->
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-
-    @include('partials.delete-modal', ['modalId' => 'deleteModal', 'formAction' => url('genre/delete'), 'textareaId' => 'deleteQuestion', 'archive_genre_id' => 'archive_genre_id', 'confirmDeletionBtn' => 'confirmDeletionBtn'])
-
-
-    <script>
-        // Create genre.index datatable
-        $(document).ready(function () {
-            $('#authorArchived').DataTable({
-                dom: '<"top"fli>rt<"bottom"pB>',
-                language: {
-                    lengthMenu: 'Show _MENU_',
-                    info: 'Displaying _START_-_END_ out of _TOTAL_',
-                    search: 'Search Authors:',
-                },
-                buttons: [{
-                    extend: 'csv',
-                    text: 'Export Author List',
-                    exportOptions: {columns: [0, 1, 2]},
-                    title: 'Authors'
-                }],
-                responsive: true,
-                lengthMenu: [
-                    [10, 25, 50, -1],
-                    ['10', '25', '50', 'All']
-                ],
-                columnDefs: [{
-                    targets: [4, 5, 6],
-                    orderable: false,
-                    searchable: false,
-                },
-                    {
-                        targets: [3],
-                        searchable: false,
-                    }],
-                order: [[2, 'asc']]
-            });
-
-            <!-- Styles-->
-            var wrapper = $('.dataTables_wrapper');
-            var filter = wrapper.find('.dataTables_filter');
-            var searchInput = filter.find('input');
-            var lengthMenu = wrapper.find('.dataTables_length');
-            var paginationContainer = $('.dataTables_paginate');
-            var filter = wrapper.find('.dataTables_filter');
-
-            filter.css('float', 'left');
-            lengthMenu.css('float', 'right');
-            searchInput.css({
-                'margin-left': '20px',
-                'width': '340px'
-            });
-            paginationContainer.addClass('float-start');
-        });
-    </script>
-
-    <!-- Confirm delete-->
-    <script>
-        $('.deleteCategoryBtn').click(function (e) {
-            e.preventDefault();
-
-            var category_id = $(this).val();
-
-            $.ajax({
-                url: '{{ route('author.check-deletion', ':id') }}'.replace(':id', category_id),
-                type: 'GET',
-                success: function (response) {
-                    console.log(response.message);
-                    $('#deleteQuestion').val(response.message);
-                    $('#category_id').val(category_id);
-
-                    var deletable = response.deletable;
-
-                    if (deletable) {
-                        $('#confirmDeletionBtn').show();
-                    } else {
-                        $('#confirmDeletionBtn').hide();
-                    }
-
-                    // Show the modal
-                    $('#deleteModal').modal('show');
-                },
-                error: function (error) {
-                    // Handle errors, e.g., show an alert
-                    alert('Error checking deletion status');
-                }
-            });
-        });
-    </script>
-
-</x-app-layout>
+@push('scripts')
+    <script src="{{ asset('js/author.js') }}"></script>
+@endpush

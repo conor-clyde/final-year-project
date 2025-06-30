@@ -1,14 +1,15 @@
-<style>
+@extends('layouts.app')
 
-</style>
-<x-app-layout>
+@section('header')
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        {{ __('Deleted Books') }}
+    </h2>
+@endsection
 
-    <x-slot name="header">
-        <h2 >
-            {{ __('Deleted Books') }}
-        </h2>
-    </x-slot>
+@section('content')
+    <style>
 
+    </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div >
@@ -45,8 +46,7 @@
                         </tr>
                         </thead>
                         <tbody>
-
-                        @foreach ($books as $book)
+                        @forelse ($books as $book)
                             <tr>
                                 <td>{{ $book->id }}</td>
                                 <td>
@@ -59,41 +59,45 @@
                                 <td>{{ $book->catalogueEntry->title }}</td>
                                 <td>
                                     @foreach ($book->catalogueEntry->authors as $author)
-                                        {{ $author->forename }} {{ $author->surname }}
-                                        @if (!$loop->last)
-                                            &amp;
-                                        @endif
+                                        {{ $author->forename }} {{ $author->surname }}@if (!$loop->last) &amp; @endif
                                     @endforeach
                                 </td>
                                 <td>{{ $book->publisher->name }}<br>
                                     ({{ \Carbon\Carbon::parse($book->publish_date)->format('jS M Y') }})</td>
                                 <td>{{ $book->condition->name }}</td>
-                                <!-- Status column -->
                                 <td>
                                     @if ($book->isOnLoan())
-                                        On Loan
+                                        {{ __('On Loan') }}
                                     @else
-                                        Available
+                                        {{ __('Available') }}
                                     @endif
                                 </td>
                                 <td>{{ $book->popularity() }}</td>
                                 <td>
-                                    <a class="btn btn-primary" href="{{ $book->id }}">Details</a>
+                                    <a class="btn btn-primary" href="{{ $book->id }}">{{ __('Details') }}</a>
                                 </td>
                                 <td>
-                                    <a href="restore/{{$book->id}}" class="btn btn-primary">Restore</a>
+                                    <a href="restore/{{$book->id}}" class="btn btn-primary">{{ __('Restore') }}</a>
                                 </td>
                                 <td>
                                     <form action="{{ route('book.permanent-delete', $book->id) }}" method="POST" class="pull-right">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger" onclick="return confirmPermanentDelete(event, {{ $book->id }})">
-                                            Perm. Delete
+                                            {{ __('Perm. Delete') }}
                                         </button>
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No deleted books'),
+                                'message' => __('No deleted books found. Deleted books will appear here and can be restored or permanently removed.'),
+                                'actionRoute' => route('book'),
+                                'actionLabel' => __('Back to Books')
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -152,8 +156,7 @@
             paginationContainer.addClass('float-start');
         });
     </script>
-
-</x-app-layout>
+@endsection
 
 
 

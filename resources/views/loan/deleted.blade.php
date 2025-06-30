@@ -49,37 +49,40 @@
 
                         <!-- Table body -->
                         <tbody>
-                        @foreach ($loans as $loan)
+                        @forelse ($loans as $loan)
                             <tr>
                                 <td>{{ $loan->id }}</td>
                                 <td>{{ $loan->bookCopy->CatalogueEntry->title }} by
                                     @foreach ($loan->bookCopy->CatalogueEntry->authors as $author)
-                                        {{ $author->forename }} {{ $author->surname }}
-                                        @if (!$loop->last)
-                                            &amp;
-                                        @endif
-
+                                        {{ $author->forename }} {{ $author->surname }}@if (!$loop->last) &amp; @endif
                                     @endforeach
                                 ({{ $loan->bookCopy->id }})</td>
-                                <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }} ({{ $loan->patron->id }})
-                                <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}
-                                </td>
+                                <td>{{ $loan->patron->forename }} {{ $loan->patron->surname }} ({{ $loan->patron->id }})</td>
+                                <td>{{ \Carbon\Carbon::parse($loan->start_time)->format('jS M Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($loan->end_time)->format('jS M Y') }}</td>
-                                <td>{{ $loan->is_returned ? 'Yes' : 'No' }}</td>
+                                <td>{{ $loan->is_returned ? __('Yes') : __('No') }}</td>
                                 <td>
-                                    <a href="restore/{{$loan->id}}" class="btn btn-primary">Restore</a>
+                                    <a href="restore/{{$loan->id}}" class="btn btn-primary">{{ __('Restore') }}</a>
                                 </td>
                                 <td>
                                     <form action="{{ route('book.permanent-delete', $loan->id) }}" method="POST" class="pull-right">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger" onclick="return confirmPermanentDelete(event, {{ $loan->id }})">
-                                            Perm. Delete
+                                            {{ __('Perm. Delete') }}
                                         </button>
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            @include('partials.empty-state', [
+                                'icon' => 'bi-emoji-frown',
+                                'title' => __('No deleted loans'),
+                                'message' => __('No deleted loans found. Deleted loans will appear here and can be restored or permanently removed.'),
+                                'actionRoute' => route('loan'),
+                                'actionLabel' => __('Back to Loans')
+                            ])
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
