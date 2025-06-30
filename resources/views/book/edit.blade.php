@@ -257,17 +257,33 @@
                                 <td>
                                     <div class="row align-items-center">
                                         <div class="col-md-4">
-                                            {!! Form::selectRange('publish_day', 1, 31, date('j', strtotime($book->publish_date)), ['class' => 'form-control']) !!}
+                                            <select name="publish_day" class="form-control">
+                                                @for($i = 1; $i <= 31; $i++)
+                                                    <option value="{{ $i }}" {{ date('j', strtotime($book->publish_date)) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                                @endfor
+                                            </select>
                                         </div>
 
                                         {{-- Month Input --}}
                                         <div class="col-md-4">
-                                            {!! Form::selectMonth('publish_month', intval(date('m', strtotime($book->publish_date))), ['class' => 'form-control']) !!}
+                                            <select name="publish_month" class="form-control">
+                                                @foreach([
+                                                    1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+                                                    5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+                                                    9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+                                                ] as $value => $label)
+                                                    <option value="{{ $value }}" {{ intval(date('m', strtotime($book->publish_date))) == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         {{-- Year Input --}}
                                         <div class="col-md-4">
-                                            {!! Form::selectRange('publish_year', date('Y'), date('Y') - 100, date('Y', strtotime($book->publish_date)), ['class' => 'form-control']) !!}
+                                            <select name="publish_year" class="form-control">
+                                                @for($i = date('Y'); $i >= date('Y') - 100; $i--)
+                                                    <option value="{{ $i }}" {{ date('Y', strtotime($book->publish_date)) == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                                @endfor
+                                            </select>
                                         </div>
                                     </div>
                                 </td>
@@ -294,33 +310,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Imported scripts -->
-    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
-
-    <!-- DataTables Responsive CSS -->
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-
-    <!-- DataTables Responsive JS -->
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-
 
     <script>
         // Create genre.index datatable
@@ -361,7 +350,6 @@
         });
 
     </script>
-
 
     <script>
         $(document).ready(function () {

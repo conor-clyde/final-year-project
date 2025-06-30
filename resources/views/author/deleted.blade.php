@@ -55,12 +55,13 @@
                                     <a href="restore/{{$author->id}}" class="btn btn-primary">Restore</a>
                                 </td>
                                 <td style="padding-right:4px; padding-left: 4px;">
-                                    {!! Form::open(['url' => ['author/permanent-delete', $author->id], 'method' => 'POST', 'class' => 'pull-right']) !!}
-
-                                    {!! Form::hidden('_method', 'DELETE') !!}
-                                    {!! Form::submit('Delete', ['class' => 'btn btn-danger', 'style' => "background-color: #dc3545;", 'onclick' => 'confirmPermanentDelete(event, ' . $author->id . ')']) !!}
-
-                                    {!! Form::close() !!}
+                                    <form action="{{ route('author.permanent-delete', $author->id) }}" method="POST" class="pull-right" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" style="background-color: #dc3545;" onclick="return confirmPermanentDelete(event, {{ $author->id }})">
+                                            Delete
+                                        </button>
+                                    </form>
                                 </td>
 
 

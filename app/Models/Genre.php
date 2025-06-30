@@ -10,11 +10,16 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Genre extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'name',
         'description',
+        'archived',
+    ];
+
+    protected $casts = [
+        'archived' => 'boolean',
     ];
 
     public function catalogueEntries()

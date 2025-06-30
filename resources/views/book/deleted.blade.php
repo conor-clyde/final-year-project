@@ -85,12 +85,13 @@
                                     <a href="restore/{{$book->id}}" class="btn btn-primary">Restore</a>
                                 </td>
                                 <td style="padding-right:4px; padding-left: 4px;">
-                                    {!! Form::open(['url' => ['book/permanent-delete', $book->id], 'method' => 'POST', 'class' => 'pull-right']) !!}
-
-                                    {!! Form::hidden('_method', 'DELETE') !!}
-                                    {!! Form::submit('Perm. Delete', ['class' => 'btn btn-danger', 'style' => "background-color: #dc3545;", 'onclick' => 'confirmPermanentDelete(event, ' . $book->id . ')']) !!}
-
-                                    {!! Form::close() !!}
+                                    <form action="{{ route('book.permanent-delete', $book->id) }}" method="POST" class="pull-right" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" style="background-color: #dc3545;" onclick="return confirmPermanentDelete(event, {{ $book->id }})">
+                                            Perm. Delete
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -100,28 +101,6 @@
             </div>
         </div>
     </div>
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/buttons/2.0.1/css/buttons.dataTables.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-
-    <!-- DataTables Buttons JS -->
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/buttons/2.0.1/js/dataTables.buttons.min.js"></script>
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/buttons/2.0.1/js/buttons.html5.min.js"></script>
-
-    <!-- DataTables Responsive JS -->
-    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -174,7 +153,6 @@
             paginationContainer.addClass('float-start');
         });
     </script>
-
 
 </x-app-layout>
 

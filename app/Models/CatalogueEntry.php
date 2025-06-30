@@ -9,8 +9,18 @@ use Laravel\Sanctum\HasApiTokens;
 
 class CatalogueEntry extends Model
 {
+    use HasFactory;
+
     protected $dates = [
         'publish_date'
+    ];
+
+    protected $fillable = [
+        'title',
+        'description',
+        'genre_id',
+        'language_id',
+        'format_id',
     ];
 
     public function genre()
@@ -25,7 +35,7 @@ class CatalogueEntry extends Model
 
     public function authors()
     {
-        return $this->belongsToMany(Author::class, 'author_catalogue_entries');
+        return $this->belongsToMany(Author::class, 'author_catalogue_entry');
     }
 
     protected static function boot()
@@ -42,8 +52,18 @@ class CatalogueEntry extends Model
         return $this->hasMany(BookCopy::class);
     }
 
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
+    }
+
+    public function format()
+    {
+        return $this->belongsTo(Format::class);
+    }
+
     public function popularity()
     {
-        return $this->bookCopies()->count();
+        return $this->bookCopies()->withCount('loans')->get()->sum('loans_count');
     }
 }

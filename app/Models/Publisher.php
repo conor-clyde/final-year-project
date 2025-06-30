@@ -10,12 +10,16 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Publisher extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name'
+        'name',
+        'archived',
     ];
 
+    protected $casts = [
+        'archived' => 'boolean',
+    ];
 
     public function bookCopies()
     {

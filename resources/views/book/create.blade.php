@@ -233,20 +233,33 @@
 
                                 {{-- Day Input --}}
                                 <div class="col-md-2">
-                                    {!! Form::selectRange('publish_day', 1, 31, old('publish_day'), ['class' =>
-                                    'form-control']) !!}
+                                    <select name="publish_day" class="form-control">
+                                        @for($i = 1; $i <= 31; $i++)
+                                            <option value="{{ $i }}" {{ old('publish_day') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                        @endfor
+                                    </select>
                                 </div>
 
                                 {{-- Month Input --}}
                                 <div class="col-md-3">
-                                    {!! Form::selectMonth('publish_month', old('publish_month'), ['class' =>
-                                    'form-control']) !!}
+                                    <select name="publish_month" class="form-control">
+                                        @foreach([
+                                            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+                                            5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+                                            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+                                        ] as $value => $label)
+                                            <option value="{{ $value }}" {{ old('publish_month') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
 
                                 {{-- Year Input --}}
                                 <div class="col-md-2">
-                                    {!! Form::selectRange('publish_year', date('Y'), date('Y') - 100,
-                                    old('publish_year'), ['class' => 'form-control']) !!}
+                                    <select name="publish_year" class="form-control">
+                                        @for($i = date('Y'); $i >= date('Y') - 100; $i--)
+                                            <option value="{{ $i }}" {{ old('publish_year') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                                        @endfor
+                                    </select>
                                 </div>
                             </div>
 

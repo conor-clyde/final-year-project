@@ -10,10 +10,22 @@ use Laravel\Sanctum\HasApiTokens;
 
 class BookCopy extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'catalogue_entry_id',
+        'publisher_id',
+        'condition_id',
+        'language_id',
+        'format_id',
+        'publish_date',
+        'pages',
+        'archived',
+    ];
 
     protected $casts = [
         'publish_date' => 'datetime',
+        'archived' => 'boolean',
     ];
 
     public function catalogueEntry()
@@ -54,8 +66,6 @@ class BookCopy extends Model
     public function isOnLoan()
     {
         // Check if there is an active loan for the book
-        return $this->loans()->where('is_returned', 0)->exists();
+        return $this->loans()->where('is_returned', false)->exists();
     }
-
-
 }

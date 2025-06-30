@@ -19,48 +19,76 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
 
 
 class BookController extends Controller
 {
     public function index(Request $request)
     {
-        $books = BookCopy::orderBy('publish_date')
-            ->where('book_copies.archived', '=', '0')->get();
+        $books = BookCopy::with([
+            'catalogueEntry.authors',
+            'catalogueEntry.genre',
+            'publisher',
+            'condition',
+            'format',
+            'language',
+            'loans'
+        ])
+        ->where('archived', false)
+        ->orderBy('publish_date')
+        ->get();
 
         return view('book.index', compact('books'));
     }
 
     public function show($id)
     {
-
-        $book = BookCopy::withTrashed()->find($id);
-        //dd($book);
-        $book->load('loans');
-        $book->load('catalogueEntry');
-        $book->load('catalogueEntry.genre');
+        $book = BookCopy::withTrashed()
+            ->with([
+                'loans',
+                'catalogueEntry.genre',
+                'catalogueEntry.authors',
+                'publisher',
+                'condition',
+                'format',
+                'language'
+            ])
+            ->findOrFail($id);
 
         return view('book.show', compact('book'));
     }
 
     public function create()
     {
-        $authors = Author::all()->where('archived', '=', '0')->sortBy(function ($entry) {
-            return strtolower($entry->surname);
+        $authors = Author::where('archived', false)
+            ->orderByRaw('LOWER(surname)')
+            ->get();
+            
+        $genres = Cache::remember('genres_active', 3600, function () {
+            return Genre::where('archived', false)
+                ->orderByRaw('LOWER(name)')
+                ->get();
         });
-        $genres = Genre::all()->where('archived', '=', '0')->sortBy(function ($entry) {
-            return strtolower($entry->name);
-        });
-        $publishers = Publisher::all()->where('archived', '=', '0')->sortBy(function ($entry) {
-            return strtolower($entry->name);
-        });
-        $catalogue_entries = CatalogueEntry::all()->sortBy(function ($entry) {
-            return strtolower($entry->title);
-        });
-        $conditions = Condition::all(); // Fetch all genres
-        $languages = Language::all();
-        $formats = Format::all();
-        return view('book.create', compact('authors', 'genres', 'publishers', 'catalogue_entries', 'conditions', 'languages', 'formats'));
+            
+        $publishers = Publisher::where('archived', false)
+            ->orderByRaw('LOWER(name)')
+            ->get();
+            
+        $catalogue_entries = CatalogueEntry::orderByRaw('LOWER(title)')->get();
+        $conditions = Cache::get('conditions_all', Condition::all());
+        $languages = Cache::get('languages_all', Language::all());
+        $formats = Cache::get('formats_all', Format::all());
+        
+        return view('book.create', compact(
+            'authors', 
+            'genres', 
+            'publishers', 
+            'catalogue_entries', 
+            'conditions', 
+            'languages', 
+            'formats'
+        ));
     }
 
     public function deleted(Request $request)
@@ -342,9 +370,8 @@ class BookController extends Controller
         return $formattedDate;
     }
 
-    public function conor($catalogueEntryId, $authorId)
+    public function removeAuthor($catalogueEntryId, $authorId)
     {
-        dd('hi');
         // Count the number of authors associated with the same book
         $authorCount = Author_CatalogueEntry::where('catalogue_entry_id', $catalogueEntryId)
             ->count();
@@ -384,31 +411,26 @@ class BookController extends Controller
 
     public function edit($id)
     {
-        $book = BookCopy::find($id);
-        //dd( $book);
+        $book = BookCopy::findOrFail($id);
 
+        $authors = Author::orderByRaw('LOWER(surname)')->get();
+        $genres = Cache::get('genres_active', Genre::orderByRaw('LOWER(name)')->get());
+        $publishers = Publisher::orderByRaw('LOWER(name)')->get();
+        $catalogue_entries = CatalogueEntry::orderByRaw('LOWER(title)')->get();
+        $conditions = Cache::get('conditions_all', Condition::all());
+        $languages = Cache::get('languages_all', Language::all());
+        $formats = Cache::get('formats_all', Format::all());
 
-        $authors = Author::all()->sortBy(function ($entry) {
-            return strtolower($entry->surname);
-        });
-        $genres = Genre::all()->sortBy(function ($entry) {
-            return strtolower($entry->name);
-        });
-        //dd($genres);
-        $publishers = Publisher::all()->sortBy(function ($entry) {
-            return strtolower($entry->name);
-        });
-        $catalogue_entries = CatalogueEntry::all()->sortBy(function ($entry) {
-            return strtolower($entry->title);
-        });
-
-        $conditions = Condition::all();
-        $languages = Language::all();
-        $formats = Format::all();
-
-        //dd(date('m', strtotime($book->publish_date)));
-
-        return view('book.edit', compact('book', 'authors', 'genres', 'publishers', 'catalogue_entries', 'conditions', 'languages', 'formats'));
+        return view('book.edit', compact(
+            'book', 
+            'authors', 
+            'genres', 
+            'publishers', 
+            'catalogue_entries', 
+            'conditions', 
+            'languages', 
+            'formats'
+        ));
     }
 
     public function getDetails($book)

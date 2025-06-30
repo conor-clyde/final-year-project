@@ -10,9 +10,22 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Loan extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'book_copy_id',
+        'patron_id',
+        'staff_id',
+        'start_time',
+        'end_time',
+        'is_returned',
+    ];
 
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
+        'is_returned' => 'boolean',
+    ];
 
     public function bookCopy()
     {
@@ -21,11 +34,11 @@ class Loan extends Model
 
     public function patron()
     {
-        return $this->belongsTo(Patron::class, 'patron_id');
+        return $this->belongsTo(Patron::class);
     }
 
     public function staff()
     {
-        return $this->belongsTo(Staff::class, 'staff_id');
+        return $this->belongsTo(Staff::class);
     }
 }

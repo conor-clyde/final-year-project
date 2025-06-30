@@ -14,4 +14,22 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         //
     ];
+
+    /**
+     * Determine if the request has a valid CSRF token.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return bool
+     */
+    protected function tokensMatch($request)
+    {
+        $token = $this->getTokenFromRequest($request);
+        $sessionToken = $request->session()->token();
+
+        if (!$token || !$sessionToken) {
+            return false;
+        }
+
+        return hash_equals($sessionToken, $token);
+    }
 }

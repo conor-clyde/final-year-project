@@ -70,12 +70,13 @@
                                     <a href="restore/{{$loan->id}}" class="btn btn-primary">Restore</a>
                                 </td>
                                 <td style="padding-right:4px; padding-left: 4px;">
-                                    {!! Form::open(['url' => ['book/permanent-delete', $loan->id], 'method' => 'POST', 'class' => 'pull-right']) !!}
-
-                                    {!! Form::hidden('_method', 'DELETE') !!}
-                                    {!! Form::submit('Perm. Delete', ['class' => 'btn btn-danger', 'style' => "background-color: #dc3545;", 'onclick' => 'confirmPermanentDelete(event, ' . $loan->id . ')']) !!}
-
-                                    {!! Form::close() !!}
+                                    <form action="{{ route('book.permanent-delete', $loan->id) }}" method="POST" class="pull-right" style="display: inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger" style="background-color: #dc3545;" onclick="return confirmPermanentDelete(event, {{ $loan->id }})">
+                                            Perm. Delete
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach

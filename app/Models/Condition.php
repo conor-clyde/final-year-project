@@ -10,8 +10,14 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Condition extends Model
 {
+    use HasFactory;
 
+    protected $fillable = [
+        'name',
+    ];
 
-
-
+    public function bookCopies()
+    {
+        return $this->hasMany(BookCopy::class);
+    }
 }

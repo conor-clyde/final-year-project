@@ -10,6 +10,14 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Staff extends Model
 {
+    use HasFactory;
+
+    protected $fillable = [
+        'forename',
+        'surname',
+        'email',
+    ];
+
     public function loans()
     {
         return $this->hasMany(Loan::class);
