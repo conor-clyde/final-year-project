@@ -9,22 +9,21 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+require __DIR__.'/auth.php';
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 // Profile routes
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Librarian-only routes
+// Library Management Routes - Admin and Librarian access
 Route::middleware(['auth', 'is_librarian'])->group(function () {
     // Books
     Route::resource('book', BookController::class)->except(['destroy']);
@@ -87,7 +86,3 @@ Route::middleware(['auth', 'is_librarian'])->group(function () {
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
 });
-
-require __DIR__.'/auth.php';
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

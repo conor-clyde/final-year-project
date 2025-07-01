@@ -20,7 +20,7 @@
                     <a class="navbar-brand fw-bold" href="#">Library Management System</a>
                     <div class="navbar-nav ms-auto">
                         @auth
-                            <a class="nav-link" href="{{ url('/catalogue') }}">Catalogue</a>
+                            <a class="nav-link" href="{{ url('/home') }}">Home</a>
                         @else
                             <a class="nav-link" href="{{ route('login') }}">Log in</a>
                             @if (Route::has('register'))
